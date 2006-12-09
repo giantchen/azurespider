@@ -5,7 +5,7 @@ require 'open-uri'
 
 SITE_URL = "http://www.dangdang.com"
 
-def putu(url, text)
+def putu(url, text='')
   printf("%s%s\t%s\n", SITE_URL, url, text)
 end
 
@@ -15,6 +15,11 @@ def get_all_txt_pages(txt_urls)
     max = 0
     maxurl = ""
     fn_base = txturl.sub(".shtml", "")
+    
+    filename = "txt/" + File.basename(txturl)
+    if File.exist? filename
+      url = filename
+    end
     puts url
     
     doc = Hpricot(open(url))
@@ -54,4 +59,20 @@ def get_base_txt_pages
   get_all_txt_pages(txt_urls)
 end
 
-get_base_txt_pages
+def get_book_url
+  Dir.glob("details/01*.shtml").each do |fn|
+    #puts fn
+    doc = Hpricot(open(fn))
+    doc.search("a").each do |link|
+      href = link['href']
+      if href.include? 'product'
+        puts SITE_URL + href
+      end 
+    end
+  end
+end
+
+# get_base_txt_pages
+# get_all_txt_pages('01.47.07.00.00.00txt.shtml'=>1, '01.54.04.00.00.00txt.shtml' => 1)
+
+get_book_url
