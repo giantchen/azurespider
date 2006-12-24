@@ -72,7 +72,11 @@ def get_book_url
   end
 end
 
+def get_book_details(file)
+  doc = Hpticot(open(file))
+  
+end
 # get_base_txt_pages
 # get_all_txt_pages('01.47.07.00.00.00txt.shtml'=>1, '01.54.04.00.00.00txt.shtml' => 1)
 
-get_book_url
+#get_book_url
