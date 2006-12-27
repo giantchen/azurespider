@@ -73,24 +73,28 @@ def get_book_url
 end
 
 class Book
+  
+  @@regexps = {
+    'title' => /productname="(.*)"/,
+    'author' => /作者：<\/span><span class="black">(.*?)<\/a>/,
+    'publisher' => /出版社：<\/span><a href='.*'>(.*?)<\/a>/,
+    'isbn' => /ISBN：<\/span><span class="black">(.*?)<\/span>/,
+    'publish_date' => /出版日期：<\/span><span class="black">(.*?)<\/span>/,
+    'version' => /版次：<\/span><span class="black">(.*?)<\/span>/,
+    'price' => /productstr1="定价：(.*?)元/,
+    'site_price' => /productstr1=".*当当价：(.*?)元/,
+    'vip_price' => /productstr1=".*钻石VIP价：(.*?)元/,
+    'summary' => /内容提要：<\/td>\s*<\/tr>\s*<tr>\s*<td>(.*?)<\/td>/,
+    'author_intro' => /作者简介：<\/td>\s*<\/tr>\s*<tr>\s*<td>(.*?)<\/td>/
+  }
+  
+  @@filters = {
+    'summary' => lambda {|text| unhtml(text)},
+    'author_intro' => lambda {|text| unhtml(text)},
+  }
+  
   def initialize(file)
-    @regexps = {
-      'title' => /productname="(.*)"/,
-      'author' => /作者：<\/span><span class="black">(.*?)<\/a>/,
-      'publisher' => /出版社：<\/span><a href='.*'>(.*?)<\/a>/,
-      'isbn' => /ISBN：<\/span><span class="black">(.*?)<\/span>/,
-      'publish_date' => /出版日期：<\/span><span class="black">(.*?)<\/span>/,
-      'version' => /版次：<\/span><span class="black">(.*?)<\/span>/,
-      'price' => /productstr1="定价：(.*?)元/,
-      'site_price' => /productstr1=".*当当价：(.*?)元/,
-      'vip_price' => /productstr1=".*钻石VIP价：(.*?)元/,
-      'summary' => /内容提要：<\/td>\s*<\/tr>\s*<tr>\s*<td>(.*?)<\/td>/,
-      'author_intro' => /作者简介：<\/td>\s*<\/tr>\s*<tr>\s*<td>(.*?)<\/td>/
-    }
-    @filters = {
-      'summary' => lambda {|text| unhtml(text)},
-      'author_intro' => lambda {|text| unhtml(text)},
-    }
+
     @values = {}
     parse(file)
   end
@@ -106,10 +110,10 @@ class Book
 
   def parse(file)
     text = open(file).gets(nil)
-    @regexps.each do |key, re|
+    @@regexps.each do |key, re|
       if text =~ re
-        if @filters.key?(key)
-          @values[key] = @filters[key].call($1.strip)
+        if @@filters.key?(key)
+          @values[key] = @@filters[key].call($1.strip)
         else
           @values[key] = $1.strip
         end
@@ -117,7 +121,7 @@ class Book
     end
   end
 
-  def unhtml(s)
+  def Book.unhtml(s)
     if (s)
       s.gsub(/&nbsp;/, ' ')#.gsub(/<br>/, "\n")
     else
@@ -129,11 +133,19 @@ end
 # get_base_txt_pages
 # get_all_txt_pages('01.47.07.00.00.00txt.shtml'=>1, '01.54.04.00.00.00txt.shtml' => 1)
 
+total_books = 0
+cnt = 1
 File.open("b2.txt").each_line do |file|
   file.chomp!.sub!(/^http:\//, '.')
   if File.exist? file
     book = Book.new(file)
-    #printf '.'
-    puts file, book
+    total_books += 1
+    if cnt == 1000
+      STDERR.print "#{total_books}, "
+      cnt = 1
+    else
+      cnt += 1
+    end
+    puts file, book, ""
   end
 end
