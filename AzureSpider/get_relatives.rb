@@ -10,7 +10,7 @@ def get_relatives(list_file)
 
   File.open(list_file).each_line do |file|
   	file.chomp!
-  	file =~ /product\/\d+\/(\d+)\.shtml/
+  	file =~ /(\d+)\D*$/
   	book_id = $1
   	# print "%s\t'%s'\n" % [file, book_id]
   	url = "http://product.dangdang.com/script/alsoBuy.aspx?product_id=" + book_id;
