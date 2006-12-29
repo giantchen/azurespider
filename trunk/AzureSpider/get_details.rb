@@ -95,7 +95,7 @@ def get_details(list_file)
   
   # output the book_id to isbn file.
   File.open("book_id_to_isbn.txt", "w") do |id_file|
-  	id_file.puts "# book_id\tISBN"
+  	id_file.puts "book_id\tISBN"
     book_id_to_isbn.each {|key, value| id_file.puts "#{key}\t#{value}"}
   end
 end
