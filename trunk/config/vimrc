@@ -1,0 +1,24 @@
+set nocp
+syntax on
+
+set cindent
+set title
+set mouse=
+
+set hlsearch
+set incsearch
+set sw=2
+set expandtab
+highlight Comment ctermfg=6
+
+if &term == "screen"
+   set t_ts=k
+   set t_fs=\
+   set t_@7=[4~
+endif
+
+if &term == "linux"
+   "set term=xtermc
+   set t_ts=]0;
+   set t_fs=
+endif
