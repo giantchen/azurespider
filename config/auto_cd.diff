@@ -1,0 +1,105 @@
+diff -ur bash-3.2/builtins/cd.def bash-3.2-auto_cd/builtins/cd.def
+--- bash-3.2/builtins/cd.def	2006-07-28 09:35:36.000000000 +0800
++++ bash-3.2-auto_cd/builtins/cd.def	2008-05-17 00:21:14.000000000 +0800
+@@ -58,16 +58,18 @@
+ extern int array_needs_making;
+ extern char *bash_getcwd_errstr;
+ 
+-static int bindpwd __P((int));
++int bindpwd __P((int));
+ static void setpwd __P((char *));
+ static char *resetpwd __P((char *));
+-static int change_to_directory __P((char *, int));
++int change_to_directory __P((char *, int));
+ 
+ static char *cdspell __P((char *));
+ 
+ /* Change this to 1 to get cd spelling correction by default. */
+ int cdspelling = 0;
+ 
++int auto_cd = 0;
++
+ int cdable_vars;
+ 
+ $BUILTIN cd
+@@ -103,7 +105,7 @@
+     }
+ }
+ 
+-static int
++int
+ bindpwd (no_symlinks)
+      int no_symlinks;
+ {
+@@ -395,7 +397,7 @@
+    getcwd() will eventually be called), or set to a string corresponding
+    to the working directory.  Return 1 on success, 0 on failure. */
+ 
+-static int
++int
+ change_to_directory (newdir, nolinks)
+      char *newdir;
+      int nolinks;
+diff -ur bash-3.2/builtins/shopt.def bash-3.2-auto_cd/builtins/shopt.def
+--- bash-3.2/builtins/shopt.def	2005-02-20 06:25:03.000000000 +0800
++++ bash-3.2-auto_cd/builtins/shopt.def	2008-05-17 00:21:22.000000000 +0800
+@@ -68,6 +68,7 @@
+ extern int hup_on_exit;
+ extern int xpg_echo;
+ extern int gnu_error_format;
++extern int auto_cd;
+ 
+ #if defined (EXTENDED_GLOB)
+ extern int extended_glob;
+@@ -114,6 +115,7 @@
+   int  *value;
+   shopt_set_func_t *set_func;
+ } shopt_vars[] = {
++  { "auto_cd", &auto_cd, (shopt_set_func_t *)NULL },
+   { "cdable_vars", &cdable_vars, (shopt_set_func_t *)NULL },
+   { "cdspell", &cdspelling, (shopt_set_func_t *)NULL },
+   { "checkhash", &check_hashed_filenames, (shopt_set_func_t *)NULL },
+@@ -253,6 +255,7 @@
+   cdable_vars = mail_warning = 0;
+   no_exit_on_failed_exec = print_shift_error = 0;
+   check_hashed_filenames = cdspelling = expand_aliases = check_window_size = 0;
++  auto_cd = 0;
+ 
+   source_uses_path = promptvars = 1;
+ 
+diff -ur bash-3.2/execute_cmd.c bash-3.2-auto_cd/execute_cmd.c
+--- bash-3.2/execute_cmd.c	2006-08-26 12:23:17.000000000 +0800
++++ bash-3.2-auto_cd/execute_cmd.c	2008-05-17 00:20:59.000000000 +0800
+@@ -3641,11 +3641,32 @@
+ 
+   command = search_for_command (pathname);
+ 
++  int no_symlinks = 0;
++  extern int auto_cd;
+   if (command)
+     {
++      if (auto_cd)
++        {
++          struct stat finfo;
++          if ((stat (command, &finfo) == 0) && (S_ISDIR (finfo.st_mode)))
++            {
++              if (change_to_directory (pathname, no_symlinks))
++                {
++                  bindpwd (no_symlinks);
++                  return;
++                }
++            }
++        }
++
+       maybe_make_export_env ();
+       put_command_name_into_env (command);
+     }
++  else if (auto_cd && change_to_directory (pathname, no_symlinks))
++    {
++      bindpwd (no_symlinks);
++      return;
++    }
++
+ 
+   /* We have to make the child before we check for the non-existence
+      of COMMAND, since we want the error messages to be redirected. */
