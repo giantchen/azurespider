@@ -5,3 +5,6 @@ termcapinfo linux 'ti@:te@'
 
 hardstatus string '%n %t'
 
+bindkey -k k; windowlist -b
+bindkey -k F1 prev
+bindkey -k F2 next
