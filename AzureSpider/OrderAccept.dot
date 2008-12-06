@@ -1,0 +1,13 @@
+digraph "g" {
+  // edge [labelfloat];
+  "Start" [shape = doubleoctagon];
+  "Start" -> "ExpectQuote" [label="StartEvent/\n sendQuoteRequest()"];
+  "ExpectQuote" -> "ExpectReportNew"[label="QuoteEvent/\lsendOrder()"];
+  "ExpectQuote" -> "Failed"[label="QuoteRejectEvent"];
+  "ExpectReportNew" -> "ExpectReportAccept" [label=" OrderNewEvent"];
+  "ExpectReportNew" -> "Failed" [label=" OrderRejectEvent\n (FCCP rejects)"];
+  "ExpectReportNew" -> "ExpectReportNew" [label="QuoteEvent", headport="nw"];
+  "ExpectReportAccept" -> "Passed" [label=" OrderAcceptEvent"];
+  "ExpectReportAccept" -> "Failed" [label=" OrderRejectEvent\n (SLIM rejects)"];
+  "ExpectReportAccept" -> "ExpectReportAccept" [label="QuoteEvent", headport="nw"];  
+}
