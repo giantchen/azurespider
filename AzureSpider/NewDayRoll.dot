@@ -1,0 +1,16 @@
+digraph "NewDayRoll" {
+  "Start" [shape = doubleoctagon];
+  "Passed" [color=darkgreen];
+  "Failed" [color=red];
+  
+  "Start" -> "ExpectFelixQuoteRequest" [label = "StartEvent/\n sendQuoteRequest()"];
+  "ExpectFelixQuoteRequest" -> "ExpectQuote" [label = "  FelixQuoteRequestEvent\nsendTapTick(), etc", tailport=e];
+  "ExpectQuote" -> "ExpectQuote2" [label = "QuoteEvent/\n sendTapTick()", tailport=e];
+  "ExpectQuote2" -> "Passed" [label = "QuoteEvent\n[with new date]", tailport=e];
+
+  "ExpectFelixQuoteRequest" -> "Failed" [label = " QuoteRejectEvent"];
+  "ExpectQuote" -> "Failed" [label = "QuoteRejectEvent"];
+  "ExpectQuote2" -> "Failed" [label = "QuoteCancelledEvent or\nQuoteEvent with old date"];
+
+  "Failed"->"Passed" [style=invis]; // just to adjust the diagram
+}

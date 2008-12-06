@@ -1,13 +1,17 @@
-digraph "g" {
-  // edge [labelfloat];
+digraph "OrderAccept" {
   "Start" [shape = doubleoctagon];
-  "Start" -> "ExpectQuote" [label="StartEvent/\n sendQuoteRequest()"];
-  "ExpectQuote" -> "ExpectReportNew"[label="QuoteEvent/\lsendOrder()"];
-  "ExpectQuote" -> "Failed"[label="QuoteRejectEvent"];
-  "ExpectReportNew" -> "ExpectReportAccept" [label=" OrderNewEvent"];
-  "ExpectReportNew" -> "Failed" [label=" OrderRejectEvent\n (FCCP rejects)"];
-  "ExpectReportNew" -> "ExpectReportNew" [label="QuoteEvent", headport="nw"];
-  "ExpectReportAccept" -> "Passed" [label=" OrderAcceptEvent"];
-  "ExpectReportAccept" -> "Failed" [label=" OrderRejectEvent\n (SLIM rejects)"];
-  "ExpectReportAccept" -> "ExpectReportAccept" [label="QuoteEvent", headport="nw"];  
+  "Passed" [color=darkgreen];
+  "Failed" [color=red];
+  
+  // happy path
+  "Start" -> "ExpectFelixQuoteRequest" [label = "StartEvent/\n sendQuoteRequest()"];
+  "ExpectFelixQuoteRequest" -> "ExpectQuote" [label = "FelixQuoteRequestEvent\nsendTapTick(), etc"];
+  "ExpectQuote" -> "ExpectOrderNew"[label="QuoteEvent/\lsendOrder()", tailport=e];
+  "ExpectOrderNew" -> "ExpectOrderAccept" [label=" OrderNewEvent", tailport=e];
+  "ExpectOrderAccept" -> "Passed" [label="OrderAcceptEvent", tailport=e];
+
+  // fail path
+  "ExpectQuote" -> "Failed"[label="QuoteRejectEvent", tailport=sw, headport=w];
+  "ExpectOrderNew" -> "Failed" [label=" OrderRejectEvent\n (FCCP rejects)"];
+  "ExpectOrderAccept" -> "Failed" [label="OrderRejectEvent\n(SLIM rejects)"];
 }

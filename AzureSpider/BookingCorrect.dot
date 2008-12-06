@@ -1,0 +1,15 @@
+digraph "BookingCorrect" {
+  "Start" [shape = doubleoctagon];
+  "Passed" [color=darkgreen];
+  "Failed" [color=red];
+  
+  // happy path
+  "Start" -> "ExpectFelixQuoteRequest" [label = "StartEvent/\n sendQuoteRequest()"];
+  "ExpectFelixQuoteRequest" -> "ExpectQuote" [label = "FelixQuoteRequestEvent\nsendTapTick(), etc"];
+  "ExpectQuote" -> "ExpectBooking" [label="QuoteEvent/\lsendOrder()"];
+  "ExpectBooking" -> "ExpectOrderAccept" [label="OrderBookingEvent\n[correct]"];
+  "ExpectOrderAccept" -> "Passed" [label="OrderAcceptEvent\n[correct]"];
+  // fail path
+  "ExpectBooking" -> "Failed" [label="OrderBookingEvent\n[incorrect]"];
+  "ExpectOrderAccept" -> "Failed" [label="OrderAcceptEvent\n[incorrect]"];
+}

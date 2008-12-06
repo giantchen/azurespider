@@ -1,0 +1,20 @@
+digraph "MtiGood" {
+  "Start" [shape = doubleoctagon];
+  "MTI=10ms, two orders on the same quote, both accepted\nSLIM delay could be 0s or 1s" [shape=none];
+  "Passed" [color=darkgreen];
+  "Failed" [color=red];
+  
+  "Start" -> "ExpectFelixQuoteRequest" [label = "StartEvent/\n sendQuoteRequest()"];
+  "ExpectFelixQuoteRequest" -> "ExpectQuote" [label = "  FelixQuoteRequestEvent\nsendTapTick(), etc"];
+  "ExpectQuote" -> "ExpectOrderAccept" [label = "QuoteEvent/\nsendOrder()\ndelay 15ms\nsendOrder()"];
+  "ExpectOrderAccept" -> "ExpectOrderAccept2" [label = "OrderAcceptEvent"];
+  "ExpectOrderAccept2" -> "Passed" [label = "OrderAcceptEvent"];
+
+  "ExpectOrderAccept" -> "ExpectOrderAccept" [label = "OrderNewEvent"];
+  "ExpectOrderAccept2" -> "ExpectOrderAccept2" [label = "OrderNewEvent"];
+
+  "ExpectFelixQuoteRequest" -> "Failed" [label = " QuoteRejectEvent"];
+  "ExpectQuote" -> "Failed" [label = " QuoteRejectEvent"];
+  "ExpectOrderAccept" -> "Failed" [label = "OrderRejectEvent"];
+  "ExpectOrderAccept2" -> "Failed" [label = "OrderRejectEvent"];
+}

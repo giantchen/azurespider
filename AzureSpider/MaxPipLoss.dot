@@ -1,0 +1,14 @@
+digraph "MaxPipLoss" {
+  "Start" [shape = doubleoctagon];
+  "TTL=0ms, send order immediately when receive 2nd quote,\ntrigger max pip loss check" [shape=none];
+  "Passed" [color=darkgreen];
+  "Failed" [color=red];
+  
+  // happy path
+  "Start" -> "ExpectFelixQuoteRequest" [label = "StartEvent/\n sendQuoteRequest()"];
+  "ExpectFelixQuoteRequest" -> "ExpectQuote" [label = " FelixQuoteRequestEvent\nsendTapTick(), etc"];
+  "ExpectQuote" -> "ExpectQuote2" [label = "QuoteEvent/\n sendTapTick()"];
+  "ExpectQuote2" -> "ExpectReport" [label = "QuoteEvent/\n sendOrder()"];
+  "ExpectReport" -> "Passed" [label = "expected event", tailport=e];
+  "ExpectReport" -> "Failed" [label = "unexpected event", tailport=w];
+}

@@ -1,0 +1,15 @@
+digraph "NewDayCancel" {
+  "Start" [shape = doubleoctagon];
+  "Passed" [color=darkgreen];
+  "Failed" [color=red];
+  
+  // happy path
+  "Start" -> "ExpectFelixQuoteRequest" [label = "StartEvent/\n sendQuoteRequest()"];
+  "ExpectFelixQuoteRequest" -> "ExpectQuote" [label = "  FelixQuoteRequestEvent\nsendTapTick(), etc", tailport=e];
+  "ExpectQuote" -> "ExpectQuoteCancel" [label = "QuoteEvent/\n sendTapTick()", tailport=e];
+  "ExpectQuoteCancel" -> "Passed" [label = "QuoteCancelledEvent"];
+
+  "ExpectFelixQuoteRequest" -> "Failed" [label = " QuoteRejectEvent"];
+  "ExpectQuote" -> "Failed" [label = "QuoteRejectEvent"];
+  "ExpectQuoteCancel" -> "Failed" [label = "QuoteEvent"];
+}
