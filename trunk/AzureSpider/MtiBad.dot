@@ -1,0 +1,27 @@
+digraph "MtiBad" {
+  "Start" [shape = doubleoctagon];
+  "MTI=10ms, two orders on the same quote, the former accepted, the latter rejected.\nSLIM delay could be 0s or 1s" [shape=none];
+  "Passed" [color=darkgreen];
+  "Failed" [color=red];
+  
+  "Start" -> "ExpectFelixQuoteRequest" [label = "StartEvent/\n sendQuoteRequest()"];
+  "ExpectFelixQuoteRequest" -> "ExpectQuote" [label = "  FelixQuoteRequestEvent\nsendTapTick(), etc", tailport=e];
+  "ExpectQuote" -> "ExpectReport" [label = "QuoteEvent/\n sendOrder(1)\nno delay\nsendOrder(2)"];
+  "ExpectReport" -> "ExpectOrderAccept" [label = "OrderRejectEvent\n[order 2]"];
+  "ExpectReport" -> "ExpectOrderReject" [label = "OrderAcceptEvent\n[order 1]"];
+
+  "ExpectOrderAccept" -> "Passed" [label = " QuoteAcceptEvent\n[order 1]"];
+  "ExpectOrderReject" -> "Passed" [label = " QuoteRejectEvent\n[order 2]"];
+
+  // "ExpectOrderReport" -> "ExpectOrderReport" [label = "OrderNewEvent"];
+  // "ExpectOrderAccept" -> "ExpectOrderAccept" [label = "OrderNewEvent"];
+  // "ExpectOrderReject" -> "ExpectOrderReject" [label = "OrderNewEvent"];
+
+  "ExpectFelixQuoteRequest" -> "Failed" [label = " QuoteRejectEvent"];
+  "ExpectQuote" -> "Failed" [label = " QuoteRejectEvent"];
+  "ExpectReport" -> "Failed" [label = "OrderRejectEvent\n[order 1]"];
+  "ExpectReport" -> "Failed" [label = "OrderAcceptEvent\n[order 2]"];
+  "ExpectOrderAccept" -> "Failed" [label = "OrderRejectEvent"];
+  "ExpectOrderReject" -> "Failed" [label = "OrderAcceptEvent"];
+  "Passed" -> "Failed" [style=invis];
+}

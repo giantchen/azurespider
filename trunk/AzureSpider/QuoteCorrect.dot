@@ -1,0 +1,13 @@
+digraph "QuoteCorrect" {
+  "Start" [shape = doubleoctagon];
+  "Passed" [color=darkgreen];
+  "Failed" [color=red];
+  
+  // happy path
+  "Start" -> "ExpectFelixQuoteRequest" [label = "StartEvent/\n sendQuoteRequest()"];
+  "ExpectFelixQuoteRequest" -> "ExpectQuote" [label = "FelixQuoteRequestEvent\nsendTapTick(), etc", tailport=e];
+  "ExpectQuote" -> "Passed" [label = "QuoteEvent/\n[correct]", tailport=e];
+
+  "ExpectFelixQuoteRequest" -> "Failed" [label = " QuoteRejectEvent"];
+  "ExpectQuote" -> "Failed" [label = "QuoteEvent/\n[incorrect]"];
+}

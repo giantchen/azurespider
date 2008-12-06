@@ -1,0 +1,14 @@
+digraph "Ttl" {
+  "Start" [shape = doubleoctagon];
+  "TTL=10ms, send order immediately when receive 2nd quote" [shape=none];
+  "Passed" [color=darkgreen];
+  "Failed" [color=red];
+  
+  // happy path
+  "Start" -> "ExpectFelixQuoteRequest" [label = "StartEvent/\n sendQuoteRequest()"];
+  "ExpectFelixQuoteRequest" -> "ExpectQuote" [label = " FelixQuoteRequestEvent\nsendTapTick(), etc"];
+  "ExpectQuote" -> "ExpectQuote2" [label = "QuoteEvent/\n sendTapTick()"];
+  "ExpectQuote2" -> "ExpectOrderAccept" [label = "QuoteEvent/\n sendOrder()"];
+  "ExpectOrderAccept" -> "Passed" [label = "OrderAcceptEvent"];
+  "ExpectOrderAccept" -> "Failed" [label = "OrderRejectEvent"];
+}
