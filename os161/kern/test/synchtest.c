@@ -128,10 +128,18 @@ locktestthread(void *junk, unsigned long num)
 	(void)junk;
 
 	for (i=0; i<NLOCKLOOPS; i++) {
+		if (lock_do_i_hold(testlock)) {
+			fail(num, "hold before acquire");
+		}
+
 		lock_acquire(testlock);
 		testval1 = num;
 		testval2 = num*num;
 		testval3 = num%3;
+
+		if (!lock_do_i_hold(testlock)) {
+			fail(num, "unhold after acquire");
+		}
 
 		if (testval2 != testval1*testval1) {
 			fail(num, "testval2/testval1");
@@ -158,6 +166,9 @@ locktestthread(void *junk, unsigned long num)
 		}
 
 		lock_release(testlock);
+		if (lock_do_i_hold(testlock)) {
+			fail(num, "hold after release");
+		}
 	}
 	V(donesem);
 }
