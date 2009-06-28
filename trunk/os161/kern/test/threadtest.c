@@ -58,7 +58,8 @@ quietthread(void *junk, unsigned long num)
 	(void)junk;
 
 	putch(ch);
-	for (i=0; i<200000; i++);
+	for (i=0; i<200000; i++)
+	{}
 	putch(ch);
 
 	V(tsem);
