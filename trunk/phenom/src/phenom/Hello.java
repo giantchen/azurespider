@@ -24,4 +24,5 @@ public class Hello {
 		System.out.println("Hello world2.");
 		assertEquals(true, true);
 	}
+	
 }
