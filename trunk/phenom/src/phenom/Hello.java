@@ -84,7 +84,7 @@ public class Hello {
 		rs.close();
 		
 		TimeSeriesGraph graph = new TimeSeriesGraph("Stock", "Date", "Price & Money");
-		graph.addDataSource("600010", prices);
+		graph.addDataSource("600001", prices);
 		graph.addDataSource("Average", averages);
 		graph.addDataSource("MyMoney", cashes);
 		graph.display();
