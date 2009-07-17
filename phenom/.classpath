@@ -6,6 +6,6 @@
 	<classpathentry kind="lib" path="lib/jcommon-1.0.16.jar"/>
 	<classpathentry kind="lib" path="lib/jfreechart-1.0.13.jar"/>
 	<classpathentry kind="lib" path="lib/jstockchart-0.4.1.jar"/>
-	<classpathentry kind="lib" path="D:/Project/lib/sqlitejdbc-v056.jar"/>
+	<classpathentry kind="lib" path="lib/sqlitejdbc-v056.jar"/>
 	<classpathentry kind="output" path="ide-bin"/>
 </classpath>
