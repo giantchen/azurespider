@@ -7,23 +7,25 @@ import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
 * 个股十大流通股东数据
-* Schema:
-* date: 日期
-* symbol: 股票代码.上市交易所，如600001.sh 000001.sz
-* rank: 十大流通股东排名 1 - 10
-* holder: 股东名字
-* percentage: 控股比例
 */
 public class HoldersParser {
-	private static final String INSERT_STOCK_HOLDERS = "insert into STOCK_HOLDERS (date, symbol, rank, holder, percentage) " +
-	 	"values (?,?,?,?,?)";
+	private static final String INSERT_STOCK_HOLDERS = "insert into STOCK_HOLDERS (Uid, Date, Symbol, Rank, Holder, Percentage) " +
+	 	"values (?,?,?,?,?,?)";
 	
-	private static final String CREATE_STOCK_HOLDERS = "CREATE TABLE STOCK_HOLDERS (date varchar(8), symbol varchar(10), rank int, holder varchar(256), percentage float)";
+	private static final String CREATE_STOCK_HOLDERS = "CREATE TABLE STOCK_HOLDERS (" +
+		"Uid NUMERIC PRIMARY KEY  NOT NULL , " + 	// 物理主键
+		"Date VARCHAR, " + 							// 日期
+		"Symbol VARCHAR, " +						// 股票代码.上市交易所，如600001.sh 000001.sz
+		"Rank NUMERIC, " +							// 十大流通股东排名 1 - 10
+		"Holder VARCHAR, " +						// 股东名字
+		"Percentage DOUBLE" +						// 控股比例
+		")";
 	
 	private static final String DROP_STOCK_HOLDERS = "DROP TABLE IF EXISTS STOCK_HOLDERS";
 	private static String _holdersFileName = "data/holders.csv";
@@ -52,6 +54,11 @@ public class HoldersParser {
 			String scon = "jdbc:sqlite:" + _dbPath;
 			conn = DriverManager.getConnection(scon);
 			conn.setAutoCommit(false);
+			
+			Statement s = conn.createStatement();			
+			ResultSet rs = s.executeQuery("select max(Uid) id from INDUSTRY_INFO");
+			int uid = rs.getInt("id");
+			rs.close();
 			prep = conn.prepareStatement(INSERT_STOCK_HOLDERS);		
 			
 			BufferedReader reader;
@@ -64,11 +71,12 @@ public class HoldersParser {
 					continue;
 				System.out.println(line);
 				String [] fields = line.split("\t");
-				prep.setString(1, fields[1]); // date
-				prep.setString(2, fields[0]); // symbol
-				prep.setInt(3, Integer.parseInt(fields[2])); // rank
-				prep.setString(4, fields[3]); // holder name
-				prep.setDouble(5, Double.parseDouble(fields[4])); // percentage
+				prep.setInt(1, ++uid);
+				prep.setString(2, fields[1].replaceAll("-", "")); // date
+				prep.setString(3, fields[0]); // symbol
+				prep.setInt(4, Integer.parseInt(fields[2])); // rank
+				prep.setString(5, fields[3]); // holder name
+				prep.setDouble(6, Double.parseDouble(fields[4])); // percentage
 				prep.addBatch();
 
 				if (count % 500 == 0) {
