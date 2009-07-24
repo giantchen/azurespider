@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public class PriceData {
-	private static final String SQL = "select Open_Price, Close_Price from STOCK_PRICE where Stock_Id = '600001' and Stock_Ds >= '20080101' and Stock_Ds <= '20081230'";
+	private static final String SQL = "select Open, Close from STOCK_PRICE where Symbol = '600001.sh' and Date >= '20080101' and Date <= '20081230'";
 
 	Map<String, Stock> stocks;
 
@@ -25,13 +25,13 @@ public class PriceData {
 		List<Double> openPrices = new ArrayList<Double>();
 		List<Double> closePrices = new ArrayList<Double>();
 		while (rs.next()) {
-			double open = rs.getDouble("Open_Price") / 1000.0;
-			double close = rs.getDouble("Close_Price") / 1000.0;
+			double open = rs.getDouble("Open") / 1000.0;
+			double close = rs.getDouble("Close") / 1000.0;
 			openPrices.add(open);
 			closePrices.add(close);
 		}
 		rs.close();
-		stocks.put("600001", new Stock(openPrices, closePrices));
+		stocks.put("600001.sh", new Stock(openPrices, closePrices));
 	}
 
 	public Stock getStockPrice(String id) {

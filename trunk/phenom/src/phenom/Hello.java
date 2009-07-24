@@ -33,8 +33,8 @@ public class Hello {
 	@Before
 	public void before() {
 		System.out.println("before a case");
-		closePrices = priceData.getStockPrice("600001").getClosePrices();
-		openPrices = priceData.getStockPrice("600001").getOpenPrices();
+		closePrices = priceData.getStockPrice("600001.sh").getClosePrices();
+		openPrices = priceData.getStockPrice("600001.sh").getOpenPrices();
 	}
 
 	@After

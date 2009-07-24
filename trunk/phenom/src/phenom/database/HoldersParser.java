@@ -15,8 +15,8 @@ import java.sql.Statement;
 * 个股十大流通股东数据
 */
 public class HoldersParser {
-	private static final String INSERT_STOCK_HOLDERS = "insert into STOCK_HOLDERS (Uid, Date, Symbol, Rank, Holder, Percentage) " +
-	 	"values (?,?,?,?,?,?)";
+	private static final String INSERT_STOCK_HOLDERS = "insert into STOCK_HOLDERS (Uid, Date, Symbol, Rank, Holder, Amount, Percentage) " +
+	 	"values (?,?,?,?,?,?,?)";
 	
 	private static final String CREATE_STOCK_HOLDERS = "CREATE TABLE STOCK_HOLDERS (" +
 		"Uid NUMERIC PRIMARY KEY  NOT NULL , " + 	// 物理主键
@@ -24,6 +24,7 @@ public class HoldersParser {
 		"Symbol VARCHAR, " +						// 股票代码.上市交易所，如600001.sh 000001.sz
 		"Rank NUMERIC, " +							// 十大流通股东排名 1 - 10
 		"Holder VARCHAR, " +						// 股东名字
+		"Amount NUMERIC, " +						// 控股量
 		"Percentage DOUBLE" +						// 控股比例
 		")";
 	
@@ -76,7 +77,8 @@ public class HoldersParser {
 				prep.setString(3, fields[0]); // symbol
 				prep.setInt(4, Integer.parseInt(fields[2])); // rank
 				prep.setString(5, fields[3]); // holder name
-				prep.setDouble(6, Double.parseDouble(fields[4])); // percentage
+				prep.setInt(6, Integer.parseInt(fields[4])); // amount
+				prep.setDouble(7, Double.parseDouble(fields[5])); // percentage
 				prep.addBatch();
 
 				if (count % 500 == 0) {
