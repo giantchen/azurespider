@@ -16,6 +16,7 @@ import phenom.utils.graph.TimeSeriesGraph;
 public class Hello {
 	static PriceData priceData;
 
+	private String[] dates;
 	private double[] closePrices;
 	private double[] openPrices;
 
@@ -33,8 +34,10 @@ public class Hello {
 	@Before
 	public void before() {
 		System.out.println("before a case");
-		closePrices = priceData.getStockPrice("600001.sh").getClosePrices();
-		openPrices = priceData.getStockPrice("600001.sh").getOpenPrices();
+		Stock stock = priceData.getStock("600001.sh");
+		dates = stock.getDates();
+		closePrices = stock.getClosePrices();
+		openPrices = stock.getOpenPrices();
 	}
 
 	@After
@@ -65,6 +68,11 @@ public class Hello {
 		List<Double> averages = new ArrayList<Double>();
 
 		for (int i = 0; i < openPrices.length; ++i) {
+			if (dates[i].compareTo("20080101") < 0)
+				continue;
+			if (dates[i].compareTo("20091231") > 0)
+				break;
+					
 			double open = openPrices[i];
 			double close = closePrices[i];
 			average = (average * day + close) / (day + 1);
