@@ -18,19 +18,14 @@ public class SampleStrategy extends Strategy {
 		for (int day = 0; day < dates.length; ++day) {
 			Operation op;
 			int s;
-			if (day == 0)
-			{
+			if (day == 0) {
 				op = Operation.Buy;
 				s = 10000;
-			}
-			else if (day == dates.length - 3)
-			{
+			} else if (day == dates.length - 3) {
 				// sell all on the last day
 				op = Operation.Sell;
 				s = shares;
-			}
-			else 
-			{
+			} else {
 				op = Operation.Noop;
 				s = 0;
 			}

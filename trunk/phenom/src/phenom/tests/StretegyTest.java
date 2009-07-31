@@ -10,11 +10,11 @@ import phenom.Strategy;
 public class StretegyTest extends Strategy {
 
 	public StretegyTest() {
-		super(0.001, // 佣金为千分之一 
-				5, // 最少5元佣金 
-				0.001, // 卖出印花税千分之一 
+		super(0.001, // 佣金为千分之一
+				5, // 最少5元佣金
+				0.001, // 卖出印花税千分之一
 				0.0 // 买入印花税无
-				);
+		);
 	}
 
 	@Before
@@ -59,7 +59,7 @@ public class StretegyTest extends Strategy {
 		assertEquals(0, shares);
 
 		endDay(Operation.Noop, 3, 0);
-		
+
 		assertEquals(9976, cash, 0.001);
 		assertEquals(0, cashOnTheWay, 0.001);
 		assertEquals(0, shares);

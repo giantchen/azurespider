@@ -72,7 +72,7 @@ public class Hello {
 				continue;
 			if (dates[i].compareTo("20091231") > 0)
 				break;
-					
+
 			double open = openPrices[i];
 			double close = closePrices[i];
 			average = (average * day + close) / (day + 1);
@@ -80,7 +80,8 @@ public class Hello {
 			if (ratio == 0)
 				ratio = cash / close;
 
-			// if the open price is 10% lower than the average, buy as much as possible
+			// if the open price is 10% lower than the average, buy as much as
+			// possible
 			// if the close price is 10% higher than the average, sell all
 			if (open / average >= 1.1) {
 				// sell all
@@ -94,10 +95,15 @@ public class Hello {
 			prices.add(close);
 			cashes.add((cash + stocks * close) / ratio);
 			averages.add(average);
-			System.out.println("open: " + open + " close: " + close + " " + " average: " + average + " cash: " + cash + " stocks: " + stocks + " total money: " + cashes.get(cashes.size() - 1));
+			System.out
+					.println("open: " + open + " close: " + close + " "
+							+ " average: " + average + " cash: " + cash
+							+ " stocks: " + stocks + " total money: "
+							+ cashes.get(cashes.size() - 1));
 		}
 
-		TimeSeriesGraph graph = new TimeSeriesGraph("Stock", "Date", "Price & Money");
+		TimeSeriesGraph graph = new TimeSeriesGraph("Stock", "Date",
+				"Price & Money");
 		graph.addDataSource("600001", prices);
 		graph.addDataSource("Average", averages);
 		graph.addDataSource("MyMoney", cashes);
