@@ -4,7 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -178,7 +177,7 @@ public class WeightParser {
 				di.readInt();// no use byte
 				
 				prep.setInt(1, ++id);
-				prep.setString(2, stockId + ".sz");
+				prep.setString(2, stockId + "." + exchange_);
 				// prep.setDate(3, DateUtil.parse(date));
 				prep.setString(3, String.valueOf(date));
 				prep.setInt(4, gift_stock);
