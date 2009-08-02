@@ -10,27 +10,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import phenom.utils.WeightUtil;
 
-/**
- * date:LongInt; //日期 open:LongInt; //开盘(元/1000) high:LongInt; //最高价(元/1000)
- * low:LongInt; //最低价(元/1000) close:LongInt; //收盘(元/1000) amount:LongInt;
- * //成交额(千元) volume:LongInt; //成交量(手) Nouse1:LongInt; //没用 Nouse2:LongInt; //没用
- * Nouse3:LongInt; //没用
- * 
- * STOCK_PRICE Schema: Stock_Nb: symbol: 股票代号 如 600010.sh 000001.sz date: 日期
- * open: 开盘价 high: 最高低 low: 最低价 close: 收盘价 amount: 成交额 volume: 成交量 Last_UpdId:
- * 最后更新人 Last_UpdDs: 最后更新日期
- * 
- * 
- * STOCK_WEIGHT Schema: Weiht_Nb, symbol: 股票代号 如 600010.sh 000001.sz date: 日期
- * allotstock: 配股数 allotprice: 配股价 dividend: 红利 split: 转增数 totalshare: 总股本
- * liquidshare: 流通股数
- */
 public class WeightParser {
 	private static final String DROP_STOCK_WEIGHT = "DROP TABLE IF EXISTS STOCK_WEIGHT";
 	private static final String CREATE_STOCK_WEIGHT = "CREATE TABLE STOCK_WEIGHT (Uid NUMERIC, Symbol varchar(10), Date varchar, "
@@ -116,21 +100,23 @@ public class WeightParser {
 	}
 
 	/**
-	 * struct Weight {
-	 * 
-	 * unsigned long date; // 日期高bit为年，接着bit为月，接着bit为日 unsigned long gift_stock;
-	 * // 送股数* 10000 unsigned long stock_amount; // 配股数* 10000 unsigned long
-	 * stock_price; // 配股价* 1000 unsigned long bonus; // 红利* 1000 unsigned long
-	 * trans_num; // 转增数 unsigned long total_amount; // 总股本，单位万 unsigned long
-	 * liquid_amoun; // 流通股，单位万 最后一个字节没用
+	 * unsigned long date; // 日期高bit为年，接着bit为月，接着bit为日 
+	 * unsigned long gift_stock; // 送股数* 10000 
+	 * unsigned long stock_amount; // 配股数* 10000 
+	 * unsigned long stock_price; // 配股价* 1000 
+	 * unsigned long bonus; // 红利* 1000 
+	 * unsigned long trans_num; // 转增数 
+	 * unsigned long total_amount; // 总股本，单位万 
+	 * unsigned long liquid_amoun; // 流通股，单位万 
+	 * 最后一个字节没用
 	 * 
 	 * @param path_
 	 */
+	@SuppressWarnings("null")
 	public static void readWeight(String path_, String exchange_) {
 		BufferedInputStream fi = null;
 		PreparedStatement prep = null;
-		Connection conn = null;
-		Date curDate = new java.sql.Date(System.currentTimeMillis());
+		Connection conn = null;	
 		
 		ExtendedDataInputStream di = null;
 		
