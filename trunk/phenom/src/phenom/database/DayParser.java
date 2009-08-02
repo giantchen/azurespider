@@ -64,8 +64,8 @@ public class DayParser {
 			conn = DriverManager.getConnection(scon);
 			conn.setAutoCommit(false);			
 			Statement s = conn.createStatement();			
-			ResultSet rs = s.executeQuery("select max(Uid) id from STOCK_PRICE");
-			int uid = rs.getInt("id");
+			ResultSet rs = s.executeQuery("select max(Uid) Uid from STOCK_PRICE");
+			int uid = rs.getInt("Uid");
 			rs.close();
 			
 			// populate day table
