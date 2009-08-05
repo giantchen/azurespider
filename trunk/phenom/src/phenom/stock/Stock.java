@@ -1,7 +1,13 @@
 package phenom.stock;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+import phenom.database.ConnectionManager;
+import phenom.utils.PriceCalculator;
 
 public class Stock {
 	private String symbol;
@@ -85,6 +91,10 @@ public class Stock {
 		
 	}
 	
+	public Stock(String symbol_) {
+		this.symbol = symbol_;
+	}
+	
 	@Override
 	public String toString() {
 		return "Stock [amount=" + amount + ", closePrice=" + closePrice
@@ -94,4 +104,71 @@ public class Stock {
 	}
 	
 	
+	public List<Stock> getStock(String startDate_, String endDate_, boolean applyWeight) {
+		List<Stock> stocks = new ArrayList<Stock>();
+		Stock s = null;
+		Connection conn = null;
+		ResultSet rs = null;
+		
+		String sql = "select * from STOCK_PRICE where Symbol = '" + getSymbol() + "' and Date between '" 
+			+ startDate_ + "' and '" + endDate_ + "' order by Date";		
+		
+		try {
+			conn = ConnectionManager.getConnection();
+			rs = conn.createStatement().executeQuery(sql);
+			
+			while(rs.next()) {
+				s = new Stock();
+				s.set(rs);
+				stocks.add(s);
+				
+				if(applyWeight) {
+					PriceCalculator.applyWeight(s);
+				}
+			}			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				try {						
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}		
+		
+		return stocks;
+	}
+	
+	//return the recent price before date_
+	public static Stock getStock(String symbol_, String date_) {		
+		Stock s = null;
+		Connection conn = null;
+		ResultSet rs = null;
+		String subSql = "(select max(Date) from STOCK_PRICE where Symbol = '" + symbol_ + "' and Date < '" + date_ + "')";
+		String sql = "select * from STOCK_PRICE where Symbol = '" + symbol_ + "' and Date = " + subSql;		
+		
+		try {
+			conn = ConnectionManager.getConnection();
+			rs = conn.createStatement().executeQuery(sql);
+			
+			while(rs.next()) {
+				s = new Stock();
+				s.set(rs);
+			}			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				try {						
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}		
+		
+		return s;
+	}	
 }
