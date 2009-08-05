@@ -98,13 +98,13 @@ public class Weight {
 		uid = rs.getInt("Uid");
 		symbol = rs.getString("Symbol");
 		date = rs.getString("Date");
-		gift = rs.getDouble("Gift")/10000;
-		amount = rs.getDouble("Amount");
-		price = rs.getDouble("Price");
-		bonus = rs.getDouble("Bonus")/1000;
-		trans = rs.getDouble("Trans")/10000;
-		totalShare = rs.getInt("Total_Share");
-		liquidShare = rs.getInt("Liquid_Share");
+		gift = rs.getDouble("Gift");//10000;
+		amount = rs.getDouble("Amount");//10000;
+		price = rs.getDouble("Price");//1000;
+		bonus = rs.getDouble("Bonus");//1000;
+		trans = rs.getDouble("Trans");//10000;
+		totalShare = rs.getInt("Total_Share")*10000;
+		liquidShare = rs.getInt("Liquid_Share")*10000;
 	}
 	@Override
 	public String toString() {

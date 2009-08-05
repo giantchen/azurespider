@@ -18,7 +18,7 @@ import phenom.utils.WeightUtil;
 public class WeightParser {
 	private static final String DROP_STOCK_WEIGHT = "DROP TABLE IF EXISTS STOCK_WEIGHT";
 	private static final String CREATE_STOCK_WEIGHT = "CREATE TABLE STOCK_WEIGHT (Uid NUMERIC, Symbol varchar(10), Date varchar, "
-			+ "Gift NUMERIC, Amount NUMERIC, Price Double, Bonus Double, Trans NUMERIC, Total_Share NUMERIC, Liquid_Share NUMERIC)";
+			+ "Gift Double, Amount Double, Price Double, Bonus Double, Trans Double, Total_Share NUMERIC, Liquid_Share NUMERIC)";
 	
 	private static final String CREATE_INDEX1 = "CREATE UNIQUE INDEX 'STOCK_WEIGHT_I1' ON 'STOCK_WEIGHT' ('Uid' ASC)";
 	private static final String CREATE_INDEX2 = "CREATE UNIQUE INDEX 'STOCK_WEIGHT_I2' ON 'STOCK_WEIGHT' ('Symbol' ASC, 'Date' ASC)";
@@ -105,7 +105,7 @@ public class WeightParser {
 	 * unsigned long stock_amount; // 配股数* 10000 
 	 * unsigned long stock_price; // 配股价* 1000 
 	 * unsigned long bonus; // 红利* 1000 
-	 * unsigned long trans_num; // 转增数 
+	 * unsigned long trans_num; // 转增数 *10000
 	 * unsigned long total_amount; // 总股本，单位万 
 	 * unsigned long liquid_amoun; // 流通股，单位万 
 	 * 最后一个字节没用
@@ -166,11 +166,11 @@ public class WeightParser {
 				prep.setString(2, stockId + "." + exchange_);
 				// prep.setDate(3, DateUtil.parse(date));
 				prep.setString(3, String.valueOf(date));
-				prep.setInt(4, gift_stock);
-				prep.setInt(5, stock_amount);
-				prep.setDouble(6, stock_price);
-				prep.setDouble(7, bonus);
-				prep.setInt(8, trans_num);
+				prep.setDouble(4, ((double)gift_stock)/10000);
+				prep.setDouble(5, ((double)stock_amount)/10000);
+				prep.setDouble(6, ((double)stock_price)/1000);
+				prep.setDouble(7, ((double)bonus)/1000);
+				prep.setDouble(8, ((double)trans_num)/10000);
 				prep.setInt(9, total_amount);
 				prep.setInt(10, liquid_amount);				
 				
@@ -209,7 +209,5 @@ public class WeightParser {
 				}
 			}
 		}
-
 	}
-
 }
