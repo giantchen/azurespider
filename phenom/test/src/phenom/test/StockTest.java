@@ -1,4 +1,4 @@
-package phenom.stock.test;
+package phenom.test;
 
 import java.util.List;
 import phenom.stock.Stock;
