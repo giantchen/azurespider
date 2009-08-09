@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="lib/jfreechart-1.0.13.jar"/>
 	<classpathentry kind="lib" path="lib/jstockchart-0.4.1.jar"/>
 	<classpathentry kind="lib" path="lib/sqlitejdbc-v056.jar"/>
+	<classpathentry kind="lib" path="lib/commons-math-2.0.jar" sourcepath="E:/fei/SQLite/commons-math-2.0/commons-math-2.0/commons-math-2.0-sources.jar"/>
 	<classpathentry kind="output" path="ide-bin"/>
 </classpath>
