@@ -3,7 +3,7 @@ package phenom.test;
 import java.util.List;
 import phenom.stock.Stock;
 
-public class StockTest {
+public class StockTest { 
 
 	/**
 	 * @param args
