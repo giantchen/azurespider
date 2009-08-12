@@ -34,7 +34,7 @@ public class DayParser {
 	private static final String INSERT_STOCK_PRICE = "insert into STOCK_PRICE (Uid, Symbol, Date, "
 		+ "Open, High, Low, Close, Amount,Volume, Exchange, Weight)"
 		+ "values (?,?,?,?,?,?,?,?,?,?,?)";
-	private static final String CREATE_INDEX_ON_STOCK_PRICE = "CREATE INDEX IDX_PRICE ON STOCK_PRICE(Symbol)";
+	private static final String CREATE_INDEX_ON_STOCK_PRICE = "CREATE INDEX IDX_PRICE ON STOCK_PRICE(Symbol ASC, Date ASC, Exchange ASC)";
 	
 	private static String _historyFile = "data/history.csv";
 	private static String _dbPath = "data/SuperT_STOCK.sqlite";
