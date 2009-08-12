@@ -1,4 +1,4 @@
-package phenom.test;
+package phenom.stock.techind;
 
 import static org.junit.Assert.assertEquals;
 
