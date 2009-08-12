@@ -57,8 +57,10 @@ public class MovingAverage extends AbstractTechIndicator{
      * Calculate Average Specified by days
      */
     public double getAverage(String symbol_, String date_, int days_) {
-        if(symbol_ == null || date_ == null) {
-            throw new RuntimeException("Symbol and Date must be set up");
+        validate(symbol_, date_, days_);
+        
+        if(Collections.binarySearch(values.get(symbol_), new Stock(symbol_, date_)) < 0) {
+        	return Double.NaN; //data is not avaliable
         }
         
         CycleValuePair average = null;
@@ -91,13 +93,14 @@ public class MovingAverage extends AbstractTechIndicator{
     }
     
     protected CycleValuePair calculate(String symbol_, String date_, int days_) {
+    	List<Stock> stocks = values.get(symbol_);
         CycleValuePair cv = null;
         Stock s = new Stock(symbol_);          
         String curDate = date_;           
         
         for(int i = 0; i < days_; i++) {
             s.setDate(curDate);
-            int index = Collections.binarySearch(values, s);
+            int index = Collections.binarySearch(stocks, s);
             
             while(index < 0) {
                 if(Math.abs(index + 1) == 0) {
@@ -106,12 +109,12 @@ public class MovingAverage extends AbstractTechIndicator{
                 } else {
                     curDate = DateUtil.previousDay(s.getDate());
                     s.setDate(curDate);
-                    index = Collections.binarySearch(values, s);
+                    index = Collections.binarySearch(stocks, s);
                 }                
             }
             
             if(index >= 0) { //find 1 record               
-                stat.addValue(values.get(index).getClosePrice());       
+                stat.addValue(stocks.get(index).getClosePrice());       
             }
             
             curDate = DateUtil.previousDay(s.getDate());            

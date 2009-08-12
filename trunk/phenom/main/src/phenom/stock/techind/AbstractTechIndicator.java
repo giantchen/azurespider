@@ -61,10 +61,24 @@ public abstract class AbstractTechIndicator implements ITechnicalIndicator<Stock
         }
     }
     
+    @Override
     public void clear() {
         values.clear();
         cache.clear();
     } 
+    
+    protected void validate(String symbol_, String date_, int cycle_) {
+    	String s = null;
+    	if(symbol_ == null || date_ == null || cycle_ <= 0) {
+    		s = "Symbol and Date must be set up, Days must be positive";
+    	} else if (values == null || values.size() == 0) {
+    		s = "Value is not initialized";
+    	}
+    	
+    	if(s != null) {
+    		throw new RuntimeException(s);
+    	}
+    }
     
     public static class CycleValuePair {
         private double value;
