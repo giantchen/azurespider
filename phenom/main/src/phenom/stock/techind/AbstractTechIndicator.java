@@ -63,9 +63,15 @@ public abstract class AbstractTechIndicator implements ITechnicalIndicator<Stock
     
     @Override
     public void clear() {
-        values.clear();
-        cache.clear();
+        clear(false);
     } 
+    
+    public void clear(boolean clearCache_) {
+    	values.clear();
+    	if(clearCache_) {
+    		cache.clear();
+    	}
+    }
     
     protected void validate(String symbol_, String date_, int cycle_) {
     	String s = null;
