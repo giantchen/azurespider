@@ -13,8 +13,9 @@ import phenom.utils.DateUtil;
 import phenom.stock.Cycle;
 
 /**
- * This should behave like a util class.
- * Will refactor later
+ * Arithmetic Average Implementation
+ * 
+ * Before each public method call, the values must already be sorted, or parse true when call addValue/addValues method
  * 
  */
 public class SMovingAverage extends AbstractTechIndicator{       
