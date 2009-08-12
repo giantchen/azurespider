@@ -1,4 +1,4 @@
-package phenom.test;
+package phenom.stock.techind;
 
 import java.util.List;
 import phenom.stock.Stock;
