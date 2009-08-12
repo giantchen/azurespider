@@ -92,7 +92,12 @@ public class Stock implements Comparable<Stock>{
 	}
 	
 	public Stock(String symbol_) {
+		this(symbol_, null);
+	}
+	
+	public Stock(String symbol_, String date_) {
 		this.symbol = symbol_;
+		this.date = date_;
 	}
 	
 	@Override
