@@ -9,9 +9,6 @@ import java.util.Set;
 import java.util.HashSet;
 
 import phenom.stock.Stock;
-import phenom.utils.DateUtil;
-import phenom.stock.Cycle;
-import phenom.stock.techind.AbstractTechIndicator.CycleValuePair;
 
 /**
  * Exponent Average Implementation
@@ -34,6 +31,10 @@ public class EMovingAverage extends AbstractTechIndicator{
 		calculaedCycleCache.clear();
 	}
     
+	public double getAverage(Stock s_, int cycle_) {
+		return getAverage(s_.getSymbol(), s_.getDate(), cycle_);
+	}
+	
     /**
      * Calculate Average Specified by days
      */

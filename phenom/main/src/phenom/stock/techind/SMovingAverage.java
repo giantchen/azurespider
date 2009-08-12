@@ -94,6 +94,7 @@ public class SMovingAverage extends AbstractTechIndicator{
     }
     
     protected CycleValuePair calculate(String symbol_, String date_, int days_) {
+    	stat.clear();    	
     	List<Stock> stocks = values.get(symbol_);
         CycleValuePair cv = null;
         Stock s = new Stock(symbol_);          
@@ -121,7 +122,8 @@ public class SMovingAverage extends AbstractTechIndicator{
             curDate = DateUtil.previousDay(s.getDate());            
         }
         
-        cv = new CycleValuePair(days_, stat.getMean());
+        cv = new CycleValuePair(days_, stat.getMean());        
+       
         return cv;
     }
 }

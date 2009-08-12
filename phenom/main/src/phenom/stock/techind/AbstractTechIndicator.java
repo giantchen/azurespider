@@ -34,7 +34,7 @@ public abstract class AbstractTechIndicator implements ITechnicalIndicator<Stock
     	}    	
         
         if(sort_) {
-        	for(String sb : cache.keySet()) {
+        	for(String sb : values.keySet()) {
         		Collections.sort(values.get(sb));
         	}
         }

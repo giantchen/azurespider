@@ -126,7 +126,9 @@ public class Stock implements Comparable<Stock>{
 		ResultSet rs = null;
 		
 		String sql = "select * from STOCK_PRICE where Symbol = '" + getSymbol() + "' and Date between '" 
-			+ startDate_ + "' and '" + endDate_ + "' order by Date";		
+			+ startDate_ + "' and '" + endDate_ + "' order by Symbol, Date";		
+		
+		System.out.println(sql);
 		
 		try {
 			conn = ConnectionManager.getConnection();
