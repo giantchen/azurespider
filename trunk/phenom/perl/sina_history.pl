@@ -65,8 +65,8 @@ sub process_fund_sohu {
       print STDERR "processing sohu fund data year=$year, quarter=$quater, stock=$stock_id\n";
       my $sohu_url = "http://q.stock.sohu.com/app2/history.up?method=history&code=cn_$stock_id&sd=$year-$date_map{$quater}->{start_date}&ed=$year-$date_map{$quater}->{end_date}&t=d&res=js";
       my $sohu_file = "sohu-$stock_id-$year-$quater.json";
-
-      unless (-e $sohu_file && -s $sohu_file > 0 && $today le "$year-$date_map{$quater}->{end_date}") {
+      unlink $sohu_file if $today le "$year-$date_map{$quater}->{end_date}";
+      unless (-e $sohu_file && -s $sohu_file > 0) {
 	# print STDERR $sohu_url, "\n";
 	my $request = HTTP::Request->new(GET => $sohu_url);
 	my $res = $ua->request($request) || die $!;
@@ -92,8 +92,7 @@ sub process_fund_sohu {
 	my $date = $data->[0];
 	$date =~ s/-//g;
 	# symbol, date, open, high, close, low, amount, volumn, exchange
-	print Dumper($data), "\n";
-	print "$stock_id.$exchange,$date,$data->[1],$data->[6],$data->[2],$data->[5],$data->[8], $data->[7]\n";
+	print "$stock_id.$exchange,$date,$data->[1],$data->[6],$data->[2],$data->[5],$data->[8],$data->[7],1.0\n";
       }
       $semaphore->up;
     }
@@ -112,10 +111,10 @@ sub aciton {
     for my $quater (1..4) {
       my $url = "http://money.finance.sina.com.cn/corp/go.php/vMS_FuQuanMarketHistory/stockid/$stock_id.phtml?year=$year&jidu=$quater";
       my $file = "$stock_id.phtml?year=$year&jidu=$quater";
-      qx(wget "$url") unless -e $file && -s $file > 0 && $today gt "$year-$date_map{$quater}->{end_date}";
+      unlink $file if $today lt "$year-$date_map{$quater}->{end_date}";
+      qx(wget "$url") unless -e $file && -s $file > 0;
       my $parser = HTML::TreeBuilder->new();
       $parser->parse_file($file);
-
       my $stockcode = getStockCode($parser);
 
       unless ($exchange.$stock_id eq $stockcode) {
