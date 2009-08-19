@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Set;
-import java.util.HashSet;
 
 import phenom.stock.Stock;
 
@@ -18,16 +16,7 @@ import phenom.stock.Stock;
  *
  * Currently only support eager calculation
  */
-public class EMovingAverage extends AbstractTechIndicator{
-	@Override
-    public void clear() {
-    	clear(false);
-    }
-	
-	public void clear(boolean clearCache_) {
-		super.clear(clearCache_);		
-	}
-    
+public class EMovingAverage extends AbstractTechIndicator{	
 	public double getAverage(Stock s_, int cycle_) {
 		return calculate(s_.getSymbol(), s_.getDate(), cycle_);
 	}
@@ -93,14 +82,25 @@ public class EMovingAverage extends AbstractTechIndicator{
             	}
             	
             	//calculate factors
-            	double factor1 = 1/((double)cycle_);
-            	double factor2 = ((double)(cycle_ - 1)) / cycle_;
-            	c = new CycleValuePair(cycle_, stocks.get(i).getClosePrice() * factor1 +
-            			previousPair.getValue() * factor2);            	
+            	double []factor = calculateFactor(cycle_);            	
+            	c = new CycleValuePair(cycle_, stocks.get(i).getClosePrice() * factor[0] +
+            			previousPair.getValue() * factor[1]);            	
             }
             
             pairs.add(c);
     	}
+    }
+    
+    /**
+     * different EMV could override this method to 
+     * @param cycle_
+     * @return
+     */
+    protected double[] calculateFactor(int... cycle_) {
+    	int c = cycle_[0];    	
+    	double f1 = 1 / ((double)c);
+    	double f2 = ((double)(c - 1)) / c;
+    	return new double[]{f1, f2};    	    	
     }
 }
 
