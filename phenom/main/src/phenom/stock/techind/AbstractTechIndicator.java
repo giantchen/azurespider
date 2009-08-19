@@ -73,6 +73,26 @@ public abstract class AbstractTechIndicator implements ITechnicalIndicator<Stock
     	}
     }
     
+    @Override
+    public boolean isCalculated(String symbol_, String date_, int cycle_) {
+    	boolean flag = false;
+    	
+    	Map<String, List<CycleValuePair>> m = cache.get(symbol_);
+    	if(m != null) {
+    		List<CycleValuePair> l = m.get(date_);
+    		if(l != null) {
+    			for(CycleValuePair c : l) {
+    				if(c.getCycle() == cycle_) {
+    					flag = true;
+    					break;
+    				}
+    			}
+    		}
+    	}
+    	
+    	return flag;
+    }
+    
     protected void validate(String symbol_, String date_, int cycle_) {
     	String s = null;
     	if(symbol_ == null || date_ == null || cycle_ <= 0) {

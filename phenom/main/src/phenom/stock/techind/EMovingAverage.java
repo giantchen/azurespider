@@ -18,36 +18,33 @@ import phenom.stock.Stock;
  *
  * Currently only support eager calculation
  */
-public class EMovingAverage extends AbstractTechIndicator{   
-	Set<String> calculaedCycleCache = new HashSet<String>();    
-    
+public class EMovingAverage extends AbstractTechIndicator{
 	@Override
     public void clear() {
     	clear(false);
     }
 	
 	public void clear(boolean clearCache_) {
-		super.clear(clearCache_);
-		calculaedCycleCache.clear();
+		super.clear(clearCache_);		
 	}
     
 	public double getAverage(Stock s_, int cycle_) {
-		return getAverage(s_.getSymbol(), s_.getDate(), cycle_);
+		return calculate(s_.getSymbol(), s_.getDate(), cycle_);
 	}
 	
     /**
      * Calculate Average Specified by days
      */
-    public double getAverage(String symbol_, String date_, int days_) {
+	@Override
+    public double calculate(String symbol_, String date_, int days_) {
     	double average = 0;
         validate(symbol_, date_, days_);        
         if(Collections.binarySearch(values.get(symbol_), new Stock(symbol_, date_)) < 0) {
         	return Double.NaN; //data is not avaliable
         }
         
-        if(!calculaedCycleCache.contains(symbol_ + days_)) {
-        	calculate(symbol_, days_);
-        	calculaedCycleCache.add(symbol_ + days_);
+        if(!isCalculated(symbol_, date_, days_)) {
+        	calculateEM(symbol_, days_);        	
         }
         
         List<CycleValuePair> pairs = cache.get(symbol_).get(date_);        
@@ -64,7 +61,7 @@ public class EMovingAverage extends AbstractTechIndicator{
     /**
      * Eager Calculation
      */
-    private void calculate(String symbol_, int cycle_) {
+    private void calculateEM(String symbol_, int cycle_) {
     	List<Stock> stocks = values.get(symbol_);
     	
     	for(int i = 0; i < stocks.size(); i++) {
