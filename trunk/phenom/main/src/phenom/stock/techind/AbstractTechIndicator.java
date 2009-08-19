@@ -93,6 +93,15 @@ public abstract class AbstractTechIndicator implements ITechnicalIndicator<Stock
     	return flag;
     }
     
+    /**
+     * used when calculate 1 tech indicator which depends on another indicator
+     * no need to keep 2 copies
+     * @param s_
+     */
+    protected void setValues(Map<String, List<Stock>> s_) {
+    	this.values = s_;
+    }
+    
     protected void validate(String symbol_, String date_, int cycle_) {
     	String s = null;
     	if(symbol_ == null || date_ == null || cycle_ <= 0) {
