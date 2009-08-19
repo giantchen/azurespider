@@ -44,20 +44,21 @@ public class SMovingAverage extends AbstractTechIndicator{
     }
     
     public double getAverage(Stock s_, int days_) {
-        return getAverage(s_.getSymbol(), s_.getDate(), days_);
+        return calculate(s_.getSymbol(), s_.getDate(), days_);
     }    
     
     /**
      * Calculate Average Specified by cycle_
      */
     public double getAverage(String symbol_, String date_, Cycle cycle_) {
-        return getAverage(symbol_, date_, cycle_.numDays());
+        return calculate(symbol_, date_, cycle_.numDays());
     }    
     
     /**
      * Calculate Average Specified by days
      */
-    public double getAverage(String symbol_, String date_, int days_) {
+    @Override
+    public double calculate(String symbol_, String date_, int days_) {
         validate(symbol_, date_, days_);
         
         if(Collections.binarySearch(values.get(symbol_), new Stock(symbol_, date_)) < 0) {
@@ -86,14 +87,14 @@ public class SMovingAverage extends AbstractTechIndicator{
         }
         
         if(average == null) {
-            average = calculate(symbol_, date_, days_);
+            average = calculateMean(symbol_, date_, days_);
             pairs.add(average);
         }
         
         return average.getValue();
     }
     
-    protected CycleValuePair calculate(String symbol_, String date_, int days_) {
+    protected CycleValuePair calculateMean(String symbol_, String date_, int days_) {
     	stat.clear();    	
     	List<Stock> stocks = values.get(symbol_);
         CycleValuePair cv = null;
@@ -122,8 +123,7 @@ public class SMovingAverage extends AbstractTechIndicator{
             curDate = DateUtil.previousDay(s.getDate());            
         }
         
-        cv = new CycleValuePair(days_, stat.getMean());        
-       
+        cv = new CycleValuePair(days_, stat.getMean());
         return cv;
     }
 }
