@@ -12,7 +12,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * 新浪配股和分红表
+ * 个股十大流通股东数据
  */
 public class BonusParser {
 	private static final String INSERT_STOCK_BONUS = "insert into STOCK_BONUS (Uid, Symbol, " +
