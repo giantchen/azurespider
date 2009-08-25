@@ -159,7 +159,7 @@ public class Stock implements Comparable<Stock>{
 	}
 	
 	//return the recent price before date_
-	public static Stock getStock(String symbol_, String date_) {		
+	public static Stock previousStock(String symbol_, String date_) {		
 		Stock s = null;
 		Connection conn = null;
 		ResultSet rs = null;
@@ -187,5 +187,34 @@ public class Stock implements Comparable<Stock>{
 		}		
 		
 		return s;
-	}	
+	}
+	
+	public static Stock getStock(String symbol_, String date_) {		
+		Stock s = null;
+		Connection conn = null;
+		ResultSet rs = null;		
+		String sql = "select * from STOCK_PRICE where Symbol = '" + symbol_ + "' and Date = '" + date_ + "'";		
+		
+		try {
+			conn = ConnectionManager.getConnection();
+			rs = conn.createStatement().executeQuery(sql);
+			
+			while(rs.next()) {
+				s = new Stock();
+				s.set(rs);
+			}			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				try {						
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}		
+		
+		return s;
+	}
 }
