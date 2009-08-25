@@ -121,7 +121,7 @@ public class PriceCalculator {
 				count++;
 				
 				w = weights.get(symbol_).get(date);				
-				s = Stock.getStock(symbol_, date);
+				s = Stock.previousStock(symbol_, date);
 				
 				if(s == null) { //IPO date has no previous price
 					continue;
@@ -169,7 +169,7 @@ public class PriceCalculator {
 				}
 				
 				w = weights.get(symbol_).get(date);				
-				s = Stock.getStock(symbol_, date);
+				s = Stock.previousStock(symbol_, date);
 				
 				//除权除息价＝(股权登记日的收盘价－每股所分红利现金额＋配股价×每股配股数)÷(1＋每股送红股数＋每股配股数 + 每股转增股数)				
 				/*double weightedPrice = (s.getClosePrice() - w.getBonus()/10 + w.getPrice() * w.getAmount() / 10)
