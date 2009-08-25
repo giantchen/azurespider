@@ -19,6 +19,7 @@ public class Stock implements Comparable<Stock>{
 	private double closePrice;
 	private double amount;
 	private double volume;
+	private double weight;
 	
 	public String getSymbol() {
 		return symbol;
@@ -74,6 +75,12 @@ public class Stock implements Comparable<Stock>{
 	public void setVolume(long volume) {
 		this.volume = volume;
 	}
+	public void setWeight(double weight) {
+		this.weight = weight;
+	}
+	public double getWeight() {
+		return this.weight;
+	}
 
 	public void set(ResultSet rs_) throws SQLException{
 		symbol = rs_.getString("Symbol");
@@ -85,6 +92,7 @@ public class Stock implements Comparable<Stock>{
 		closePrice = rs_.getDouble("Close");
 		amount = rs_.getDouble("amount");
 		volume = rs_.getDouble("Volume");
+		weight = rs_.getDouble("Weight");
 	}	
 	
 	public Stock() {
