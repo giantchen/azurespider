@@ -4,12 +4,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
-import java.util.Comparator;
+
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.SortedMap;
-import java.util.List;
-import java.util.LinkedList;
 
 import phenom.database.ConnectionManager;
 import phenom.stock.Stock;
@@ -64,35 +62,32 @@ public class WeightUtil {
 	}
 	
 	public static void applyWeight(Stock s_) {
-		Map<String, Double> weights = weightFactors.get(s_.getSymbol());
+		SortedMap<String, Double> weights = weightFactors.get(s_.getSymbol());
 		if(weights == null) {
 			init(s_.getSymbol());
 			weights = weightFactors.get(s_.getSymbol());
 		}
+		double factor = 1.0;		
 		
 		for(String xDate : weights.keySet()) {
-			if(s_.getDate().compareTo(xDate) <= 0) {
-				double factor = weights.get(xDate);
-				s_.setClosePrice(factor * s_.getClosePrice());
-				s_.setOpenPrice(factor * s_.getOpenPrice());
-				s_.setHighPrice(factor * s_.getHighPrice());
-				s_.setLowPrice(factor = s_.getLowPrice());
+			if(s_.getDate().compareTo(xDate) < 0) {				
+				factor = weights.get(xDate);
+				break;
 			}
 		}
+		
+		s_.setClosePrice(s_.getClosePrice() * factor);
+		s_.setOpenPrice(s_.getOpenPrice() * factor);
+		s_.setHighPrice(s_.getHighPrice() * factor);
+		s_.setLowPrice(s_.getLowPrice() * factor);
 	}
 	
 	/**
 	 * init symbol and keydates
 	 */
 	private synchronized static void init(String symbol_) {
-		SortedMap<String, Double> weights = new TreeMap<String, Double>(new Comparator<String>() {
-			@Override
-			public int compare(String o1, String o2) {				
-				return o2.compareTo(o1);
-			}								
-		});
-		weightFactors.put(symbol_, weights);
-		List<Double> tmpWeights = new LinkedList<Double>();
+		SortedMap<String, Double> weights = new TreeMap<String, Double>();
+		weightFactors.put(symbol_, weights);		
 		
 		Connection conn = null;		
 		PreparedStatement s = null;
@@ -100,6 +95,7 @@ public class WeightUtil {
 		
 		try {			
 			conn = ConnectionManager.getConnection();
+			System.out.println(SQL);
 			
 			//retrieve symbol and ex date
 			s = conn.prepareStatement(SQL);
@@ -109,22 +105,16 @@ public class WeightUtil {
 				weights.put(rs.getString("XDate"), null);
 			}			
 			rs.close();
+			//retrieve current stock factor
+			Stock current = Stock.getStock(symbol_, weights.lastKey());
 			
-			int index = 0;
 			//init factors
-			for(String xDate : weights.keySet()) {				
-				index++;
-				if(tmpWeights.size() == 0) {
-					tmpWeights.add(1.0);
-				} else {
-					double pw = tmpWeights.get(index - 1);
-					Stock stock = Stock.getStock(symbol_, xDate);
-					Stock pStock = Stock.previousStock(symbol_, xDate);
-					tmpWeights.add(tmpWeights.get(0) * stock.getWeight() / pStock.getWeight());
-				}
-				
-				weights.put(xDate, tmpWeights.get(0));
+			for(String xDate : weights.keySet()) {
+				Stock pStock = Stock.previousStock(symbol_, xDate);				
+				weights.put(xDate, pStock.getWeight() / current.getWeight());
 			}
+			
+			System.out.println(weights);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return;
