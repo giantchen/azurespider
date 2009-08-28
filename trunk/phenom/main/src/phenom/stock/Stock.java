@@ -181,7 +181,8 @@ public class Stock implements Comparable<Stock>{
 				stocks.add(s);
 				
 				if(applyWeight) {
-					WeightUtil.applyWeight(s);					
+					WeightUtil.applyWeight(s);
+					//PriceCalculator.applyWeight(s);
 				}
 			}			
 		} catch (Exception e) {
