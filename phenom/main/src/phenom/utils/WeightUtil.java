@@ -111,6 +111,7 @@ public class WeightUtil {
 			//init factors
 			for(String xDate : weights.keySet()) {
 				Stock pStock = Stock.previousStock(symbol_, xDate);				
+				//weights.put(xDate, BigDecimal.valueOf(pStock.getWeight() / current.getWeight()).setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue());
 				weights.put(xDate, pStock.getWeight() / current.getWeight());
 			}
 			

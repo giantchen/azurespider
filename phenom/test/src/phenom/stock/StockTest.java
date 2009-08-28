@@ -23,7 +23,7 @@ public class StockTest {
     
     @Test
     public void testWeight() {
-        Stock s = new Stock("000001.sz");
+        Stock s = new Stock("000001.sz"); //深发展特殊，2007年由s股票转为深发展，分红并且不进行除权计算
         List<Stock> stocks = s.getStock("20000101", "20091231", true);        
         
         Assert.assertEquals(2229, stocks.size());
@@ -58,6 +58,7 @@ public class StockTest {
     }
     
     @Test
+    //康美药业
     public void testWeight1() {
         Stock s = new Stock("600518.sh");
         List<Stock> stocks = s.getStock("20000101", "20091231", true);        
@@ -66,5 +67,73 @@ public class StockTest {
         
         Assert.assertEquals("20010319", stocks.get(0).getDate());
         Assert.assertEquals(2.06, BigDecimal.valueOf(stocks.get(0).getClosePrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+    }
+    
+    @Test
+    //用友软件
+    public void testWeight2() {
+        Stock s = new Stock("600588.sh");
+        int i = -1;
+        Stock t = null;
+        List<Stock> stocks = s.getStock("20000101", "20091231", true);        
+        
+        Assert.assertEquals(1960, stocks.size());      
+        
+        //1
+        s.setDate("20090428");
+        i = Collections.binarySearch(stocks, s);
+        t = stocks.get(i);        
+        Assert.assertEquals("20090428", t.getDate());
+        Assert.assertEquals(19.65, BigDecimal.valueOf(t.getClosePrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        
+        //2
+        s.setDate("20080410");
+        i = Collections.binarySearch(stocks, s);
+        t = stocks.get(i);        
+        Assert.assertEquals("20080410", t.getDate());
+        //同花顺was 21.69
+        Assert.assertEquals(21.67, BigDecimal.valueOf(t.getClosePrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        
+        //3
+        s.setDate("20070510");
+        i = Collections.binarySearch(stocks, s);
+        t = stocks.get(i);        
+        Assert.assertEquals("20070510", t.getDate());
+        //同花顺16.83
+        Assert.assertEquals(16.95, BigDecimal.valueOf(t.getClosePrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        
+    }
+    
+    @Test
+    //中国卫星
+    public void testWeight3() {
+        /*Stock s = new Stock("600118.sh");
+        int i = -1;
+        Stock t = null;
+        List<Stock> stocks = s.getStock("20000101", "20091231", true);        
+        
+        Assert.assertEquals(2262, stocks.size());      
+        
+        //1
+        s.setDate("20090420");//("20000428");
+        i = Collections.binarySearch(stocks, s);
+        t = stocks.get(i);        
+        Assert.assertEquals("20090420", t.getDate());
+        Assert.assertEquals(20.92, BigDecimal.valueOf(t.getClosePrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        
+        //2
+        s.setDate("20071219");
+        i = Collections.binarySearch(stocks, s);
+        t = stocks.get(i);        
+        Assert.assertEquals("20071219", t.getDate());
+        Assert.assertEquals(21.27, BigDecimal.valueOf(t.getClosePrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        
+        //3
+        s.setDate("20070511");
+        i = Collections.binarySearch(stocks, s);
+        t = stocks.get(i);        
+        Assert.assertEquals("20070511", t.getDate());
+        Assert.assertEquals(21.29, BigDecimal.valueOf(t.getClosePrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());*/
+        
     }
 }
