@@ -105,14 +105,15 @@ public class WeightUtil {
 				weights.put(rs.getString("XDate"), null);
 			}			
 			rs.close();
-			//retrieve current stock factor
-			Stock current = Stock.getStock(symbol_, weights.lastKey());
-			
-			//init factors
-			for(String xDate : weights.keySet()) {
-				Stock pStock = Stock.previousStock(symbol_, xDate);				
-				//weights.put(xDate, BigDecimal.valueOf(pStock.getWeight() / current.getWeight()).setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue());
-				weights.put(xDate, pStock.getWeight() / current.getWeight());
+			//if weights exists
+			if(weights.size() != 0) {
+				Stock current = Stock.getStock(symbol_, weights.lastKey());			
+				//init factors
+				for(String xDate : weights.keySet()) {
+					Stock pStock = Stock.previousStock(symbol_, xDate);				
+					//weights.put(xDate, BigDecimal.valueOf(pStock.getWeight() / current.getWeight()).setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue());
+					weights.put(xDate, pStock.getWeight() / current.getWeight());
+				}
 			}
 			
 			System.out.println(weights);
