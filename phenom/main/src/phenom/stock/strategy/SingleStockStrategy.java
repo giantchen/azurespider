@@ -25,10 +25,10 @@ public class SingleStockStrategy {
 		
 		em.calculate(symbol, endDate, 10);
 		em.calculate(symbol, endDate, 5);
-		
+				
 		for(Stock s : lsts) {
 			double mv5 = em.getAverage(symbol, s.getDate(), 5);
-			double mv10 = em.getAverage(symbol, s.getDate(), 10);
+			double mv10 = em.getAverage(symbol, s.getDate(), 10);			
 						
 			if(s.getClosePrice() < mv10) {
 				int p100 = (int)(cash / (s.getClosePrice() * 100));//ÂòÂôÒ»°ÙÊÖ
