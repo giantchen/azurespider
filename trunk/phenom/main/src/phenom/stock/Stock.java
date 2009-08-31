@@ -160,12 +160,16 @@ public class Stock implements Comparable<Stock>{
 	}
 	
 	public List<Stock> getStock(String startDate_, String endDate_, boolean applyWeight) {
+		return Stock.getStock(getSymbol(), startDate_, endDate_, applyWeight);
+	}
+	
+	public static List<Stock> getStock(String symbol_, String startDate_, String endDate_, boolean applyWeight) {
 		List<Stock> stocks = new ArrayList<Stock>();
 		Stock s = null;
 		Connection conn = null;
 		ResultSet rs = null;
 		
-		String sql = "select * from STOCK_PRICE where Symbol = '" + getSymbol() + "' and Date between '" 
+		String sql = "select * from STOCK_PRICE where Symbol = '" + symbol_ + "' and Date between '" 
 			+ startDate_ + "' and '" + endDate_ + "' order by Symbol, Date";		
 		
 		System.out.println(sql);

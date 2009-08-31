@@ -20,5 +20,4 @@ public class StockTest {
 			System.out.println(sb.toString());
 		}
 	}
-
 }

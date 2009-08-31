@@ -16,7 +16,11 @@ import phenom.stock.Stock;
  *
  * Currently only support eager calculation
  */
-public class EMovingAverage extends AbstractTechIndicator{	
+public class EMovingAverage extends AbstractTechIndicator{
+	public double getAverage(String symbol_, String date_, int cycle_) {
+		return calculate(symbol_, date_, cycle_);
+	}
+	
 	public double getAverage(Stock s_, int cycle_) {
 		return calculate(s_.getSymbol(), s_.getDate(), cycle_);
 	}
