@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import phenom.database.ConnectionManager;
-import phenom.utils.PriceCalculator;
 import phenom.utils.WeightUtil;;
 
 public class Stock implements Comparable<Stock>{
