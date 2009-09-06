@@ -107,10 +107,17 @@ public class WeightUtil {
 			rs.close();
 			//if weights exists
 			if(weights.size() != 0) {
-				Stock current = Stock.getStock(symbol_, weights.lastKey());			
+				Stock current = Stock.getStock(symbol_, weights.lastKey());
+				/**
+				 * 如果除权日那天没有日线数据的话，就会抛NULLPointerException。
+				 * 比如说600369.sh，最后一次除权日期为20060720，但是20060720那天似乎是停牌，没有任何日线数据
+				 */
+				while(current == null) {
+					current = Stock.getStock(symbol_, DateUtil.nextDay(weights.lastKey()));
+				}
 				//init factors
 				for(String xDate : weights.keySet()) {
-					Stock pStock = Stock.previousStock(symbol_, xDate);				
+					Stock pStock = Stock.previousStock(symbol_, xDate);
 					//weights.put(xDate, BigDecimal.valueOf(pStock.getWeight() / current.getWeight()).setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue());
 					weights.put(xDate, pStock.getWeight() / current.getWeight());
 				}

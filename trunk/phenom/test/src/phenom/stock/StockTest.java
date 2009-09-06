@@ -105,35 +105,28 @@ public class StockTest {
     }
     
     @Test
-    //中国卫星
+    //西南证券
     public void testWeight3() {
-        /*Stock s = new Stock("600118.sh");
+        Stock s = new Stock("600369.sh");
         int i = -1;
         Stock t = null;
         List<Stock> stocks = s.getStock("20000101", "20091231", true);        
         
-        Assert.assertEquals(2262, stocks.size());      
+        Assert.assertEquals(1774, stocks.size());      
         
         //1
         s.setDate("20090420");//("20000428");
         i = Collections.binarySearch(stocks, s);
         t = stocks.get(i);        
         Assert.assertEquals("20090420", t.getDate());
-        Assert.assertEquals(20.92, BigDecimal.valueOf(t.getClosePrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        Assert.assertEquals(15.21, BigDecimal.valueOf(t.getClosePrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        
         
         //2
-        s.setDate("20071219");
+        s.setDate("20060609");//("20000428");
         i = Collections.binarySearch(stocks, s);
         t = stocks.get(i);        
-        Assert.assertEquals("20071219", t.getDate());
-        Assert.assertEquals(21.27, BigDecimal.valueOf(t.getClosePrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
-        
-        //3
-        s.setDate("20070511");
-        i = Collections.binarySearch(stocks, s);
-        t = stocks.get(i);        
-        Assert.assertEquals("20070511", t.getDate());
-        Assert.assertEquals(21.29, BigDecimal.valueOf(t.getClosePrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());*/
-        
+        Assert.assertEquals("20060609", t.getDate());
+        Assert.assertEquals(1.49, BigDecimal.valueOf(t.getClosePrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());      
     }
 }
