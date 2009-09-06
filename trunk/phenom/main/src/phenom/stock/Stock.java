@@ -160,6 +160,11 @@ public class Stock implements Comparable<Stock>{
 		amount = rs_.getDouble("amount");
 		volume = rs_.getDouble("Volume");
 		weight = rs_.getDouble("Weight");
+		
+		weightedOpenPrice = openPrice;
+		weightedClosePrice = closePrice;
+		weightedLowPrice = lowPrice;
+		weightedHighPrice = highPrice;
 	}	
 	
 	public Stock() {
