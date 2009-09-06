@@ -33,14 +33,14 @@ public class StockTest {
         
         //no 除权
         Assert.assertEquals("20081031",t.getDate());
-        Assert.assertEquals(8.37, t.getClosePrice());
+        Assert.assertEquals(8.37, t.getWeightedClosePrice());
         
         //最近一次除权
         s.setDate("20081030");
         i = Collections.binarySearch(stocks, s);
         t = stocks.get(i);
         Assert.assertEquals("20081030",t.getDate());
-        Assert.assertEquals(8.67, BigDecimal.valueOf(t.getClosePrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        Assert.assertEquals(8.67, BigDecimal.valueOf(t.getWeightedClosePrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
         
         /*//第n此除权
         s.setDate("20070531");
@@ -66,7 +66,7 @@ public class StockTest {
         Assert.assertEquals(1985, stocks.size());        
         
         Assert.assertEquals("20010319", stocks.get(0).getDate());
-        Assert.assertEquals(2.06, BigDecimal.valueOf(stocks.get(0).getClosePrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        Assert.assertEquals(2.06, BigDecimal.valueOf(stocks.get(0).getWeightedClosePrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
     }
     
     @Test
@@ -84,7 +84,7 @@ public class StockTest {
         i = Collections.binarySearch(stocks, s);
         t = stocks.get(i);        
         Assert.assertEquals("20090428", t.getDate());
-        Assert.assertEquals(19.65, BigDecimal.valueOf(t.getClosePrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        Assert.assertEquals(19.65, BigDecimal.valueOf(t.getWeightedClosePrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
         
         //2
         s.setDate("20080410");
@@ -92,7 +92,7 @@ public class StockTest {
         t = stocks.get(i);        
         Assert.assertEquals("20080410", t.getDate());
         //同花顺was 21.69
-        Assert.assertEquals(21.67, BigDecimal.valueOf(t.getClosePrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        Assert.assertEquals(21.67, BigDecimal.valueOf(t.getWeightedClosePrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
         
         //3
         s.setDate("20070510");
@@ -100,7 +100,7 @@ public class StockTest {
         t = stocks.get(i);        
         Assert.assertEquals("20070510", t.getDate());
         //同花顺16.83
-        Assert.assertEquals(16.95, BigDecimal.valueOf(t.getClosePrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        Assert.assertEquals(16.95, BigDecimal.valueOf(t.getWeightedClosePrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
         
     }
     
@@ -119,7 +119,7 @@ public class StockTest {
         i = Collections.binarySearch(stocks, s);
         t = stocks.get(i);        
         Assert.assertEquals("20090420", t.getDate());
-        Assert.assertEquals(15.21, BigDecimal.valueOf(t.getClosePrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        Assert.assertEquals(15.21, BigDecimal.valueOf(t.getWeightedClosePrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
         
         
         //2
@@ -127,6 +127,6 @@ public class StockTest {
         i = Collections.binarySearch(stocks, s);
         t = stocks.get(i);        
         Assert.assertEquals("20060609", t.getDate());
-        Assert.assertEquals(1.49, BigDecimal.valueOf(t.getClosePrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());      
+        Assert.assertEquals(1.49, BigDecimal.valueOf(t.getWeightedClosePrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());      
     }
 }

@@ -76,10 +76,10 @@ public class WeightUtil {
 			}
 		}
 		
-		s_.setClosePrice(s_.getClosePrice() * factor);
-		s_.setOpenPrice(s_.getOpenPrice() * factor);
-		s_.setHighPrice(s_.getHighPrice() * factor);
-		s_.setLowPrice(s_.getLowPrice() * factor);
+		s_.setWeightedClosePrice(s_.getClosePrice() * factor);
+		s_.setWeightedOpenPrice(s_.getOpenPrice() * factor);
+		s_.setWeightedHighPrice(s_.getHighPrice() * factor);
+		s_.setWeightedLowPrice(s_.getLowPrice() * factor);
 	}
 	
 	/**
