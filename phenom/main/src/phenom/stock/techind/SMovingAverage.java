@@ -117,7 +117,7 @@ public class SMovingAverage extends AbstractTechIndicator{
             }
             
             if(index >= 0) { //find 1 record               
-                stat.addValue(stocks.get(index).getClosePrice());       
+                stat.addValue(stocks.get(index).getWeightedClosePrice());       
             }
             
             curDate = DateUtil.previousDay(s.getDate());            

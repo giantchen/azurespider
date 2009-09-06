@@ -74,7 +74,7 @@ public class EMovingAverage extends AbstractTechIndicator{
             }
             
             if(i == 0) {
-            	c = new CycleValuePair(cycle_, stocks.get(0).getClosePrice());
+            	c = new CycleValuePair(cycle_, stocks.get(0).getWeightedClosePrice());
             } else {
             	CycleValuePair previousPair = null;
             	List<CycleValuePair> previosPairs = symbolAverages.get(stocks.get(i - 1).getDate());
@@ -87,7 +87,7 @@ public class EMovingAverage extends AbstractTechIndicator{
             	
             	//calculate factors
             	double []factor = calculateFactor(cycle_);            	
-            	c = new CycleValuePair(cycle_, stocks.get(i).getClosePrice() * factor[0] +
+            	c = new CycleValuePair(cycle_, stocks.get(i).getWeightedClosePrice() * factor[0] +
             			previousPair.getValue() * factor[1]);            	
             }
             
