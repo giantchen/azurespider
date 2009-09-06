@@ -17,7 +17,46 @@ public class Stock implements Comparable<Stock>{
 	private double highPrice;
 	private double lowPrice;
 	private double closePrice;
+	private double amount;
+	private double volume;
+	private double weight;
+	private double weightedOpenPrice;
+	private double weightedClosePrice;
+	private double weightedLowPrice;
+	private double weightedHighPrice;
 	
+	public double getWeightedOpenPrice() {
+		return weightedOpenPrice;
+	}
+
+	public void setWeightedOpenPrice(double weightedOpenPrice) {
+		this.weightedOpenPrice = weightedOpenPrice;
+	}
+
+	public double getWeightedClosePrice() {
+		return weightedClosePrice;
+	}
+
+	public void setWeightedClosePrice(double weightedClosePrice) {
+		this.weightedClosePrice = weightedClosePrice;
+	}
+
+	public double getWeightedLowPrice() {
+		return weightedLowPrice;
+	}
+
+	public void setWeightedLowPrice(double weightedLowPrice) {
+		this.weightedLowPrice = weightedLowPrice;
+	}
+
+	public double getWeightedHighPrice() {
+		return weightedHighPrice;
+	}
+
+	public void setWeightedHighPrice(double weightedHighPrice) {
+		this.weightedHighPrice = weightedHighPrice;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -49,10 +88,6 @@ public class Stock implements Comparable<Stock>{
 		return true;
 	}
 
-	private double amount;
-	private double volume;
-	private double weight;
-	
 	public String getSymbol() {
 		return symbol;
 	}
