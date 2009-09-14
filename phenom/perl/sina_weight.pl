@@ -27,7 +27,7 @@ while (<FH>) {
     print STDERR "exchange = $exchange, stock = $stock_id\n";    
     my $url = "http://money.finance.sina.com.cn/corp/go.php/vISSUE_ShareBonus/stockid/$stock_id.phtml";
     my $file = "$stock_id.phtml";
-    qx(wget "$url") unless -e $file;
+    qx(wget "$url");
 
     my $parser = HTML::TreeBuilder->new();
     $parser->parse_file($file);

@@ -34,26 +34,22 @@ my %date_map = (
 	       );
 
 
-# open FH, "<stocklist" || die $!;
 
 my $pool = Thread::Pool->new(
 			     {
 			      optimize => 'cpu', # default: 'memory'
-			      'do' => \&aciton,
+			      'do' => \&action,
 			      frequency => 1000,
 			      autoshutdown => 1, # default: 1 = yes
-			      workers => 20,     # default: 1
-			      maxjobs => 100, # default: 5 * workers
-			      minjobs => 10,  # default: maxjobs / 2
+			      workers => 4,     # default: 1
+			      maxjobs => 40, # default: 5 * workers
+			      minjobs => 20,  # default: maxjobs / 2
 			     }
 			    );
-
-
 while (<>) {
-  chomp;
-  $pool->job($_);
+    chomp;
+    $pool->job($_);
 }
-# $pool->job('sh510050');
 
 sub process_fund_sohu {
   my ($stock_id, $exchange) = @_;
@@ -66,15 +62,15 @@ sub process_fund_sohu {
       my $sohu_url = "http://q.stock.sohu.com/app2/history.up?method=history&code=cn_$stock_id&sd=$year-$date_map{$quater}->{start_date}&ed=$year-$date_map{$quater}->{end_date}&t=d&res=js";
       my $sohu_file = "sohu-$stock_id-$year-$quater.json";
       unlink $sohu_file if $today le "$year-$date_map{$quater}->{end_date}";
-      unless (-e $sohu_file && -s $sohu_file > 0) {
+      unless (-e "$sohu_file" && -s "$sohu_file" > 0) {
 	# print STDERR $sohu_url, "\n";
 	my $request = HTTP::Request->new(GET => $sohu_url);
-	my $res = $ua->request($request) || die $!;
-	open SOHU_FH, ">$sohu_file" || die $!;
+	my $res = $ua->request($request) || return;
+	open SOHU_FH, ">$sohu_file" || return;
 	print SOHU_FH $res->content;
 	close SOHU_FH;
       }
-      open SOHU_FH, "<$sohu_file" || die $!;
+      open SOHU_FH, "<$sohu_file" || return;
       my $s = "";
       while (<SOHU_FH>) {
 	# chomp;
@@ -85,7 +81,12 @@ sub process_fund_sohu {
       $s =~ s/\)//g;
       $s =~ s/\'/\"/g;
 
-      my $obj = JSON->new->utf8(0)->decode($s) || die "data is not correct\n";
+      my $obj = undef;
+      eval { JSON->new->utf8(0)->decode($s); };
+      if ($@) {
+      	print STDERR "No json for $stock_id\n";
+	return;
+	}
       next if (scalar @$obj < 2);
       $semaphore->down;
       for my $data (@{$obj->[1]}) {
@@ -99,20 +100,21 @@ sub process_fund_sohu {
   }
 }
 
-sub aciton {
+sub action {
   my $exchange = shift;
   my $stock_id = $exchange;
   $exchange =~ s/\d+//g;
   $stock_id =~ s/[^\d]//g;
 
-  print STDERR "exchange = $exchange, stock = $stock_id\n";
-  my $found = 0;
+  print STDERR "---exchange = $exchange, stock = $stock_id---\n";
+  eval {  
+my $found = 0;
   for my $year (2000..2009) {
     for my $quater (1..4) {
       my $url = "http://money.finance.sina.com.cn/corp/go.php/vMS_FuQuanMarketHistory/stockid/$stock_id.phtml?year=$year&jidu=$quater";
       my $file = "$stock_id.phtml?year=$year&jidu=$quater";
       unlink $file if $today lt "$year-$date_map{$quater}->{end_date}";
-      qx(wget "$url") unless -e $file && -s $file > 0;
+      qx(wget "$url") unless -e "$file" && -s "$file" > 0;
       my $parser = HTML::TreeBuilder->new();
       $parser->parse_file($file);
       my $stockcode = getStockCode($parser);
@@ -120,15 +122,21 @@ sub aciton {
       unless ($exchange.$stock_id eq $stockcode) {
 	$url = "http://vip.stock.finance.sina.com.cn/corp/go.php/vMS_MarketHistory/stockid/$stock_id/type/S.phtml?year=$year&jidu=$quater";
 	$file = "S-$stock_id.phtml?year=$year&jidu=$quater";
+	unlink $file if $today lt "$year-$date_map{$quater}->{end_date}";
 	$semaphore->down;
-	qx(wget "$url") unless -e $file &&  -s $file > 0;
+	qx(wget "$url") unless -e "$file" &&  -s "$file" > 0;
 	rename "S.phtml?year=$year&jidu=$quater", $file;
 	$semaphore->up;
 	$parser->delete;
+	undef $parser;
 	$parser = HTML::TreeBuilder->new();
 	$parser->parse_file($file);
 	$stockcode = getStockCode($parser);
-	next unless $exchange.$stock_id eq $stockcode;
+	unless ($exchange.$stock_id eq $stockcode) {
+		$parser->delete;
+		undef $parser;
+		next;
+	}
       }
 
       print STDERR "year=$year, quarter=$quater, stock=$stockcode\n";
@@ -154,10 +162,12 @@ sub aciton {
 	}
       }
       $parser->delete;
+      undef $parser;
     }
   }
 
   process_fund_sohu($stock_id, $exchange) unless ($found);
+};
 }
 
 sub getStockCode {

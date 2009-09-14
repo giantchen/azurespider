@@ -22,6 +22,7 @@ public class BonusParser {
 		"AnnounceDate, AllocShare, AllocPrice, TotalShare, XDate, RegDate, StartPayDate, EndPayDate, " +
 		"ListDate, TotalAmount) " +
 		"values (?,?,?,?,?,?,?,?,?,?,?,?)";
+	private static final String FIND_LIST_DATE = "SELECT Date FROM STOCK_PRICE WHERE Symbol = ? AND Date >= ? LIMIT 1 OFFSET 4";
 
 	// ºìÀû»òºì¹É
 	private static final String CREATE_STOCK_BONUS = "CREATE  TABLE STOCK_BONUS (" +
@@ -112,7 +113,24 @@ public class BonusParser {
 				prep.setDouble(7, fields[5].length() == 0 ? 0 : Double.parseDouble(fields[5])); 	// Total share
 				prep.setString(8, fields[6]); 						// XDate
 				prep.setString(9, fields[7]);						// RegDate
-				prep.setString(10, fields[8]); 						// ListDate
+								
+				String listDate = fields[8].trim();
+				if (listDate.length() == 0 && fields[6].trim().length() > 0) {
+					PreparedStatement stat = null;
+					try {
+						stat = conn.prepareStatement(FIND_LIST_DATE);
+						stat.setString(1, fields[0]); // symbol
+						stat.setString(2, fields[6]); // XDate
+						ResultSet results = stat.executeQuery();
+						listDate = results.getString(1);
+					} catch(Exception e) {
+						e.printStackTrace();
+					} finally {
+						stat.close();
+					}
+				}
+				
+				prep.setString(10, listDate); 						// ListDate
 				prep.addBatch();
 
 				if (count % 500 == 0) {
@@ -173,6 +191,7 @@ public class BonusParser {
 				prep.setString(9, fields[7]); 						// StartPayDate
 				prep.setString(10, fields[8]); 						// EndPayDate
 				prep.setString(11, fields[9]); 						// ListDate
+				
 				prep.setDouble(12, fields[10].length() == 0 ? 0 : Double.parseDouble(fields[10])); // TotalAmount
 				prep.addBatch();
 
