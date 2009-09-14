@@ -91,6 +91,7 @@ public class BasicInfoParser {
 		parser.populateTable();
 	}
 
+	@SuppressWarnings("deprecation")
 	public void populateTable() {
 		try {
 			Class.forName("org.sqlite.JDBC");
