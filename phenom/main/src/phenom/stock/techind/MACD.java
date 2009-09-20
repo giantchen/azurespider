@@ -53,7 +53,7 @@ public class MACD extends AbstractTechIndicator {
             }
         }
         
-        return Double.NaN;
+        return AbstractTechIndicator.INVALID_VALUE;
     }
     
     public double getDEA(String symbol_, String date_, int cycle_) {
@@ -64,7 +64,7 @@ public class MACD extends AbstractTechIndicator {
             }
         }
         
-        return Double.NaN;
+        return AbstractTechIndicator.INVALID_VALUE;
     }    
     
     public double calculate(Stock s_) {

@@ -40,4 +40,11 @@ public class EMovingAverageTest {
         b = BigDecimal.valueOf(m.getAverage(s, 12)).setScale(4, BigDecimal.ROUND_HALF_UP);        
         Assert.assertEquals(10.5890, b.doubleValue()); 
     }
+    
+    @Test
+    public void testValid() {
+    	Assert.assertEquals(false, AbstractTechIndicator.isValid(AbstractTechIndicator.INVALID_VALUE));
+    	Assert.assertEquals(false, AbstractTechIndicator.isValid(Double.NaN));
+    	Assert.assertEquals(true, AbstractTechIndicator.isValid(1.1));
+    }
 }

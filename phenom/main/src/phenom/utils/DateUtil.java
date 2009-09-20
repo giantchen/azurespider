@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 /**
  * TODO: type comment.
@@ -59,5 +60,17 @@ public class DateUtil {
     
     public static String nextDay(int date_) {
         return nextDay(String.valueOf(date_));
+    }
+    
+    public static String previousTradeDate(String symbol_, String date_) {
+    	return phenom.stock.Stock.previousTradeDate(symbol_, date_);    	
+    }
+    
+    public static String previosTradeDate(String date_) {
+    	return phenom.stock.Stock.previousTradeDate(date_);
+    }
+    
+    public static List<String> tradeDates(String startDate_, String endDate_) {
+    	return phenom.stock.Stock.tradeDates(startDate_, endDate_);
     }
 }
