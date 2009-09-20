@@ -10,11 +10,13 @@ export HISTCONTROL=ignoredups
 # ... and ignore same sucessive entries.
 export HISTCONTROL=ignoreboth
 export IGNOREEOF=1
+export LANG=en_US
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
 shopt -s cdspell
+stty stop undef
 
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(lesspipe)"
@@ -72,9 +74,10 @@ fi
 # some more ls aliases
 alias l='ls -l'
 alias du1='du --max-depth=1'
-if [ -n "$DISPLAY" ]; then
-  alias vi=gvim
-fi
+alias gmake=make
+# if [ -n "$DISPLAY" ]; then
+#   alias vi=gvim
+# fi
 #alias la='ls -A'
 #alias l='ls -CF'
 
