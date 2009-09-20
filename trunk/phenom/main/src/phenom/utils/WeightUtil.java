@@ -5,25 +5,45 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.List;
 import java.util.TreeMap;
 import java.util.SortedMap;
+import java.util.HashMap;
+import java.util.ArrayList;
 
 import phenom.database.ConnectionManager;
+import phenom.stock.Dividend;
+import phenom.stock.PositionEntry;
 import phenom.stock.Stock;
 
+/**
+ * 
+ * 所有除权、工具方法都延迟加载
+ * TODO：未来可考虑eager init，用多线程处理如 Latch
+ *
+ */
 public class WeightUtil {
 	final static String SQL = "select * from (select Symbol, XDate from STOCK_BONUS union select Symbol, " +
-			"XDate from STOCK_ALLOC) t where t.Symbol = ? and t.XDate >= '20000101'";
-	//key = symbol value = {key = date, value = factor}
-	static Map<String, SortedMap<String, Double>> weightFactors = new TreeMap<String, SortedMap<String, Double>>();
+			"XDate from STOCK_ALLOC) t where t.Symbol = ? and t.XDate >= '20000101'";	
+	final static String DIVSQL = "select * from STOCK_BONUS where Symbol = ?"; 
 	
+	//除权因子key = symbol value = {key = date, value = factor}
+	static Map<String, SortedMap<String, Double>> weightFactors = new TreeMap<String, SortedMap<String, Double>>();
+	//分红转增增发
+	static Map<String, List<Dividend>> weights = new HashMap<String, List<Dividend>>();
+			
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) {		
 		// TODO Auto-generated method stub
 
+	}
+	
+	public static void applyDividend(PositionEntry pe_, String date_) {
+		
 	}
 	
 	public static String parseDate(String date_) {					
@@ -62,11 +82,10 @@ public class WeightUtil {
 	}
 	
 	public static void applyWeight(Stock s_) {
-		SortedMap<String, Double> weights = weightFactors.get(s_.getSymbol());
-		if(weights == null) {
-			init(s_.getSymbol());
-			weights = weightFactors.get(s_.getSymbol());
+		if(!weightFactors.containsKey(s_.getSymbol())) {
+			initFactor(s_.getSymbol());
 		}
+		SortedMap<String, Double> weights = weightFactors.get(s_.getSymbol());		
 		double factor = 1.0;		
 		
 		for(String xDate : weights.keySet()) {
@@ -79,13 +98,31 @@ public class WeightUtil {
 		s_.setWeightedClosePrice(s_.getClosePrice() * factor);
 		s_.setWeightedOpenPrice(s_.getOpenPrice() * factor);
 		s_.setWeightedHighPrice(s_.getHighPrice() * factor);
-		s_.setWeightedLowPrice(s_.getLowPrice() * factor);
+		s_.setWeightedLowPrice(s_.getLowPrice() * factor);		
+	}
+	
+	public static Dividend applyDividend(String symbol_, String buyDate_) {
+		if(!weights.containsKey(symbol_)) {
+			initDividend(symbol_);
+		}		
+		List<Dividend> ds = weights.get(symbol_);
+		Dividend di = null;
+		if(ds.size() > 0) {
+			for(Dividend d : ds) {
+				if(buyDate_.compareTo(d.getXDate()) < 0) {
+					di = d;
+					break;
+				}
+			}
+		}
+		
+		return di;
 	}
 	
 	/**
 	 * init symbol and keydates
 	 */
-	private synchronized static void init(String symbol_) {
+	private synchronized static void initFactor(String symbol_) {
 		SortedMap<String, Double> weights = new TreeMap<String, Double>();
 		weightFactors.put(symbol_, weights);		
 		
@@ -95,7 +132,7 @@ public class WeightUtil {
 		
 		try {			
 			conn = ConnectionManager.getConnection();
-			System.out.println(SQL);
+			//System.out.println(SQL);
 			
 			//retrieve symbol and ex date
 			s = conn.prepareStatement(SQL);
@@ -122,8 +159,6 @@ public class WeightUtil {
 					weights.put(xDate, pStock.getWeight() / current.getWeight());
 				}
 			}
-			
-			System.out.println(weights);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return;
@@ -137,5 +172,44 @@ public class WeightUtil {
 				}
 			}
 		}
+	}
+	
+	//初始化转增 除权 增发
+	private static synchronized void initDividend(String symbol_) {
+		List<Dividend> ws = new ArrayList<Dividend>();
+		weights.put(symbol_, ws);
+		
+		Connection conn = null;		
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		
+		try {			
+			conn = ConnectionManager.getConnection();
+			//System.out.println();
+			
+			s = conn.prepareStatement(DIVSQL);
+			s.setString(1, symbol_);
+			rs = s.executeQuery();			
+			while(rs.next()) {
+				Dividend d = new Dividend();
+				d.set(rs);
+				ws.add(d);
+			}			
+			rs.close();			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return;
+		}  finally {
+			if (conn != null) {
+				try {
+					s.close();					
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		Collections.sort(ws);
 	}
 }

@@ -4,12 +4,13 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
 import phenom.database.ConnectionManager;
 import phenom.utils.WeightUtil;;
 
 public class Stock implements Comparable<Stock>{
+	public static String SZZS = "000001.sh";
 	private String symbol;
 	private String exchange;
 	private String date;
@@ -164,7 +165,7 @@ public class Stock implements Comparable<Stock>{
 		weightedOpenPrice = openPrice;
 		weightedClosePrice = closePrice;
 		weightedLowPrice = lowPrice;
-		weightedHighPrice = highPrice;
+		weightedHighPrice = highPrice;	 
 	}	
 	
 	public Stock() {
@@ -273,6 +274,26 @@ public class Stock implements Comparable<Stock>{
 		
 		return s;
 	}
+		
+	public static String previousTradeDate(String symbol_, String date_) {		
+		Stock s = previousStock(symbol_, date_);		
+		return s == null ? null : s.getDate();
+	}
+	
+	//上证指数或者深证指数的所有交易日
+	public static String previousTradeDate(String date_) {
+		return previousTradeDate(SZZS, date_);
+	}
+	
+	public static List<String> tradeDates(String startDate_, String endDate_) {
+		List<Stock> stocks = getStock(SZZS, startDate_, endDate_, false);
+		List<String> tradeDates = new ArrayList<String>();
+		for(Stock s : stocks) {
+			tradeDates.add(s.getDate());
+		}
+		Collections.sort(tradeDates);
+		return tradeDates;
+	}
 	
 	public static Stock getStock(String symbol_, String date_) {		
 		Stock s = null;
@@ -301,5 +322,9 @@ public class Stock implements Comparable<Stock>{
 		}		
 		
 		return s;
+	}
+	
+	public static double getClosePrice(String symbol_, String date_) {
+		return getStock(symbol_, date_).getClosePrice();
 	}
 }

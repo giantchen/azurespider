@@ -62,7 +62,7 @@ public class SMovingAverage extends AbstractTechIndicator{
         validate(symbol_, date_, days_);
         
         if(Collections.binarySearch(values.get(symbol_), new Stock(symbol_, date_)) < 0) {
-        	return Double.NaN; //data is not avaliable
+        	return AbstractTechIndicator.INVALID_VALUE; //data is not avaliable
         }
         
         CycleValuePair average = null;

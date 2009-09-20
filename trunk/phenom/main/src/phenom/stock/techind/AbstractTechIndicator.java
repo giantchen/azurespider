@@ -7,12 +7,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import phenom.stock.Stock;
+
 /**
  * This should behave like a util class.
  * Will refactor later
  * 
  */
 public abstract class AbstractTechIndicator implements ITechnicalIndicator<Stock>{
+	public static double INVALID_VALUE = Double.NaN;
     //key = symbol, value(key = date, List(value = CycleValuePair))
     protected Map<String, Map<String, List<CycleValuePair>>> cache = new HashMap<String, Map<String, List<CycleValuePair>>>();    
     //protected List<Stock> values = new ArrayList<Stock>();
@@ -102,17 +104,25 @@ public abstract class AbstractTechIndicator implements ITechnicalIndicator<Stock
     	this.values = s_;
     }
     
+    protected Map<String, List<Stock>> getValues() {
+    	return values;
+    }
+    
     protected void validate(String symbol_, String date_, int cycle_) {
     	String s = null;
     	if(symbol_ == null || date_ == null || cycle_ <= 0) {
     		s = "Symbol and Date must be set up, Days must be positive";
-    	} else if (values == null || values.size() == 0) {
+    	} else if (getValues() == null || getValues().size() == 0) {
     		s = "Value is not initialized";
     	}
     	
     	if(s != null) {
     		throw new RuntimeException(s);
     	}
+    }
+    
+    public static boolean isValid(double val_) {
+    	return !Double.isNaN(val_);
     }
     
     public static class CycleValuePair {
