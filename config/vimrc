@@ -2,6 +2,7 @@ set nocp
 syntax on
 
 set cindent
+set cino=g1h1
 set title
 set mouse=
 
@@ -12,6 +13,9 @@ set expandtab
 highlight Comment ctermfg=6
 
 behave mswin
+
+filetype plugin indent on
+autocmd FileType make set noexpandtab
 
 " backspace and cursor keys wrap to previous/next line
 set backspace=indent,eol,start whichwrap+=<,>,[,]
