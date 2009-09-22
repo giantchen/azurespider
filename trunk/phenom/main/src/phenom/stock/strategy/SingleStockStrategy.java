@@ -72,7 +72,7 @@ public class SingleStockStrategy {
 				if(d != null) {
 					if(s.getDate().compareTo(d.getListDate()) > 0) {
 						position = position * (1 + d.getTranDiv() + d.getStockDiv());						 
-					} else if(s.getDate().compareTo(d.getListDate1()) > 0) {
+					} else if(s.getDate().compareTo(d.getDivDate()) > 0) {
 						cash = cash + position * d.getStockDiv();
 					} else {//卖出时不可用， 需要记录可以卖出的日期并卖掉
 						double inflightPos = position * (d.getTranDiv() + d.getStockDiv());
