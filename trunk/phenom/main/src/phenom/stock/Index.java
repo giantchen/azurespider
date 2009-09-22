@@ -25,7 +25,7 @@ public class Index {
 
 		try {
 			conn = ConnectionManager.getConnection();
-			rs = conn.createStatement().executeQuery(INDEX_SQL);
+			rs = conn.createStatement().executeQuery(INDEX_SQL1);
 
 			while (rs.next()) {
 				is.put(rs.getString("IndexId"), null);

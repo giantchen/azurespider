@@ -1,20 +1,20 @@
 package phenom.stock;
 
+/**
+ * 
+ * TODO
+ * assume the next corporate actions comes after current ca being settled, otherwise can use a list to model this
+ */
 public class PositionEntry {	
 	private String symbol;
-	private double amount;
-	
-	//TODO assume the next corporate actions comes after current ca being settled, otherwise can use a list to model this
-	private NameValuePair inflightAmt;
-	private NameValuePair inflightCash;
+	private double amount;	
+	private PEDateValue inflightAmt;
+	private PEDateValue inflightCash;
 
-	public PositionEntry(String symbol, double amount,
-			NameValuePair inflightAmt, NameValuePair inflightCash) {
+	public PositionEntry(String symbol, double amount) {
 		super();
 		this.symbol = symbol;
 		this.amount = amount;
-		this.inflightAmt = inflightAmt;
-		this.inflightCash = inflightCash;
 	}
 	
 	public double getAmount() {
@@ -22,19 +22,11 @@ public class PositionEntry {
 	}
 	
 	public double getInflightPos() {
-		double v = 0;
-		if(inflightAmt != null) {
-			v = inflightAmt.getValue();
-		}
-		return v;
+		return inflightAmt == null ? 0 : inflightAmt.getValue();		
 	}
 	
 	public double getInflightCash() {
-		double v = 0;
-		if(inflightCash != null) {
-			v = inflightCash.getValue();
-		}
-		return v;
+		return inflightCash == null ? 0 : inflightCash.getValue();		
 	}
 
 	public void setAmount(double amount) {
@@ -45,10 +37,13 @@ public class PositionEntry {
 		return symbol;
 	}
 	
-	public double evaluateInflightCash(String date_) {
+	public double evaluateInflightCash(String date_, Dividend div_) {
 		double val = 0;
+		if(div_ != null) {
+			inflightCash = new PEDateValue(div_.getRegDate(), div_.getListDate(), div_.getCashDiv()* amount);
+		}
 		if(inflightCash != null) {
-			if(inflightCash.getName().equals(date_)) {
+			if(inflightCash.getListDate().equals(date_)) {
 				val = inflightCash.getValue();
 				inflightCash = null;
 			}
@@ -56,10 +51,20 @@ public class PositionEntry {
 		return val;
 	}
 	
-	public double evaluateInflightPos(String date_) {
-		double val = 0;
+	/**
+	 * 1. move the inflight to available
+	 * 2. check to see if there are any new dividend eligible
+	 * @param date_
+	 * @param div_
+	 * @return
+	 */
+	public double evaluateInflightPos(String date_, Dividend div_) {
+		double val = 0;		
+		if(div_ != null) {
+			inflightAmt = new PEDateValue(div_.getRegDate(), div_.getListDate(), div_.getEntitledPos() * amount);
+		}		
 		if(inflightAmt != null) {
-			if(inflightAmt.getName().equals(date_)) {
+			if(inflightAmt.getListDate().equals(date_)) {
 				val = inflightAmt.getValue();
 				amount += val;
 				inflightAmt = null;
@@ -76,13 +81,33 @@ public class PositionEntry {
 		}
 	}
 	
-	public void increaseInflight(double cash_, double shares_, String cashAvailableDate_, String listDate_) {
-		//TODO assume the next corporate actions comes after current ca being settled, otherwise can use a list to model this
-		if(cash_ > 0) {
-			inflightCash = new NameValuePair(cashAvailableDate_, cash_);
+	public void increaseInflight(Dividend d_) {		
+		if(d_.getCashDiv() > 0) {
+			inflightCash = new PEDateValue(d_.getRegDate(), d_.getListDate(), d_.getCashDiv() * amount);
 		}
-		if(shares_ > 0) {
-			inflightAmt = new NameValuePair(listDate_, shares_);
+		if(d_.getEntitledPos() > 0) {
+			inflightAmt = new PEDateValue(d_.getRegDate(), d_.getListDate(), d_.getEntitledPos() * amount);
 		}
+	}
+	
+	private static class PEDateValue {
+		private double value;
+		private String regDate;
+		private String listDate;
+		public PEDateValue(String regDate, String listDate, double value) {
+			super();
+			this.value = value;
+			this.regDate = regDate;
+			this.listDate = listDate;
+		}
+		public double getValue() {
+			return value;
+		}
+		public String getRegDate() {
+			return regDate;
+		}
+		public String getListDate() {
+			return listDate;
+		}		
 	}
 }

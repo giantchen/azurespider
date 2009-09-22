@@ -43,20 +43,20 @@ public class WeightUtil {
 
 	}
 	
-	public static void applyDividend(PositionEntry pe_, String date_) {
+	public static Dividend getEntitledDividend(PositionEntry pe_, String date_) {
+		Dividend dv = null;
 		if(!weights.containsKey(pe_.getSymbol())) {
 			initDividend(pe_.getSymbol());
 		}		
 		List<Dividend> ds = weights.get(pe_.getSymbol());		
 		if(ds.size() > 0) {
 			for(Dividend d : ds) {
-				if(date_.compareTo(d.getAnnDate()) >= 0 && date_.compareTo(d.getXDate()) <= 0) {					
-					pe_.increaseInflight(d.getCashDiv(), d.getStockDiv() + d.getTranDiv(), d.getListDate1(), d.getListDate());
-					//TODO assume the next corporate actions comes after current ca being settled, otherwise should continue loop
-					break;
+				if(date_.equals(d.getRegDate())){					
+					dv = d;
 				}
 			}
 		}
+		return dv;
 	}
 	
 	public static String parseDate(String date_) {					
