@@ -102,7 +102,8 @@ public class PositionEntry {
 		}
 		public double getValue() {
 			return value;
-		}
+		}		
+		@SuppressWarnings("unused")
 		public String getRegDate() {
 			return regDate;
 		}
