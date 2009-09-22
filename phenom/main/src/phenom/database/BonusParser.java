@@ -16,13 +16,13 @@ import java.sql.Statement;
  */
 public class BonusParser {
 	private static final String INSERT_STOCK_BONUS = "insert into STOCK_BONUS (Uid, Symbol, " +
-		"AnnounceDate, BonusShare, TransitShare, Dividend, TotalShare, XDate, RegDate, ListDate)" +
-		" values (?,?,?,?,?,?,?,?,?,?)";
+		"AnnounceDate, BonusShare, TransitShare, Dividend, TotalShare, XDate, RegDate, ListDate, DividendDate)" +
+		" values (?,?,?,?,?,?,?,?,?,?,?)";
 	private static final String INSERT_STOCK_ALLOC = "insert into STOCK_ALLOC (Uid, Symbol, " +
 		"AnnounceDate, AllocShare, AllocPrice, TotalShare, XDate, RegDate, StartPayDate, EndPayDate, " +
 		"ListDate, TotalAmount) " +
 		"values (?,?,?,?,?,?,?,?,?,?,?,?)";
-	private static final String FIND_LIST_DATE = "SELECT Date FROM STOCK_PRICE WHERE Symbol = ? AND Date >= ? LIMIT 1 OFFSET 4";
+	private static final String FIND_DIVIDEND_DATE = "SELECT Date FROM STOCK_PRICE WHERE Symbol = ? AND Date >= ? ORDER BY Date LIMIT 1 OFFSET 4";
 
 	// 红利或红股
 	private static final String CREATE_STOCK_BONUS = "CREATE  TABLE STOCK_BONUS (" +
@@ -35,7 +35,8 @@ public class BonusParser {
 		"TotalShare DOBULE, " +							// 基准股本（单位万股)
 		"XDate VARCHAR, " +								// 除权除息日
 		"RegDate VARCHAR, " +							// 股权登记日
-		"ListDate VARCHAR" +							// 红股上市日
+		"ListDate VARCHAR," +							// 红股上市日
+		"DividendDate VARCHAR" +						// 红利到帐日
 		")";
 	
 	// 配股
@@ -112,27 +113,29 @@ public class BonusParser {
 				prep.setDouble(6, fields[4].length() == 0 ? 0 : Double.parseDouble(fields[4])); 	// Dividend
 				prep.setDouble(7, fields[5].length() == 0 ? 0 : Double.parseDouble(fields[5])); 	// Total share
 				prep.setString(8, fields[6]); 						// XDate
-				prep.setString(9, fields[7]);						// RegDate
-								
-				String listDate = fields[8].trim();
-				if (listDate.length() == 0 && fields[6].trim().length() > 0) {
+				prep.setString(9, fields[7]);						// RegDate								
+				prep.setString(10, fields[8].trim()); 				// ListDate
+				
+				double dividend = fields[4].length() == 0 ? 0 : Double.parseDouble(fields[4]);
+				String dividendDate = "";
+				
+				if (dividend > 0 && fields[6].trim().length() == 8) {
 					PreparedStatement stat = null;
 					try {
-						stat = conn.prepareStatement(FIND_LIST_DATE);
+						stat = conn.prepareStatement(FIND_DIVIDEND_DATE);
 						stat.setString(1, fields[0]); // symbol
 						stat.setString(2, fields[6]); // XDate
 						ResultSet results = stat.executeQuery();
-						listDate = results.getString(1);
+						dividendDate = results.getString(1);
 					} catch(Exception e) {
 						e.printStackTrace();
 					} finally {
 						stat.close();
 					}
-				}
+				}				
+				prep.setString(11, dividendDate);
 				
-				prep.setString(10, listDate); 						// ListDate
 				prep.addBatch();
-
 				if (count % 500 == 0) {
 					prep.executeBatch();
 					conn.commit();
