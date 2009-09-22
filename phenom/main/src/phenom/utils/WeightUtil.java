@@ -27,7 +27,8 @@ import phenom.stock.Stock;
 public class WeightUtil {
 	final static String SQL = "select * from (select Symbol, XDate from STOCK_BONUS union select Symbol, " +
 			"XDate from STOCK_ALLOC) t where t.Symbol = ? and t.XDate >= '20000101'";	
-	final static String DIVSQL = "select * from STOCK_BONUS where Symbol = ?"; 
+	final static String DIVSQL = "select * from STOCK_BONUS where Symbol = ? and AnnounceDate != '' " +
+			"and (ListDate != '' or (ListDate = '' and Dividend != 0))"; 
 	
 	//³ýÈ¨Òò×Ókey = symbol value = {key = date, value = factor}
 	static Map<String, SortedMap<String, Double>> weightFactors = new TreeMap<String, SortedMap<String, Double>>();
@@ -43,7 +44,19 @@ public class WeightUtil {
 	}
 	
 	public static void applyDividend(PositionEntry pe_, String date_) {
-		
+		if(!weights.containsKey(pe_.getSymbol())) {
+			initDividend(pe_.getSymbol());
+		}		
+		List<Dividend> ds = weights.get(pe_.getSymbol());		
+		if(ds.size() > 0) {
+			for(Dividend d : ds) {
+				if(date_.compareTo(d.getAnnDate()) >= 0 && date_.compareTo(d.getXDate()) <= 0) {					
+					pe_.increaseInflight(d.getCashDiv(), d.getStockDiv() + d.getTranDiv(), d.getListDate1(), d.getListDate());
+					//TODO assume the next corporate actions comes after current ca being settled, otherwise should continue loop
+					break;
+				}
+			}
+		}
 	}
 	
 	public static String parseDate(String date_) {					
