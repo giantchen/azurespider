@@ -10,6 +10,7 @@ public class Dividend implements Comparable<Dividend>{
 	private String annDate; 
 	private String xDate; //除权除息日， 股票除息日 + 4 = 发放日
 	private String listDate; //上市日期 
+	private String divDate;
 	private String regDate; //entitlement date
 	private String symbol;
 	public double getCashDiv() {
@@ -27,8 +28,8 @@ public class Dividend implements Comparable<Dividend>{
 	public String getListDate() {
 		return listDate;
 	}
-	public String getListDate1() {//现金分红可用日
-		return listDate;
+	public String getDivDate() {//现金分红可用日
+		return divDate;
 	}
 	public String getSymbol() {
 		return symbol;
@@ -92,6 +93,7 @@ public class Dividend implements Comparable<Dividend>{
 		listDate = rs_.getString("ListDate");
 		annDate = rs_.getString("AnnounceDate");
 		regDate = rs_.getString("RegDate");
+		divDate = rs_.getString("DividendDate");
 		cashDiv = Double.parseDouble(rs_.getString("Dividend")) / 10;
 		stockDiv = Double.parseDouble(rs_.getString("BonusShare")) / 10;
 		tranDiv = Double.parseDouble(rs_.getString("TransitShare")) / 10;
