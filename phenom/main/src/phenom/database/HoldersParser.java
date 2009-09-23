@@ -90,19 +90,16 @@ public class HoldersParser {
 			}
 			prep.executeBatch();
 			conn.commit();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+		} catch (SQLException e) {			
 			e.printStackTrace();
 			return;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		} catch (IOException e) {			
 			e.printStackTrace();
 		} finally {
 			if (conn != null)
 				try {
 					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
+				} catch (SQLException e) {					
 					e.printStackTrace();
 				}
 		}

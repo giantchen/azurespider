@@ -10,7 +10,6 @@ import java.util.HashSet;
 import phenom.stock.Stock;
 
 /**
- * TODO: type comment.
  * 
  * Should refactor the 2 moving average algorithm so this MACD didn't depend on concrete implementation
  * Add a calculated method

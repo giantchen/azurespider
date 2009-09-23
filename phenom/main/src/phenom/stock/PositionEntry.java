@@ -2,7 +2,7 @@ package phenom.stock;
 
 /**
  * 
- * TODO
+ * TODO - Dividend Overlap : 1 comes before the previous settled
  * assume the next corporate actions comes after current ca being settled, otherwise can use a list to model this
  */
 public class PositionEntry {	
