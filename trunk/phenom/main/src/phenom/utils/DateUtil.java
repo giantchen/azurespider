@@ -6,10 +6,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-/**
- * TODO: type comment.
- *
- */
 public class DateUtil {
     private static final DateFormat YYMMDD = new SimpleDateFormat("yyyyMMdd");   
     

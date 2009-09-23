@@ -20,11 +20,12 @@ import phenom.utils.WeightUtil;
 
 public class RollingStrategy {
 	static Map<String, List<String>> indexStock = new HashMap<String, List<String>>();
-
+	
 	// temporarily didn't track position on each day but only track the current
 	// position
 	Map<String, PositionEntry> position = new HashMap<String, PositionEntry>();
-
+	List<String> indexSymbols = null;
+	//TODO - Initialize trade date
 	static List<String> tradeDates = null;
 	private int minHoldingDays = 5;
 	private double cash = -1;
@@ -36,10 +37,11 @@ public class RollingStrategy {
 	String startDate = "20090101";
 	String endDate = "20091231";
 
-	public RollingStrategy(double cash_, int maxPosCount_, int minHoldingDays_) {
+	public RollingStrategy(double cash_, int maxPosCount_, int minHoldingDays_, List<String> indexSymbols_) {
 		cash = cash_;
 		maxPosCount = maxPosCount_;
 		minHoldingDays = minHoldingDays_;
+		indexSymbols = indexSymbols_;
 	}
 
 	public String getStartDate() {
@@ -59,7 +61,7 @@ public class RollingStrategy {
 	}
 
 	public static void main(String[] args) {
-		RollingStrategy rs = new RollingStrategy(3000000, 10, 5);
+		RollingStrategy rs = new RollingStrategy(300000000, 20, 5, null);
 		DeltaEMAverage dt = new DeltaEMAverage();
 
 		//init mapping and trade dates
@@ -259,7 +261,6 @@ public class RollingStrategy {
 			PositionEntry pe = position.get(symbol);
 			curCash += pe.getAmount() * Stock.getClosePrice(symbol, date_);
 			pe.setAmount(0);
-			//TODO
 			if(pe.isSoldOut()) {
 				position.remove(symbol);
 			}
@@ -269,14 +270,12 @@ public class RollingStrategy {
 	}
 	
 	private double getFinalCash(String date_) {
-		double curCash = cash;
-		
+		double curCash = cash;		
 		for(String symbol : position.keySet()) {
 			PositionEntry pe = position.get(symbol);
 			curCash += (pe.getAmount() + pe.getInflightPos()) * Stock.getClosePrice(symbol, date_);
 			curCash += pe.getInflightCash();			
-		}
-		
+		}		
 		return curCash;
 	}
 }

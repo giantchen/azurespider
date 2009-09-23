@@ -39,8 +39,6 @@ public class WeightUtil {
 	 * @param args
 	 */
 	public static void main(String[] args) {		
-		// TODO Auto-generated method stub
-
 	}
 	
 	public static Dividend getEntitledDividend(PositionEntry pe_, String date_) {

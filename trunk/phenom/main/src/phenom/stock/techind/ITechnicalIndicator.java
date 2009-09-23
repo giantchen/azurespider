@@ -2,7 +2,7 @@ package phenom.stock.techind;
 
 import java.util.*;
 /**
- * TODO: type comment.
+ * Base Interface for Technical Indicator
  *
  */
 public interface ITechnicalIndicator<T extends Comparable<? super T>> {
