@@ -37,11 +37,11 @@ public class PositionEntry {
 		return symbol;
 	}
 	
-	public double evaluateInflightCash(String date_, Dividend div_) {
+	public double evaluateInflightCash(String date_) {
 		double val = 0;
-		if(div_ != null) {
+		/*if(div_ != null) {
 			inflightCash = new PEDateValue(div_.getRegDate(), div_.getListDate(), div_.getCashDiv()* amount);
-		}
+		}*/
 		if(inflightCash != null) {
 			if(inflightCash.getListDate().equals(date_)) {
 				val = inflightCash.getValue();
@@ -49,7 +49,7 @@ public class PositionEntry {
 			}
 		}
 		return val;
-	}
+	}	
 	
 	/**
 	 * 1. move the inflight to available
@@ -58,11 +58,11 @@ public class PositionEntry {
 	 * @param div_
 	 * @return
 	 */
-	public double evaluateInflightPos(String date_, Dividend div_) {
+	public double evaluateInflightPos(String date_) {
 		double val = 0;		
-		if(div_ != null) {
+		/*if(div_ != null) {
 			inflightAmt = new PEDateValue(div_.getRegDate(), div_.getListDate(), div_.getEntitledPos() * amount);
-		}		
+		}*/		
 		if(inflightAmt != null) {
 			if(inflightAmt.getListDate().equals(date_)) {
 				val = inflightAmt.getValue();
@@ -71,7 +71,7 @@ public class PositionEntry {
 			}
 		}
 		return val;
-	}
+	}	
 	
 	public boolean isSoldOut() {	
 		if(amount == 0 && inflightAmt == null && inflightCash == null) {
