@@ -27,6 +27,7 @@ public class RollingStrategy {
 	List<String> indexSymbols = null;
 	//TODO - Initialize trade date
 	static List<String> tradeDates = null;
+	//TODO Utilize minHolding days
 	private int minHoldingDays = 5;
 	private double cash = -1;
 	private double commission = 0.003;
@@ -61,7 +62,7 @@ public class RollingStrategy {
 	}
 
 	public static void main(String[] args) {
-		RollingStrategy rs = new RollingStrategy(300000000, 20, 5, null);
+		RollingStrategy rs = new RollingStrategy(300000000, 8, 5, null);
 		DeltaEMAverage dt = new DeltaEMAverage();
 
 		//init mapping and trade dates
@@ -114,8 +115,7 @@ public class RollingStrategy {
 				System.out.println("------- Start tradeDate ------" + td);
 				
 				//adjust the avaliable amount and cash impacted by CA, try to move the inflight to available
-				processInflightCash(td);
-				processInflightPos(td);
+				processInflightPB(td);
 				
 				date = td;
 				for(String symbol : indexStock.keySet()) {
@@ -171,6 +171,7 @@ public class RollingStrategy {
 				sortedIndex.clear();
 				allStock.clear();				
 				
+				entitle(td);
 				System.out.println("------- Finish tradeDate ------" + td);
 			}			
 		} catch (Exception e) {
@@ -208,26 +209,28 @@ public class RollingStrategy {
 		return symbols;
 	}
 	
-	private void processInflightCash(String date_) {
+	//move inflight to available
+	private void processInflightPB(String date_) {
 		double val = 0;
 		for(String symbol : position.keySet()) {
 			PositionEntry pe = position.get(symbol);			
-			//assume the next corporate actions comes after current ca being settled
-			Dividend d = WeightUtil.getEntitledDividend(pe, date_);
-			val += pe.evaluateInflightCash(date_, d);
+			//assume the next corporate actions comes after current ca being settled			
+			val += pe.evaluateInflightCash(date_);
+			pe.evaluateInflightPos(date_);
 		}
 		cash += val;
 	}
 	
-	private void processInflightPos(String date_) {
+	private void entitle(String date_) {
 		for(String symbol : position.keySet()) {
 			PositionEntry pe = position.get(symbol);			
-			//assume the next corporate actions comes after current ca being settled
 			Dividend d = WeightUtil.getEntitledDividend(pe, date_);
-			pe.evaluateInflightPos(date_, d);
+			if(d != null) {
+				pe.increaseInflight(d);
+			}
 		}
 	}
-		
+	
 	private void buy(List<String> symbols_, String date_, double stampTax_, double com_) {
 		double curCash = cash;		
 		for(int i = 0; i < symbols_.size(); i++) {
@@ -244,11 +247,7 @@ public class RollingStrategy {
 				position.put(symbol, pe);
 			} else {
 				pe.setAmount(pe.getAmount() + bAmount * 100);
-			}
-			Dividend d = WeightUtil.getEntitledDividend(pe, date_);
-			if(d != null) {
-				pe.increaseInflight(d);
-			}			
+			}				
 			curCash -= bAmount * 100 * price * (1 + stampTax_ + com_);
 		}
 		
