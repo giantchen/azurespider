@@ -10,17 +10,18 @@ import java.util.Set;
 
 import phenom.stock.Dividend;
 import phenom.stock.Index;
-import phenom.stock.Stock;
 import phenom.stock.NameValuePair;
 import phenom.stock.PositionEntry;
+import phenom.stock.Stock;
 import phenom.stock.techind.AbstractTechIndicator;
 import phenom.stock.techind.DeltaEMAverage;
 import phenom.utils.DateUtil;
 import phenom.utils.WeightUtil;
+import phenom.utils.graph.TimeSeriesGraph;
 
 public class RollingStrategy {
 	static Map<String, List<String>> indexStock = new HashMap<String, List<String>>();
-	
+	List<Double> pos = new ArrayList<Double>();
 	// temporarily didn't track position on each day but only track the current
 	// position
 	Map<String, PositionEntry> position = new HashMap<String, PositionEntry>();
@@ -35,8 +36,8 @@ public class RollingStrategy {
 	private double sellStampTax = 0.001;
 	private int maxPosCount = 10;
 
-	String startDate = "20090101";
-	String endDate = "20091231";
+	String startDate = "20080101";
+	String endDate = "20081231";
 
 	public RollingStrategy(double cash_, int maxPosCount_, int minHoldingDays_, List<String> indexSymbols_) {
 		cash = cash_;
@@ -45,6 +46,9 @@ public class RollingStrategy {
 		indexSymbols = indexSymbols_;
 	}
 
+	public List<Double> getPos() {
+		return pos;
+	}
 	public String getStartDate() {
 		return startDate;
 	}
@@ -74,7 +78,18 @@ public class RollingStrategy {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		rs.getPos();
 		
+		TimeSeriesGraph graph = new TimeSeriesGraph("Stock", "Date",
+		"Price & Money");
+		graph.addDataSource("YangFei", rs.getPos());
+		graph.display();
+		try {
+			Thread.sleep(10 * 1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		System.out.println("WOW&&&&&&&&&&&&&&&&&&" + rs.getFinalCash(tradeDates.get(tradeDates.size() - 1)));
 	}
 	
@@ -173,6 +188,7 @@ public class RollingStrategy {
 				
 				entitle(td);
 				System.out.println("------- Finish tradeDate ------" + td);
+				pos.add(getFinalCash(td));
 			}			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -258,7 +274,7 @@ public class RollingStrategy {
 		double curCash = cash;
 		for(String symbol : symbols_) {
 			PositionEntry pe = position.get(symbol);
-			curCash += pe.getAmount() * Stock.getClosePrice(symbol, date_);
+			curCash += pe.getAmount() * Stock.getClosePrice(symbol, date_) * (1 - stampTax_ - com_);
 			pe.setAmount(0);
 			if(pe.isSoldOut()) {
 				position.remove(symbol);
@@ -272,6 +288,8 @@ public class RollingStrategy {
 		double curCash = cash;		
 		for(String symbol : position.keySet()) {
 			PositionEntry pe = position.get(symbol);
+			if(Stock.getStock(symbol, date_) == null)
+				continue;
 			curCash += (pe.getAmount() + pe.getInflightPos()) * Stock.getClosePrice(symbol, date_);
 			curCash += pe.getInflightCash();			
 		}		
