@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import phenom.database.ConnectionManager;
+import phenom.stock.techind.AbstractTechIndicator;
 import phenom.utils.WeightUtil;;
 
 public class Stock implements Comparable<Stock>{
@@ -325,6 +326,7 @@ public class Stock implements Comparable<Stock>{
 	}
 	
 	public static double getClosePrice(String symbol_, String date_) {
-		return getStock(symbol_, date_).getClosePrice();
+		Stock s = getStock(symbol_, date_);
+		return s == null ? AbstractTechIndicator.INVALID_VALUE : s.getClosePrice();
 	}
 }

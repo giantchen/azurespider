@@ -13,9 +13,10 @@ import phenom.database.ConnectionManager;
 
 public class Index {
 	private final static String INDEX_SQL = "select distinct IndexId from STOCK_INDEX where " +
-			"IndexId between '000908.sh' and '000921.sh'";
+			"IndexId between '000908.sh' and '000917.sh'";
 	private final static String INDEX_SQL1 = "select distinct IndexId from STOCK_INDEX where " +
 	"IndexId between '000914.sh' and '000915.sh'";
+	
 	private final static String INDEX_STOCK_SQL = "select distinct Symbol from STOCK_INDEX where IndexId = ? order by Symbol";
 	public static Map<String, List<String>> getIndexStockMapping() {
 		Map<String, List<String>> is = new HashMap<String, List<String>>();
