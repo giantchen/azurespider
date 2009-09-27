@@ -55,7 +55,7 @@ public class RollingStrategy {
 
 	public String getEndDate() {
 		return endDate;
-	}
+	}	
 
 	public int getMinHoldingDays() {
 		return minHoldingDays;
@@ -66,20 +66,20 @@ public class RollingStrategy {
 	}
 
 	public static void main(String[] args) {
-		RollingStrategy rs = new RollingStrategy(300000000, 8, 5, null);
+		RollingStrategy rs = new RollingStrategy(3000000, 10, 5, null);
 		DeltaEMAverage dt = new DeltaEMAverage();
 
 		//init mapping and trade dates
-		indexStock = Index.getIndexStockMapping();
+		indexStock = Index.getIndexStockMapping();		
 		tradeDates = DateUtil.tradeDates(rs.getStartDate(), rs.getEndDate());	
 		
 		try {
 			rs.run(dt, 5);
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.exit(0);
 		}
-		rs.getPos();
-		
+				
 		TimeSeriesGraph graph = new TimeSeriesGraph("Stock", "Date",
 		"Price & Money");
 		graph.addDataSource("YangFei", rs.getPos());
@@ -90,7 +90,7 @@ public class RollingStrategy {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("WOW&&&&&&&&&&&&&&&&&&" + rs.getFinalCash(tradeDates.get(tradeDates.size() - 1)));
+		System.out.println("WOW&&&&&&&&&&&&&&&&&&" + rs.getFinalCash(tradeDates.get(tradeDates.size() - 1)));	
 	}
 	
 	private void loadStockPrices(DeltaEMAverage dea_) {
@@ -136,13 +136,17 @@ public class RollingStrategy {
 				for(String symbol : indexStock.keySet()) {
 					indexSymbol = symbol;
 					double delta = dea_.getDelta(symbol, td, days_);
+					//index may not be available at that time. e.g. index created from 2009 not in 2008
+					if(!AbstractTechIndicator.isValid(delta)) {
+						continue;
+					}
 					NameValuePair s = new NameValuePair(symbol, delta);
 					sortedIndex.add(s);
 				}
 				
 				//only start to sell/buy after 5 days
 				if(i >= 5 ) {
-					Collections.sort(sortedIndex, NameValuePair.VALUE_COMPARATOR);					
+					Collections.sort(sortedIndex, NameValuePair.VALUE_COMPARATOR_ASC);					
 					//asssume there are at least 5 elements, sort stocks within each index
 					for(int j = 0; j < sortedIndex.size(); j++) {
 						NameValuePair s = sortedIndex.get(j);
@@ -161,7 +165,7 @@ public class RollingStrategy {
 							sortedStock.add(new NameValuePair(st, delta));
 						}
 						
-						Collections.sort(sortedStock, NameValuePair.VALUE_COMPARATOR);
+						Collections.sort(sortedStock, NameValuePair.VALUE_COMPARATOR_ASC);
 						
 						if(j == 0 || j == 1 || j == 2) {
 							//pick up buy symbols, for top3 index pick 2 stocks for each
@@ -173,7 +177,7 @@ public class RollingStrategy {
 						System.out.println("****** Finish indexSymbol  ****** " + indexSymbol);
 					}
 					
-					Collections.sort(allStock, NameValuePair.VALUE_COMPARATOR);
+					//Collections.sort(allStock, NameValuePair.VALUE_COMPARATOR_ASC);
 					sellSymbols = evaluateSellSymbol(allStock, buySymbols);
 					
 					//sell first then buy, do not change the calling order
@@ -186,7 +190,7 @@ public class RollingStrategy {
 				sortedIndex.clear();
 				allStock.clear();				
 				
-				entitle(td);
+				processEntitlement(td);
 				System.out.println("------- Finish tradeDate ------" + td);
 				pos.add(getFinalCash(td));
 			}			
@@ -198,9 +202,10 @@ public class RollingStrategy {
 	}
 	
 	private List<String> evaluateSellSymbol(List<NameValuePair> allStocks, List<String> buySymbols) {
+		Collections.sort(allStocks, NameValuePair.NAME_COMPARATOR);
 		List<String> symbols = new ArrayList<String>();		
 		List<NameValuePair> vp = new ArrayList<NameValuePair>();
-		int posCount = indexStock.size() + buySymbols.size();
+		int posCount = position.size() + buySymbols.size();
 		NameValuePair nvp = new NameValuePair(null, -1);//only used to search
 		
 		for(String k : position.keySet()) {
@@ -209,16 +214,22 @@ public class RollingStrategy {
 				continue;
 			}			
 			nvp.setName(k);
+			
 			int i = Collections.binarySearch(allStocks, nvp);
-			NameValuePair nv = new NameValuePair(k, i);
-			vp.add(nv);
+			if(i <= 0) //the stock was suspended
+				continue;
+			
+			vp.add(allStocks.get(i));
 		}
 		
-		Collections.sort(vp, NameValuePair.VALUE_COMPARATOR);
+		Collections.sort(vp, NameValuePair.VALUE_COMPARATOR_DESC);
 		
 		if(posCount > maxPosCount) {
 			for(int i = 0; i < posCount - maxPosCount; i++) {
-				symbols.add(vp.get(vp.size() - i - i).getName());
+				if(vp.size() > i)
+					symbols.add(vp.get(i).getName());
+				else 
+					break;
 			}
 		}
 		
@@ -237,7 +248,7 @@ public class RollingStrategy {
 		cash += val;
 	}
 	
-	private void entitle(String date_) {
+	private void processEntitlement(String date_) {
 		for(String symbol : position.keySet()) {
 			PositionEntry pe = position.get(symbol);			
 			Dividend d = WeightUtil.getEntitledDividend(pe, date_);
@@ -288,9 +299,10 @@ public class RollingStrategy {
 		double curCash = cash;		
 		for(String symbol : position.keySet()) {
 			PositionEntry pe = position.get(symbol);
-			if(Stock.getStock(symbol, date_) == null)
+			double p = Stock.getClosePrice(symbol, date_);
+			if(!AbstractTechIndicator.isValid(p))
 				continue;
-			curCash += (pe.getAmount() + pe.getInflightPos()) * Stock.getClosePrice(symbol, date_);
+			curCash += (pe.getAmount() + pe.getInflightPos()) * p;
 			curCash += pe.getInflightCash();			
 		}		
 		return curCash;
