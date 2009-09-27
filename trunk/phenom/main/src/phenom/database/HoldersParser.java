@@ -58,7 +58,7 @@ public class HoldersParser {
 
 			Statement s = conn.createStatement();
 			ResultSet rs = s
-					.executeQuery("select max(Uid) id from INDUSTRY_INFO");
+					.executeQuery("select max(Uid) id from STOCK_HOLDERS");
 			int uid = rs.getInt("id");
 			rs.close();
 			prep = conn.prepareStatement(INSERT_STOCK_HOLDERS);
