@@ -36,8 +36,8 @@ public class RollingStrategy {
 	private double sellStampTax = 0.001;
 	private int maxPosCount = 10;
 
-	String startDate = "20080101";
-	String endDate = "20081231";
+	String startDate = "20090101";
+	String endDate = "20091231";
 
 	public RollingStrategy(double cash_, int maxPosCount_, int minHoldingDays_, List<String> indexSymbols_) {
 		cash = cash_;
@@ -97,14 +97,14 @@ public class RollingStrategy {
 		Set<String> loadedStocks = new HashSet<String>();
 		for(String indexId : indexStock.keySet()) {
 			if(!loadedStocks.contains(indexId)) {
-				dea_.addValues(Stock.getStock(indexId, getStartDate(), getEndDate(), false));
+				dea_.addValues(Stock.getStock(indexId, getStartDate(), getEndDate(), true));
 				loadedStocks.add(indexId);
 			}
 			
 			List<String> stocks = indexStock.get(indexId);
 			for(String symbol : stocks) {
 				if(!loadedStocks.contains(symbol)) {
-					dea_.addValues(Stock.getStock(symbol, getStartDate(), getEndDate(), false));
+					dea_.addValues(Stock.getStock(symbol, getStartDate(), getEndDate(), true));
 					loadedStocks.add(symbol);
 				}
 			}
