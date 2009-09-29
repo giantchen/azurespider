@@ -93,7 +93,7 @@ public class WeightUtil {
 	}
 	
 	public static void applyWeight(Stock s_) {
-		if(!weightFactors.containsKey(s_.getSymbol())) {
+		/*if(!weightFactors.containsKey(s_.getSymbol())) {
 			initFactor(s_.getSymbol());
 		}
 		SortedMap<String, Double> weights = weightFactors.get(s_.getSymbol());		
@@ -104,12 +104,12 @@ public class WeightUtil {
 				factor = weights.get(xDate);
 				break;
 			}
-		}
+		}*/
 		
-		s_.setWeightedClosePrice(s_.getClosePrice() * factor);
-		s_.setWeightedOpenPrice(s_.getOpenPrice() * factor);
-		s_.setWeightedHighPrice(s_.getHighPrice() * factor);
-		s_.setWeightedLowPrice(s_.getLowPrice() * factor);		
+		s_.setWeightedClosePrice(s_.getClosePrice() * s_.getWeight());
+		s_.setWeightedOpenPrice(s_.getOpenPrice() * s_.getWeight());
+		s_.setWeightedHighPrice(s_.getHighPrice() * s_.getWeight());
+		s_.setWeightedLowPrice(s_.getLowPrice() * s_.getWeight());		
 	}
 	
 	public static Dividend applyDividend(String symbol_, String buyDate_) {
@@ -133,6 +133,7 @@ public class WeightUtil {
 	/**
 	 * init symbol and keydates
 	 */
+	@SuppressWarnings("unused")
 	private synchronized static void initFactor(String symbol_) {
 		SortedMap<String, Double> weights = new TreeMap<String, Double>();
 		weightFactors.put(symbol_, weights);		

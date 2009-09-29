@@ -15,7 +15,7 @@ public class IndexTest {
 
 	@Test
 	public void testGetIndexStockMapping() {
-		Assert.assertEquals(14, mapping.size());
+		Assert.assertEquals(2, mapping.size());
 	}
 
 	@Test

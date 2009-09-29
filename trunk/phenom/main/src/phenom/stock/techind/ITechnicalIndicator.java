@@ -1,6 +1,6 @@
 package phenom.stock.techind;
 
-import java.util.*;
+import java.util.List;
 /**
  * Base Interface for Technical Indicator
  *
