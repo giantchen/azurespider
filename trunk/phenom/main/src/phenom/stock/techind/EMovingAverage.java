@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 
-import phenom.stock.Stock;
+import phenom.stock.GenericComputableEntry;;
 
 /**
  * Exponent Average Implementation
@@ -21,7 +21,7 @@ public class EMovingAverage extends AbstractTechIndicator{
 		return calculate(symbol_, date_, cycle_);
 	}
 	
-	public double getAverage(Stock s_, int cycle_) {
+	public double getAverage(GenericComputableEntry s_, int cycle_) {
 		return calculate(s_.getSymbol(), s_.getDate(), cycle_);
 	}
 	
@@ -32,7 +32,7 @@ public class EMovingAverage extends AbstractTechIndicator{
     public double calculate(String symbol_, String date_, int days_) {
     	double average = 0;
         validate(symbol_, date_, days_);        
-        if(Collections.binarySearch(values.get(symbol_), new Stock(symbol_, date_)) < 0) {
+        if(Collections.binarySearch(values.get(symbol_), new GenericComputableEntry(symbol_, date_, -1)) < 0) {
         	return AbstractTechIndicator.INVALID_VALUE; //data is not avaliable
         }
         
@@ -55,11 +55,11 @@ public class EMovingAverage extends AbstractTechIndicator{
      * Eager Calculation
      */
     private void calculateEM(String symbol_, int cycle_) {
-    	List<Stock> stocks = values.get(symbol_);
+    	List<GenericComputableEntry> stocks = values.get(symbol_);
     	
     	for(int i = 0; i < stocks.size(); i++) {
     		CycleValuePair c = null;
-    		Stock s = stocks.get(i);
+    		GenericComputableEntry s = stocks.get(i);
     		
     		Map<String, List<CycleValuePair>> symbolAverages = cache.get(s.getSymbol());
     		if (symbolAverages == null) {
@@ -74,7 +74,7 @@ public class EMovingAverage extends AbstractTechIndicator{
             }
             
             if(i == 0) {
-            	c = new CycleValuePair(cycle_, stocks.get(0).getWeightedClosePrice());
+            	c = new CycleValuePair(cycle_, stocks.get(0).getValue());
             } else {
             	CycleValuePair previousPair = null;
             	List<CycleValuePair> previosPairs = symbolAverages.get(stocks.get(i - 1).getDate());
@@ -87,7 +87,7 @@ public class EMovingAverage extends AbstractTechIndicator{
             	
             	//calculate factors
             	double []factor = calculateFactor(cycle_);            	
-            	c = new CycleValuePair(cycle_, stocks.get(i).getWeightedClosePrice() * factor[0] +
+            	c = new CycleValuePair(cycle_, stocks.get(i).getValue() * factor[0] +
             			previousPair.getValue() * factor[1]);            	
             }
             

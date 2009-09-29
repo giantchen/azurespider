@@ -10,11 +10,9 @@ import phenom.database.ConnectionManager;
 import phenom.stock.techind.AbstractTechIndicator;
 import phenom.utils.WeightUtil;;
 
-public class Stock implements Comparable<Stock>{
-	public static String SZZS = "000001.sh";
-	private String symbol;
-	private String exchange;
-	private String date;
+public class Stock extends GenericComputableEntry{
+	public static String SZZS = "000001.sh";	
+	private String exchange;	
 	private double openPrice;
 	private double highPrice;
 	private double lowPrice;
@@ -63,8 +61,8 @@ public class Stock implements Comparable<Stock>{
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((date == null) ? 0 : date.hashCode());
-		result = prime * result + ((symbol == null) ? 0 : symbol.hashCode());
+		result = prime * result + ((getDate() == null) ? 0 : getDate().hashCode());
+		result = prime * result + ((getSymbol() == null) ? 0 : getSymbol().hashCode());
 		return result;
 	}
 	
@@ -77,36 +75,34 @@ public class Stock implements Comparable<Stock>{
 		if (getClass() != obj.getClass())
 			return false;
 		Stock other = (Stock) obj;
-		if (date == null) {
-			if (other.date != null)
+		if (getDate() == null) {
+			if (other.getDate() != null)
 				return false;
-		} else if (!date.equals(other.date))
+		} else if (!getDate().equals(other.getDate()))
 			return false;
-		if (symbol == null) {
-			if (other.symbol != null)
+		if (getSymbol() == null) {
+			if (other.getSymbol() != null)
 				return false;
-		} else if (!symbol.equals(other.symbol))
+		} else if (!getSymbol().equals(other.getSymbol()))
 			return false;
 		return true;
 	}
+	
+	@Override
+	public double getValue() {
+		return getWeightedClosePrice();
+	}
+	
+	@Override
+	public void setValue(double v_) {
+		setWeightedClosePrice(v_);
+	}
 
-	public String getSymbol() {
-		return symbol;
-	}
-	public void setSymbol(String symbol) {
-		this.symbol = symbol;
-	}
 	public String getExchange() {
 		return exchange;
 	}
 	public void setExchange(String exchange) {
 		this.exchange = exchange;
-	}
-	public String getDate() {
-		return date;
-	}
-	public void setDate(String date) {
-		this.date = date;
 	}
 	public double getOpenPrice() {
 		return openPrice;
@@ -151,61 +147,48 @@ public class Stock implements Comparable<Stock>{
 		return this.weight;
 	}
 
-	public void set(ResultSet rs_) throws SQLException{
-		symbol = rs_.getString("Symbol");
+	public void set(ResultSet rs_) throws SQLException{		
 		exchange = rs_.getString("Exchange");
-		date = rs_.getString("Date");
+		setDate( rs_.getString("Date"));
 		openPrice = rs_.getDouble("Open");
 		highPrice = rs_.getDouble("High");
 		lowPrice = rs_.getDouble("Low");
 		closePrice = rs_.getDouble("Close");
 		amount = rs_.getDouble("amount");
 		volume = rs_.getDouble("Volume");
-		weight = rs_.getDouble("Weight");
-		
+		weight = rs_.getDouble("Weight");		
 		weightedOpenPrice = openPrice;
 		weightedClosePrice = closePrice;
 		weightedLowPrice = lowPrice;
 		weightedHighPrice = highPrice;	 
 	}	
 	
-	public Stock() {
-		
-	}
-	
 	public Stock(String symbol_) {
-		this(symbol_, null);
+		this(symbol_, null, -1);
 	}
 	
-	public Stock(String symbol_, String date_) {
-		this.symbol = symbol_;
-		this.date = date_;
+	public Stock(String symbol_, String date_, double value_) {
+		super(symbol_, date_, value_);
 	}
 	
 	@Override
 	public String toString() {
 		return "Stock [amount=" + amount + ", closePrice=" + closePrice
-				+ ", date=" + date + ", exchange=" + exchange + ", highPrice="
+				+ ", date=" + getDate() + ", exchange=" + exchange + ", highPrice="
 				+ highPrice + ", lowPrice=" + lowPrice + ", openPrice="
-				+ openPrice + ", symbol=" + symbol + ", volume=" + volume + "]";
+				+ openPrice + ", symbol=" + getSymbol() + ", volume=" + volume + "]";
 	}
 	
 	@Override
-	public int compareTo(Stock s) {
-		int result = this.getSymbol().compareTo(s.getSymbol());
-		
-		if(result == 0) {
-			result = this.getDate().compareTo(s.getDate());
-		}
-		
-		return result;
+	public int compareTo(GenericComputableEntry s) {
+		return super.compareTo(s);
 	}
 	
-	public List<Stock> getStock(String startDate_, String endDate_, boolean applyWeight) {
-		return Stock.getStock(getSymbol(), startDate_, endDate_, applyWeight);
+	public List<Stock> getStock(String startDate_, String endDate_, boolean applyWeight_) {
+		return Stock.getStock(getSymbol(), startDate_, endDate_, applyWeight_);
 	}
 	
-	public static List<Stock> getStock(String symbol_, String startDate_, String endDate_, boolean applyWeight) {
+	public static List<Stock> getStock(String symbol_, String startDate_, String endDate_, boolean applyWeight_) {
 		List<Stock> stocks = new ArrayList<Stock>();
 		Stock s = null;
 		Connection conn = null;
@@ -221,11 +204,11 @@ public class Stock implements Comparable<Stock>{
 			rs = conn.createStatement().executeQuery(sql);
 			
 			while(rs.next()) {
-				s = new Stock();
+				s = new Stock(rs.getString("Symbol"));
 				s.set(rs);
 				stocks.add(s);
 				
-				if(applyWeight) {
+				if(applyWeight_) {
 					WeightUtil.applyWeight(s);
 					//PriceCalculator.applyWeight(s);
 				}
@@ -258,7 +241,7 @@ public class Stock implements Comparable<Stock>{
 			rs = conn.createStatement().executeQuery(sql);
 			
 			while(rs.next()) {
-				s = new Stock();
+				s = new Stock(rs.getString("Symbol"));
 				s.set(rs);
 			}			
 		} catch (Exception e) {
@@ -307,7 +290,7 @@ public class Stock implements Comparable<Stock>{
 			rs = conn.createStatement().executeQuery(sql);
 			
 			while(rs.next()) {
-				s = new Stock();
+				s = new Stock(rs.getString("Symbol"));
 				s.set(rs);
 			}			
 		} catch (Exception e) {

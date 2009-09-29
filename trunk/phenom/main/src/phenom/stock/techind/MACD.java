@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 
-import phenom.stock.Stock;
+import phenom.stock.GenericComputableEntry;
 
 /**
  * 
@@ -31,7 +31,7 @@ public class MACD extends AbstractTechIndicator {
     }
     
     @Override
-    public void addValues(List<Stock> s_) {
+    public void addValues(List<? extends GenericComputableEntry> s_) {
         super.addValues(s_);
         ema.setValues(values);
     }
@@ -66,11 +66,11 @@ public class MACD extends AbstractTechIndicator {
         return AbstractTechIndicator.INVALID_VALUE;
     }    
     
-    public double calculate(Stock s_) {
+    public double calculate(GenericComputableEntry s_) {
         return calculate(s_, DEFAULT_SHORT_CYCLE, DEFAULT_LONG_CYCLE);
     }
     
-    public double calculate(Stock s_, int shortCycle_, int longCycle_) {
+    public double calculate(GenericComputableEntry s_, int shortCycle_, int longCycle_) {
         return calculate(s_.getSymbol(), s_.getDate(), shortCycle_, longCycle_);
     }
     
@@ -114,14 +114,14 @@ public class MACD extends AbstractTechIndicator {
         ema.calculate(symbol_, date_, shortCycle_);
         ema.calculate(symbol_, date_, longCycle_);
         
-        List<Stock> stocks = values.get(symbol_);        
+        List<GenericComputableEntry> stocks = values.get(symbol_);        
         Map<String, List<CycleValuePair>> macds = cache.get(symbol_);            
         if (macds == null) {
             macds = new HashMap<String, List<CycleValuePair>>();
             cache.put(symbol_, macds);
         }      
             
-        for(Stock s : stocks) {
+        for(GenericComputableEntry s : stocks) {
             List<CycleValuePair> pairs = macds.get(s.getDate());        
             if(pairs == null) {
                 pairs = new ArrayList<CycleValuePair>();
@@ -139,7 +139,7 @@ public class MACD extends AbstractTechIndicator {
      */
     protected void calculateDEA(String symbol_, String date_, int cycle_) {
         int diffCycle = DEFAULT_SHORT_CYCLE + DEFAULT_LONG_CYCLE;
-        List<Stock> stocks = values.get(symbol_);
+        List<GenericComputableEntry> stocks = values.get(symbol_);
         
         Map<String, List<CycleValuePair>> symbolDEAs = DEACache.get(symbol_);            
         if (symbolDEAs == null) {
@@ -149,7 +149,7 @@ public class MACD extends AbstractTechIndicator {
         
         for(int i = 0; i < stocks.size(); i++) {
             CycleValuePair c = null;
-            Stock s = stocks.get(i);            
+            GenericComputableEntry s = stocks.get(i);            
             
             List<CycleValuePair> pairs = symbolDEAs.get(s.getDate());        
             if(pairs == null) {

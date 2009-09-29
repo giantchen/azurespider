@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
-import phenom.stock.Stock;
+import phenom.stock.GenericComputableEntry;
 import phenom.utils.DateUtil;
 import phenom.stock.Cycle;
 
@@ -25,7 +25,7 @@ public class SMovingAverage extends AbstractTechIndicator{
      * By Default calculate Week/Ten Day/Fifteen Day/Month Average
      * After set, the averages are available via getAverage
      */
-    public void setAverage(Stock s_) {
+    public void setAverage(GenericComputableEntry s_) {
         setAverage(s_.getSymbol(), s_.getDate());
     }
     
@@ -39,11 +39,11 @@ public class SMovingAverage extends AbstractTechIndicator{
         }
     } 
     
-    public double getAverage(Stock s_, Cycle c_) {
+    public double getAverage(GenericComputableEntry s_, Cycle c_) {
         return getAverage(s_, c_.numDays());
     }
     
-    public double getAverage(Stock s_, int days_) {
+    public double getAverage(GenericComputableEntry s_, int days_) {
         return calculate(s_.getSymbol(), s_.getDate(), days_);
     }    
     
@@ -61,7 +61,7 @@ public class SMovingAverage extends AbstractTechIndicator{
     public double calculate(String symbol_, String date_, int days_) {
         validate(symbol_, date_, days_);
         
-        if(Collections.binarySearch(values.get(symbol_), new Stock(symbol_, date_)) < 0) {
+        if(Collections.binarySearch(values.get(symbol_), new GenericComputableEntry(symbol_, date_, -1)) < 0) {
         	return AbstractTechIndicator.INVALID_VALUE; //data is not avaliable
         }
         
@@ -96,9 +96,9 @@ public class SMovingAverage extends AbstractTechIndicator{
     
     protected CycleValuePair calculateMean(String symbol_, String date_, int days_) {
     	stat.clear();    	
-    	List<Stock> stocks = values.get(symbol_);
+    	List<GenericComputableEntry> stocks = values.get(symbol_);
         CycleValuePair cv = null;
-        Stock s = new Stock(symbol_);          
+        GenericComputableEntry s = new GenericComputableEntry(symbol_, null, -1);          
         String curDate = date_;           
         
         for(int i = 0; i < days_; i++) {
@@ -117,7 +117,7 @@ public class SMovingAverage extends AbstractTechIndicator{
             }
             
             if(index >= 0) { //find 1 record               
-                stat.addValue(stocks.get(index).getWeightedClosePrice());       
+                stat.addValue(stocks.get(index).getValue());       
             }
             
             curDate = DateUtil.previousDay(s.getDate());            
