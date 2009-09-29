@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import phenom.stock.Stock;
+import phenom.stock.GenericComputableEntry;
 import phenom.utils.DateUtil;
 
 public class DeltaEMAverage extends AbstractTechIndicator {
@@ -20,21 +20,21 @@ public class DeltaEMAverage extends AbstractTechIndicator {
 	}
 
 	@Override
-	public void addValues(List<Stock> s_) {
+	public void addValues(List<? extends GenericComputableEntry> s_) {
 		emv.addValues(s_);
 	}
 
 	@Override
-	public void addValue(Stock s_) {
+	public void addValue(GenericComputableEntry s_) {
 		emv.addValue(s_);
 	}
 
 	@Override
-	public void setValues(Map<String, List<Stock>> s_) {
+	public void setValues(Map<String, List<GenericComputableEntry>> s_) {
 		emv.setValues(s_);
 	}
 
-	public Map<String, List<Stock>> getValues() {
+	public Map<String, List<GenericComputableEntry>> getValues() {
 		return emv.values;
 	}
 	

@@ -35,7 +35,7 @@ public class EMovingAverageTest {
         Assert.assertEquals(10.4853, b.doubleValue());
         
         
-        s = new Stock("600518.sh", "20090220");
+        s = new Stock("600518.sh", "20090220", -1);
         m.addValues(s.getStock("20090201", "20090229", false), true);
         b = BigDecimal.valueOf(m.getAverage(s, 12)).setScale(4, BigDecimal.ROUND_HALF_UP);        
         Assert.assertEquals(10.5890, b.doubleValue()); 

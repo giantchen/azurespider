@@ -6,30 +6,30 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import phenom.stock.Stock;
+import phenom.stock.GenericComputableEntry;
 
 /**
  * This should behave like a util class.
  * Will refactor later
  * 
  */
-public abstract class AbstractTechIndicator implements ITechnicalIndicator<Stock>{
+public abstract class AbstractTechIndicator implements ITechnicalIndicator<GenericComputableEntry>{
 	public static double INVALID_VALUE = Double.NaN;
     //key = symbol, value(key = date, List(value = CycleValuePair))
     protected Map<String, Map<String, List<CycleValuePair>>> cache = new HashMap<String, Map<String, List<CycleValuePair>>>();    
     //protected List<Stock> values = new ArrayList<Stock>();
-    protected Map<String, List<Stock>> values = new HashMap<String, List<Stock>>();
+    protected Map<String, List<GenericComputableEntry>> values = new HashMap<String, List<GenericComputableEntry>>();
     
     @Override
-    public void addValues(List<Stock> s_) {
+    public void addValues(List<? extends GenericComputableEntry> s_) {
     	addValues(s_, false);
     }
     
-    public void addValues(List<Stock> s_, boolean sort_) {
-    	for(Stock s : s_) {
-    		List<Stock> st = values.get(s.getSymbol());
+    public void addValues(List<? extends GenericComputableEntry> s_, boolean sort_) {
+    	for(GenericComputableEntry s : s_) {
+    		List<GenericComputableEntry> st = values.get(s.getSymbol());
     		if(st == null) {
-    			st = new ArrayList<Stock>();
+    			st = new ArrayList<GenericComputableEntry>();
     			values.put(s.getSymbol(), st);
     		}
     		st.add(s);
@@ -43,7 +43,7 @@ public abstract class AbstractTechIndicator implements ITechnicalIndicator<Stock
     }
     
     @Override
-    public void addValue(Stock s_) {    	
+    public void addValue(GenericComputableEntry s_) {    	
     	addValue(s_, false);
     }
     /**
@@ -51,10 +51,10 @@ public abstract class AbstractTechIndicator implements ITechnicalIndicator<Stock
      * @param s_
      * @param sort_ if already sorting, should parse false
      */
-    public void addValue(Stock s_, boolean sort_) {
-    	List<Stock> s = values.get(s_.getSymbol());
+    public void addValue(GenericComputableEntry s_, boolean sort_) {
+    	List<GenericComputableEntry> s = values.get(s_.getSymbol());
     	if(s == null) {
-    		s = new ArrayList<Stock>();
+    		s = new ArrayList<GenericComputableEntry>();
     		values.put(s_.getSymbol(), s);
     	}
     	s.add(s_);
@@ -100,11 +100,11 @@ public abstract class AbstractTechIndicator implements ITechnicalIndicator<Stock
      * no need to keep 2 copies
      * @param s_
      */
-    protected void setValues(Map<String, List<Stock>> s_) {
+    protected void setValues(Map<String, List<GenericComputableEntry>> s_) {
     	this.values = s_;
     }
     
-    protected Map<String, List<Stock>> getValues() {
+    protected Map<String, List<GenericComputableEntry>> getValues() {
     	return values;
     }
     
