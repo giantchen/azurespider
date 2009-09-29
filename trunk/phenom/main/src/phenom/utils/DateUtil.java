@@ -69,4 +69,8 @@ public class DateUtil {
     public static List<String> tradeDates(String startDate_, String endDate_) {
     	return phenom.stock.Stock.tradeDates(startDate_, endDate_);
     }
+    
+    public static int workingDaySpan(String symbol_, String fromDate_, String toDate_) {
+    	return 1;
+    }
 }
