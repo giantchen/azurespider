@@ -9,7 +9,6 @@ import java.util.Map;
 import org.apache.commons.math.stat.descriptive.moment.Variance;
 
 import phenom.stock.GenericComputableEntry;
-import phenom.stock.techind.AbstractTechIndicator.CycleValuePair;
 
 public class PriceReverse extends AbstractTechIndicator {
 	private static Variance variance = new Variance();
@@ -41,7 +40,7 @@ public class PriceReverse extends AbstractTechIndicator {
 	public Map<String, List<GenericComputableEntry>> getValues() {
 		return pDelta.getValues();
 	}
-
+	
 	@Override
 	public double calculate(String symbol_, String date_, int cycle_) {
 		double pr = 0;
@@ -61,7 +60,7 @@ public class PriceReverse extends AbstractTechIndicator {
 		return pr;
 	}
 
-	protected void calculatePR(String symbol_, String date_, int cycle_) {
+	private void calculatePR(String symbol_, String date_, int cycle_) {
 		pDelta.calculate(symbol_, date_, cycle_);
 		List<GenericComputableEntry> deltas = pDelta.getDeltas(symbol_, cycle_);
 		Collections.sort(deltas);

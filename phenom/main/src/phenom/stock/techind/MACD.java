@@ -109,7 +109,7 @@ public class MACD extends AbstractTechIndicator {
     /**
      * Eager Calculation
      */
-    protected void calculateDIF(String symbol_, String date_, int shortCycle_, int longCycle_) {
+    private void calculateDIF(String symbol_, String date_, int shortCycle_, int longCycle_) {
         int days_ = shortCycle_ + longCycle_;
         ema.calculate(symbol_, date_, shortCycle_);
         ema.calculate(symbol_, date_, longCycle_);
@@ -137,7 +137,7 @@ public class MACD extends AbstractTechIndicator {
      * Eager Calulation
      * @param cycle_
      */
-    protected void calculateDEA(String symbol_, String date_, int cycle_) {
+    private void calculateDEA(String symbol_, String date_, int cycle_) {
         int diffCycle = DEFAULT_SHORT_CYCLE + DEFAULT_LONG_CYCLE;
         List<GenericComputableEntry> stocks = values.get(symbol_);
         
@@ -190,7 +190,7 @@ public class MACD extends AbstractTechIndicator {
      * 2/(N+1) * Today MV + (N - 1)/(N + 1) * Yesterday MV
      *
      */
-    static class ExponentialMA extends EMovingAverage {
+    private static class ExponentialMA extends EMovingAverage {
         @Override
         protected double[] calculateFactor(int... cycle_) {        
             int p1 = cycle_[0];

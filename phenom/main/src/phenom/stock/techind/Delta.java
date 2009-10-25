@@ -17,8 +17,7 @@ public class Delta extends AbstractTechIndicator {
 		
 		if(!super.isCalculated(symbol_, date_, cycle_)) {
 			calculate(symbol_, cycle_);
-		}
-		
+		}		
 		List<CycleValuePair> pairs = cache.get(symbol_).get(date_);        
         for(CycleValuePair c : pairs) {
             if(c.getCycle() == cycle_) {
@@ -52,7 +51,7 @@ public class Delta extends AbstractTechIndicator {
 		return lst;
 	}
 	
-	protected void calculate(String symbol_, int cycle_) {
+	private void calculate(String symbol_, int cycle_) {
 		List<GenericComputableEntry> stocks = values.get(symbol_);
 		
 		for(int i = 0; i < stocks.size(); i++) {
@@ -73,23 +72,14 @@ public class Delta extends AbstractTechIndicator {
             
             if(i == 0) {
             	c = new CycleValuePair(cycle_, 0);
-            } else {
-            	CycleValuePair previousPair = null;
-            	List<CycleValuePair> previosPairs = symbolAverages.get(stocks.get(i - 1).getDate());
-            	for(CycleValuePair cv : previosPairs) {
-            		if(cv.getCycle() == cycle_) {
-            			previousPair = cv;
-            			break;
-            		}            		
-            	}
+            } else {           
             	double pt = stocks.get(i).getValue();
-            	double py = previousPair.getValue();
+            	double py = stocks.get(i - 1).getValue();
             	int days = DateUtil.workingDaySpan(symbol_, stocks.get(i - 1).getDate(), stocks.get(i).getDate());
-            	c = new CycleValuePair(cycle_, (pt - py) / days);
+            	c = new CycleValuePair(cycle_, (pt - py) / py / days);
             }
             
             pairs.add(c);
 		}
 	}
-
 }
