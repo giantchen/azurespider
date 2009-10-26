@@ -1,5 +1,7 @@
 package phenom.stock;
 
+import phenom.stock.techind.Computable;
+
 public class GenericComputableEntry implements Computable, Comparable<GenericComputableEntry> {
 	private String symbol;
 	private String date;
