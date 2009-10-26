@@ -16,6 +16,7 @@ import phenom.stock.Stock;
 import phenom.stock.techind.AbstractTechIndicator;
 import phenom.stock.techind.DeltaEMAverage;
 import phenom.utils.DateUtil;
+import phenom.utils.StockUtil;
 import phenom.utils.WeightUtil;
 import phenom.utils.graph.TimeSeriesGraph;
 
@@ -35,12 +36,14 @@ public class RollingStrategy {
 	private double buyStampTax = 0;
 	private double sellStampTax = 0.001;
 	private int maxPosCount = 10;
+	private double initCash = -1;
 
 	String startDate = "20090101";
-	String endDate = "20091231";
+	String endDate = "20091020";
 
 	public RollingStrategy(double cash_, int maxPosCount_, int minHoldingDays_, List<String> indexSymbols_) {
 		cash = cash_;
+		initCash = cash_;
 		maxPosCount = maxPosCount_;
 		minHoldingDays = minHoldingDays_;
 		indexSymbols = indexSymbols_;
@@ -82,7 +85,8 @@ public class RollingStrategy {
 				
 		TimeSeriesGraph graph = new TimeSeriesGraph("Stock", "Date",
 		"Price & Money");
-		graph.addDataSource("YangFei", rs.getPos());
+		graph.addDataSource("Rolling", rs.getPos());
+		graph.addDataSource("上证指数", StockUtil.transfer(Stock.getStock(Stock.SZZS, rs.getStartDate(), rs.getEndDate(), false)));
 		graph.display();
 		try {
 			Thread.sleep(10 * 1000);
@@ -192,7 +196,7 @@ public class RollingStrategy {
 				
 				processEntitlement(td);
 				System.out.println("------- Finish tradeDate ------" + td);
-				pos.add(getFinalCash(td));
+				pos.add(getFinalCash(td) / initCash);
 			}			
 		} catch (Exception e) {
 			e.printStackTrace();
