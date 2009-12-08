@@ -18,6 +18,10 @@ public final class FinanceIndicator implements Comparable<FinanceIndicator> {
 		this.symbol = symbol;
 		this.value = value;
 	}
+	
+	public double getValue() {
+		return this.value;
+	}	
 
 	public String getSymbol() {
 		return symbol;

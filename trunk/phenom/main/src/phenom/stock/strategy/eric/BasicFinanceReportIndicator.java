@@ -53,7 +53,7 @@ public abstract class BasicFinanceReportIndicator {
 		return null;
 	}
 	
-	protected boolean isTradeDay(String date) {
+	public boolean isTradeDay(String date) {
 		return stock.isTradeDate(date);
 	}
 
