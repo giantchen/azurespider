@@ -13,7 +13,7 @@ import phenom.database.ConnectionManager;
 
 public class Index {
 	private final static String INDEX_SQL = "select distinct IndexId from STOCK_INDEX where " +
-			"IndexId between '000908.sh' and '000917.sh'";
+			"IndexId between '000908.sh' and '000916.sh'";
 	private final static String INDEX_SQL1 = "select distinct IndexId from STOCK_INDEX where " +
 	"IndexId between '000914.sh' and '000915.sh'";
 	
@@ -26,7 +26,7 @@ public class Index {
 
 		try {
 			conn = ConnectionManager.getConnection();
-			rs = conn.createStatement().executeQuery(INDEX_SQL1);
+			rs = conn.createStatement().executeQuery(INDEX_SQL);
 
 			while (rs.next()) {
 				is.put(rs.getString("IndexId"), null);

@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import phenom.database.ConnectionManager;
 import phenom.stock.techind.AbstractTechIndicator;
+import phenom.utils.DateUtil;
 import phenom.utils.WeightUtil;;
 
 public class Stock extends GenericComputableEntry{
@@ -310,6 +311,11 @@ public class Stock extends GenericComputableEntry{
 	
 	public static double getClosePrice(String symbol_, String date_) {
 		Stock s = getStock(symbol_, date_);
-		return s == null ? AbstractTechIndicator.INVALID_VALUE : s.getClosePrice();
+		while(s == null) {
+			System.out.println("no price for symbol = " + symbol_ + " on date = " + date_);
+			date_ = DateUtil.previosTradeDate(date_);
+			s = getStock(symbol_, date_);
+		}
+		return s.getClosePrice();
 	}
 }

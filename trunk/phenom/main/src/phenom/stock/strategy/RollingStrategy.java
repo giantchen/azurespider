@@ -32,14 +32,14 @@ public class RollingStrategy {
 	//TODO Utilize minHolding days
 	private int minHoldingDays = 5;
 	private double cash = -1;
-	private double commission = 0.003;
+	private double commission = 0.001;
 	private double buyStampTax = 0;
 	private double sellStampTax = 0.001;
 	private int maxPosCount = 10;
 	private double initCash = -1;
 
 	String startDate = "20090101";
-	String endDate = "20091020";
+	String endDate = "20091120";
 
 	public RollingStrategy(double cash_, int maxPosCount_, int minHoldingDays_, List<String> indexSymbols_) {
 		cash = cash_;
@@ -173,8 +173,12 @@ public class RollingStrategy {
 						
 						if(j == 0 || j == 1 || j == 2) {
 							//pick up buy symbols, for top3 index pick 2 stocks for each
-							buySymbols.add(sortedStock.get(0).getName());
-							buySymbols.add(sortedStock.get(1).getName());
+							if(sortedStock.size() > 0)
+								buySymbols.add(sortedStock.get(0).getName());
+							if(sortedStock.size() > 1)
+								buySymbols.add(sortedStock.get(1).getName());
+							/*if(sortedStock.size() > 2)
+								buySymbols.add(sortedStock.get(2).getName());*/
 						}				
 						allStock.addAll(sortedStock);
 						sortedStock.clear();			
@@ -304,8 +308,8 @@ public class RollingStrategy {
 		for(String symbol : position.keySet()) {
 			PositionEntry pe = position.get(symbol);
 			double p = Stock.getClosePrice(symbol, date_);
-			if(!AbstractTechIndicator.isValid(p))
-				continue;
+			/*if(!AbstractTechIndicator.isValid(p))
+				continue;*/
 			curCash += (pe.getAmount() + pe.getInflightPos()) * p;
 			curCash += pe.getInflightCash();			
 		}		
