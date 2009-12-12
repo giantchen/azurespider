@@ -39,6 +39,7 @@ public class WeightUtil {
 		
 	// 分红转增增发
 	static Map<String, List<Dividend>> weights = new HashMap<String, List<Dividend>>();
+	static Map<String, List<Dividend>> allocWeights = new HashMap<String, List<Dividend>>();
 
 	public static Dividend getEntitlement(String symbol, String date, DateType dt) {
 		Dividend dv = null;
@@ -62,6 +63,29 @@ public class WeightUtil {
 		}
 		return dv;
 	}
+	
+	public static Dividend getAllocEntitlement(String symbol, String date, DateType dt) {
+		Dividend dv = null;
+		if (!allocWeights.containsKey(symbol)) {
+			initDividend(symbol, true);
+		}
+		List<Dividend> ds = allocWeights.get(symbol);
+		if (ds.size() > 0) {
+			for (Dividend d : ds) {
+				if (dt == DateType.LIST_DATE && date.equals(d.getListDate())) {
+					dv = d;
+					break;
+				} else if (dt == DateType.XDATE && date.equals(d.getXDate())) {
+					dv = d;
+					break;
+				} else if (dt == DateType.REG_DATE && date.equals(d.getRegDate())) {
+					dv = d;
+					break;
+				}
+			}
+		}
+		return dv;
+	} 
 
 	public static void applyWeight(Stock s) {
 		s.setWeightedClosePrice(s.getClosePrice() * s.getWeight());
@@ -93,7 +117,12 @@ public class WeightUtil {
 		lock.lock();
 
 		List<Dividend> ws = new ArrayList<Dividend>();
-		weights.put(symbol, ws);
+		if(!alloc) {
+			weights.put(symbol, ws);
+		} else {
+			allocWeights.put(symbol, ws);
+		}
+		
 		Connection conn = null;
 		PreparedStatement s = null;
 		ResultSet rs = null;
