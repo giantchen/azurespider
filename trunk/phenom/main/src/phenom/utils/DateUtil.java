@@ -73,4 +73,8 @@ public class DateUtil {
     public static int workingDaySpan(String symbol_, String fromDate_, String toDate_) {
     	return 1;
     }
+    
+    public boolean isTradeDate(String symbol, String date) {
+    	return phenom.stock.Stock.isTradeDate(symbol, date);
+    }
 }

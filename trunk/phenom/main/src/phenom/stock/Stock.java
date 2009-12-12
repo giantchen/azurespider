@@ -323,4 +323,9 @@ public class Stock extends GenericComputableEntry{
 		}
 		return s.getClosePrice();
 	}
+	
+	public static boolean isTradeDate(String symbol, String date) {
+		Stock s = getStock(symbol, date);
+		return s == null ? false : true;
+	}
 }

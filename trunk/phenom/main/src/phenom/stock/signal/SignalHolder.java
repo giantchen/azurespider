@@ -38,6 +38,6 @@ public class SignalHolder {
 	}
 
 	public void init(List<String> symbol, String startDate, String endDate) {
-
+		
 	}
 }
