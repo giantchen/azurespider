@@ -1,4 +1,4 @@
-package phenom.stock;
+ package phenom.stock;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -111,6 +111,12 @@ public class Dividend implements Comparable<Dividend>{
 	}
 	
 	public void setAlloc(ResultSet rs_) throws SQLException {
-		
+		symbol = rs_.getString("Symbol");
+		xDate = rs_.getString("XDate");
+		listDate = rs_.getString("ListDate");
+		annDate = rs_.getString("AnnounceDate");
+		regDate = rs_.getString("RegDate");
+		allocShare = Double.parseDouble(rs_.getString("AllocShare")) / 10;
+		allocPrice = Double.parseDouble(rs_.getString("AllocPrice"));
 	}
 }
