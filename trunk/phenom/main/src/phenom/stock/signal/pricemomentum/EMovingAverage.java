@@ -1,6 +1,5 @@
 package phenom.stock.signal.pricemomentum;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
@@ -17,32 +16,33 @@ import phenom.stock.signal.GenericComputableEntry;
  * Currently only support eager calculation
  */
 public class EMovingAverage extends AbstractPriceMomentumSignal{
-	public double getAverage(String symbol_, String date_, int cycle_) {
-		return calculate(symbol_, date_, cycle_);
+	public double getAverage(String symbol_, String date_, int cycle) {
+		return calculate(symbol_, date_, cycle);
 	}
 	
-	public double getAverage(GenericComputableEntry s_, int cycle_) {
-		return calculate(s_.getSymbol(), s_.getDate(), cycle_);
+	public double getAverage(GenericComputableEntry s_, int cycle) {
+		return calculate(s_.getSymbol(), s_.getDate(), cycle);
 	}
 	
     /**
      * Calculate Average Specified by days
      */
 	@Override
-    public double calculate(String symbol_, String date_, int days_) {
-    	double average = 0;
-        validate(symbol_, date_, days_);        
-        if(Collections.binarySearch(values.get(symbol_), new GenericComputableEntry(symbol_, date_, -1)) < 0) {
-        	return AbstractPriceMomentumSignal.INVALID_VALUE; //data is not avaliable
+    public double calculate(String symbol, String date, int cycle) {
+    	double average = AbstractPriceMomentumSignal.INVALID_VALUE;
+        validate(symbol, date, cycle);    
+        
+        if(!isTradeDate(symbol, date)) {
+			return average;
+		}
+        
+        if(!isCalculated(symbol, date, cycle)) {
+        	calculateEM(symbol, cycle);        	
         }
         
-        if(!isCalculated(symbol_, date_, days_)) {
-        	calculateEM(symbol_, days_);        	
-        }
-        
-        List<CycleValuePair> pairs = cache.get(symbol_).get(date_);        
+        List<CycleValuePair> pairs = cache.get(symbol).get(date);        
         for(CycleValuePair c : pairs) {
-            if(c.getCycle() == days_) {
+            if(c.getCycle() == cycle) {
                 average = c.getValue();
                 break;
             }
@@ -54,8 +54,8 @@ public class EMovingAverage extends AbstractPriceMomentumSignal{
     /**
      * Eager Calculation
      */
-    private void calculateEM(String symbol_, int cycle_) {
-    	List<GenericComputableEntry> stocks = values.get(symbol_);
+    private void calculateEM(String symbol, int cycle) {
+    	List<GenericComputableEntry> stocks = values.get(symbol);
     	
     	for(int i = 0; i < stocks.size(); i++) {
     		CycleValuePair c = null;
@@ -64,7 +64,7 @@ public class EMovingAverage extends AbstractPriceMomentumSignal{
     		Map<String, List<CycleValuePair>> symbolAverages = cache.get(s.getSymbol());
     		if (symbolAverages == null) {
                 symbolAverages = new HashMap<String, List<CycleValuePair>>();
-                cache.put(symbol_, symbolAverages);
+                cache.put(symbol, symbolAverages);
             }
     		
     		List<CycleValuePair> pairs = symbolAverages.get(s.getDate());        
@@ -74,20 +74,20 @@ public class EMovingAverage extends AbstractPriceMomentumSignal{
             }
             
             if(i == 0) {
-            	c = new CycleValuePair(cycle_, stocks.get(0).getValue());
+            	c = new CycleValuePair(cycle, stocks.get(0).getValue());
             } else {
             	CycleValuePair previousPair = null;
             	List<CycleValuePair> previosPairs = symbolAverages.get(stocks.get(i - 1).getDate());
             	for(CycleValuePair cv : previosPairs) {
-            		if(cv.getCycle() == cycle_) {
+            		if(cv.getCycle() == cycle) {
             			previousPair = cv;
             			break;
             		}
             	}
             	
             	//calculate factors
-            	double []factor = calculateFactor(cycle_);            	
-            	c = new CycleValuePair(cycle_, stocks.get(i).getValue() * factor[0] +
+            	double []factor = calculateFactor(cycle);            	
+            	c = new CycleValuePair(cycle, stocks.get(i).getValue() * factor[0] +
             			previousPair.getValue() * factor[1]);            	
             }
             
@@ -97,11 +97,11 @@ public class EMovingAverage extends AbstractPriceMomentumSignal{
     
     /**
      * different EMV could override this method to 
-     * @param cycle_
+     * @param cycle
      * @return
      */
-    protected double[] calculateFactor(int... cycle_) {
-    	int c = cycle_[0];    	
+    protected double[] calculateFactor(int... cycle) {
+    	int c = cycle[0];    	
     	double f1 = 1 / ((double)c);
     	double f2 = ((double)(c - 1)) / c;
     	return new double[]{f1, f2};    	    	

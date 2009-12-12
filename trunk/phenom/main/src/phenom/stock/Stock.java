@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.List;
 import phenom.database.ConnectionManager;
 import phenom.stock.signal.GenericComputableEntry;
-import phenom.stock.signal.pricemomentum.AbstractPriceMomentumSignal;
 import phenom.utils.DateUtil;
 import phenom.utils.WeightUtil;;
 
@@ -26,6 +25,11 @@ public class Stock extends GenericComputableEntry{
 	private double weightedClosePrice;
 	private double weightedLowPrice;
 	private double weightedHighPrice;
+	private boolean trade;
+	
+	public boolean isTrade() {
+		return trade;
+	}
 	
 	public double getWeightedOpenPrice() {
 		return weightedOpenPrice;

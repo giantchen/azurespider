@@ -31,8 +31,8 @@ public class DeltaEMAverage extends AbstractPriceMomentumSignal {
 	}
 
 	@Override
-	public void setValues(Map<String, List<GenericComputableEntry>> s_) {
-		emv.setValues(s_);
+	public void setPrices(Map<String, List<GenericComputableEntry>> s_) {
+		emv.setPrices(s_);
 	}
 
 	public Map<String, List<GenericComputableEntry>> getValues() {
@@ -40,27 +40,31 @@ public class DeltaEMAverage extends AbstractPriceMomentumSignal {
 	}
 	
 	@Override
-	public double calculate(String symbol_, String date_, int cycle_) {
+	public double calculate(String symbol, String date, int cycle) {
 		double delta = AbstractPriceMomentumSignal.INVALID_VALUE;
-		validate(symbol_, date_, cycle_);
+		validate(symbol, date, cycle);
 		
-		if(!super.isCalculated(symbol_, date_, cycle_)) {
-			String previousTD = DateUtil.previousTradeDate(symbol_, date_);
-			double now = emv.getAverage(symbol_, date_, cycle_);			
+		if(!isTradeDate(symbol, date)) {
+			return delta;
+		}
+		
+		if(!super.isCalculated(symbol, date, cycle)) {
+			String previousTD = DateUtil.previousTradeDate(symbol, date);
+			double now = emv.getAverage(symbol, date, cycle);			
 			
 			if(!isValid(now)) {
 				return delta;
 			}
 			
-			double yesterday = emv.getAverage(symbol_, previousTD, cycle_);			
+			double yesterday = emv.getAverage(symbol, previousTD, cycle);			
 			delta = (now - yesterday) / yesterday;
 			
 			//add into cache
 			Map<String, List<CycleValuePair>> symbolAverages = new HashMap<String, List<CycleValuePair>>();
-			cache.put(symbol_, symbolAverages);
+			cache.put(symbol, symbolAverages);
 			List<CycleValuePair> pairs = new ArrayList<CycleValuePair>();
-			pairs.add(new CycleValuePair(cycle_, delta));
-			symbolAverages.put(date_, pairs);
+			pairs.add(new CycleValuePair(cycle, delta));
+			symbolAverages.put(date, pairs);
 		}
 		
 		return delta;

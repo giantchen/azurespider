@@ -31,9 +31,9 @@ public class MACD extends AbstractPriceMomentumSignal {
     }
     
     @Override
-    public void addPrices(List<? extends GenericComputableEntry> s_) {
-        super.addPrices(s_);
-        ema.setValues(values);
+    public void addPrices(List<? extends GenericComputableEntry> s) {
+        super.addPrices(s);
+        ema.setPrices(values);
     }
     
     @Override
@@ -82,20 +82,24 @@ public class MACD extends AbstractPriceMomentumSignal {
     /**
      * Calculate Average Specified by days
      */    
-    public double calculate(String symbol_, String date_, int shortCycle_, int longCycle_) {
-        double average = 0;
-        validate(symbol_, date_, shortCycle_);
-        validate(symbol_, date_, longCycle_);
+    public double calculate(String symbol, String date, int shortCycle, int longCycle) {
+        double average = AbstractPriceMomentumSignal.INVALID_VALUE;
+        validate(symbol, date, shortCycle);
+        validate(symbol, date, longCycle);
         
-        String k = symbol_ + String.valueOf(shortCycle_) + String.valueOf(longCycle_);
+        if(!isTradeDate(symbol, date)) {
+			return average;
+		}
+        
+        String k = symbol + String.valueOf(shortCycle) + String.valueOf(longCycle);
         if(!calculatedCycleCache.contains(k)) {
-            calculateDIF(symbol_, date_, shortCycle_, longCycle_);
-            calculateDEA(symbol_, date_, DEFAULT_DEA_CYCLE);
+            calculateDIF(symbol, date, shortCycle, longCycle);
+            calculateDEA(symbol, date, DEFAULT_DEA_CYCLE);
             calculatedCycleCache.add(k);
         }
         
-        int days = shortCycle_ + longCycle_;
-        List<CycleValuePair> pairs = DEACache.get(symbol_).get(date_);
+        int days = shortCycle + longCycle;
+        List<CycleValuePair> pairs = DEACache.get(symbol).get(date);
         for(CycleValuePair c : pairs) {
             if(c.getCycle() == days) {
                 average = c.getValue();

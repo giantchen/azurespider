@@ -61,9 +61,9 @@ public class SMovingAverage extends AbstractPriceMomentumSignal{
     public double calculate(String symbol_, String date_, int days_) {
         validate(symbol_, date_, days_);
         
-        if(Collections.binarySearch(values.get(symbol_), new GenericComputableEntry(symbol_, date_, -1)) < 0) {
-        	return AbstractPriceMomentumSignal.INVALID_VALUE; //data is not avaliable
-        }
+        if (!isTradeDate(symbol_, date_)) {
+			return AbstractPriceMomentumSignal.INVALID_VALUE;
+		}
         
         CycleValuePair average = null;
         
