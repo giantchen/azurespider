@@ -6,7 +6,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 
-public class NetAssetsPerShare extends AbstractFundmentalSignal {
+public class EarningToPrice extends AbstractFundmentalSignal {
+		
 	@Override
 	public void addFundmentalData(List<FundmentalData> dataList) {
 		for (FundmentalData data : dataList) {
@@ -22,19 +23,19 @@ public class NetAssetsPerShare extends AbstractFundmentalSignal {
 				});
 				values.put(data.getSymbol(), m);
 			}
-			m.put(data.getAnnounceDate(), data.getNetAssetsPerShare());
+			m.put(data.getAnnounceDate(), data.getEarningPerShare());
 		}
 	}
 	
 	@Override
 	public double calculate(final String symbol, final String date) {
-		if (!values.containsKey(symbol))
+		if (!values.containsKey(symbol) || !prices.containsKey(symbol) || !prices.get(symbol).containsKey(date))
 			return Double.NaN;
 		
 		// the map is in desc order, so return the first date that <= date
 		for (String d : values.get(symbol).keySet()) {
 			if (d.compareTo(date) <= 0) {
-				return values.get(symbol).get(d);
+				return values.get(symbol).get(d) / prices.get(symbol).get(date);
 			}
 		}
 		return Double.NaN;

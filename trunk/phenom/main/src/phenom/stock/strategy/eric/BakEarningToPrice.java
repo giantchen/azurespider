@@ -1,16 +1,16 @@
 package phenom.stock.strategy.eric;
 
 
-public class EarningToPrice extends BasicFinanceReportIndicator {
-	protected EarningToPrice(String symbol, String field, String startDate, String endDate) {
+public class BakEarningToPrice extends BasicFinanceReportIndicator {
+	protected BakEarningToPrice(String symbol, String field, String startDate, String endDate) {
 		super(symbol, field, startDate, endDate);
 	}
 	
-	public EarningToPrice(String symbol) {
+	public BakEarningToPrice(String symbol) {
 		this(symbol, "EarningPerShare", null, null);
 	}
 	
-	public EarningToPrice(String symbol, String startDate, String endDate) {
+	public BakEarningToPrice(String symbol, String startDate, String endDate) {
 		this(symbol, "EarningPerShare", startDate, endDate);
 	}
 	
