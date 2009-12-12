@@ -38,7 +38,7 @@ public class EricStrategy {
 	@Test
 	public void NetAssetsStrategy() throws Exception {
 		String startDate = "20090105";
-		String endDate = "20090901";	
+		String endDate = "20091204";	
 
 		List<String> symbols = this.getAllSymbols();
 		List<BasicFinanceReportIndicator> netAssets = new ArrayList<BasicFinanceReportIndicator>();
@@ -54,8 +54,8 @@ public class EricStrategy {
 	
 	@Test
 	public void ReturnOnEquityStrategy() throws Exception {
-		String startDate = "20080102";
-		String endDate = "20090105";	
+		String startDate = "20090105";
+		String endDate = "20091204";	
 
 		List<String> symbols = this.getAllSymbols();
 		List<BasicFinanceReportIndicator> roes = new ArrayList<BasicFinanceReportIndicator>();
@@ -72,7 +72,7 @@ public class EricStrategy {
 	@Test
 	public void EarningPerShareStrategy() throws Exception {
 		String startDate = "20090105";
-		String endDate = "20091023";		
+		String endDate = "20091204";			
 
 		List<String> symbols = this.getAllSymbols();
 		List<BasicFinanceReportIndicator> earnings = new ArrayList<BasicFinanceReportIndicator>();
@@ -88,7 +88,7 @@ public class EricStrategy {
 	@Test
 	public void EarningToPriceStrategy() throws Exception {
 		String startDate = "20090105";
-		String endDate = "20090901";		
+		String endDate = "20091204";	
 
 		List<String> symbols = this.getAllSymbols();
 		List<BasicFinanceReportIndicator> earnings = new ArrayList<BasicFinanceReportIndicator>();
@@ -104,7 +104,7 @@ public class EricStrategy {
 	@Test
 	public void CashFlowToPriceStrategy() throws Exception {
 		String startDate = "20090105";
-		String endDate = "20091023";		
+		String endDate = "20091204";		
 
 		List<String> symbols = this.getAllSymbols();
 		List<BasicFinanceReportIndicator> earnings = new ArrayList<BasicFinanceReportIndicator>();
@@ -120,7 +120,7 @@ public class EricStrategy {
 	@Test
 	public void NetProfitStrategy() throws Exception {
 		String startDate = "20090105";
-		String endDate = "20090901";		
+		String endDate = "20091204";		
 
 		List<String> symbols = this.getAllSymbols();
 		List<BasicFinanceReportIndicator> earnings = new ArrayList<BasicFinanceReportIndicator>();
@@ -203,7 +203,7 @@ public class EricStrategy {
 		graph.addDataSource("Index", indexPrice);
 		graph.display();
 		try {
-			Thread.sleep(10 * 1000);
+			Thread.sleep(600 * 1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

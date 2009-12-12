@@ -39,7 +39,7 @@ public class RollingStrategy {
 	private double initCash = -1;
 
 	String startDate = "20090101";
-	String endDate = "20091120";
+	String endDate = "20091204";
 
 	public RollingStrategy(double cash_, int maxPosCount_, int minHoldingDays_, List<String> indexSymbols_) {
 		cash = cash_;
