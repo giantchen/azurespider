@@ -31,8 +31,8 @@ public class MACD extends AbstractPriceMomentumSignal {
     }
     
     @Override
-    public void addValues(List<? extends GenericComputableEntry> s_) {
-        super.addValues(s_);
+    public void addPrices(List<? extends GenericComputableEntry> s_) {
+        super.addPrices(s_);
         ema.setValues(values);
     }
     

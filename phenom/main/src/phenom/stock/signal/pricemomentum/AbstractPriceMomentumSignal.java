@@ -9,7 +9,7 @@ import java.util.Collections;
 import phenom.stock.signal.GenericComputableEntry;
 import phenom.stock.signal.ISignal;
 
-public abstract class AbstractPriceMomentumSignal implements ISignal<GenericComputableEntry>{
+public abstract class AbstractPriceMomentumSignal implements ISignal{
 	public static double INVALID_VALUE = Double.NaN;
 	public int DEFAULT_CYCLE = 5;
 	
@@ -29,8 +29,7 @@ public abstract class AbstractPriceMomentumSignal implements ISignal<GenericComp
     	return DEFAULT_CYCLE;
     }
     
-    @Override
-    public void addValues(List<? extends GenericComputableEntry> s_) {
+    public void addPrices(List<? extends GenericComputableEntry> s_) {
     	addValues(s_, false);
     }
     
@@ -51,8 +50,7 @@ public abstract class AbstractPriceMomentumSignal implements ISignal<GenericComp
         }
     }
     
-    @Override
-    public void addValue(GenericComputableEntry s_) {    	
+    public void addPrice(GenericComputableEntry s_) {    	
     	addValue(s_, false);
     }
     /**
@@ -72,7 +70,6 @@ public abstract class AbstractPriceMomentumSignal implements ISignal<GenericComp
         }
     }
     
-    @Override
     public void clear() {
         clear(true);
     } 

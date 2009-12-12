@@ -101,14 +101,14 @@ public class RollingStrategy {
 		Set<String> loadedStocks = new HashSet<String>();
 		for(String indexId : indexStock.keySet()) {
 			if(!loadedStocks.contains(indexId)) {
-				dea_.addValues(Stock.getStock(indexId, getStartDate(), getEndDate(), true));
+				dea_.addPrices(Stock.getStock(indexId, getStartDate(), getEndDate(), true));
 				loadedStocks.add(indexId);
 			}
 			
 			List<String> stocks = indexStock.get(indexId);
 			for(String symbol : stocks) {
 				if(!loadedStocks.contains(symbol)) {
-					dea_.addValues(Stock.getStock(symbol, getStartDate(), getEndDate(), true));
+					dea_.addPrices(Stock.getStock(symbol, getStartDate(), getEndDate(), true));
 					loadedStocks.add(symbol);
 				}
 			}

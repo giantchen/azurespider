@@ -21,13 +21,13 @@ public class DeltaEMAverage extends AbstractPriceMomentumSignal {
 	}
 
 	@Override
-	public void addValues(List<? extends GenericComputableEntry> s_) {
-		emv.addValues(s_);
+	public void addPrices(List<? extends GenericComputableEntry> s_) {
+		emv.addPrices(s_);
 	}
 
 	@Override
-	public void addValue(GenericComputableEntry s_) {
-		emv.addValue(s_);
+	public void addPrice(GenericComputableEntry s_) {
+		emv.addPrice(s_);
 	}
 
 	@Override
