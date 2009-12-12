@@ -15,9 +15,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import phenom.stock.NameValuePair;
+import phenom.stock.signal.ISignal;
+import phenom.stock.signal.SignalHolder;
 import phenom.stock.signal.fundmental.AbstractFundmentalSignal;
-import phenom.stock.signal.fundmental.FundmentalData;
-import phenom.stock.signal.fundmental.NetAssetsPerShare;
 import phenom.stock.trading.MyPortfolio;
 import phenom.stock.trading.MyStock;
 import phenom.stock.trading.MyTrade;
@@ -49,10 +49,9 @@ public class EricStrategy {
 		String endDate = "20091204";	
 
 		List<String> symbols = this.getAllSymbols();
-		List<FundmentalData> datas = AbstractFundmentalSignal.loadFundmentalData(symbols, startDate, endDate);
-		NetAssetsPerShare signal = new NetAssetsPerShare();
-		signal.addFundmentalData(datas);
-		newBasicIndicatorTest(startDate, endDate, symbols, signal);
+		SignalHolder signals = new SignalHolder(symbols, startDate, endDate);
+		
+		basicIndicatorTest(startDate, endDate, symbols, signals.getNetAssetsPerShareSignal());
 	}
 	
 	@Test
@@ -68,7 +67,7 @@ public class EricStrategy {
 			BakNetAssetsPerShare na = new BakNetAssetsPerShare(symbol, startDate, endDate);
 			earnings.add(na);
 		}		
-		basicIndicatorTest(startDate, endDate, earnings);
+		oldBasicIndicatorTest(startDate, endDate, earnings);
 	}	
 	
 	@Test
@@ -84,7 +83,7 @@ public class EricStrategy {
 			EarningPerShare na = new EarningPerShare(symbol, startDate, endDate);
 			earnings.add(na);
 		}		
-		basicIndicatorTest(startDate, endDate, earnings);
+		oldBasicIndicatorTest(startDate, endDate, earnings);
 	}	
 	
 	@Test
@@ -97,10 +96,10 @@ public class EricStrategy {
 		
 		for (String symbol : symbols) {
 			System.out.println("Loading " + symbol);
-			EarningToPrice ep = new EarningToPrice(symbol, startDate, endDate);
+			BakEarningToPrice ep = new BakEarningToPrice(symbol, startDate, endDate);
 			earnings.add(ep);
 		}		
-		basicIndicatorTest(startDate, endDate, earnings);
+		oldBasicIndicatorTest(startDate, endDate, earnings);
 	}	
 	
 	@Test
@@ -116,7 +115,7 @@ public class EricStrategy {
 			CashFlowToPrice cfp = new CashFlowToPrice(symbol, startDate, endDate);
 			earnings.add(cfp);
 		}		
-		basicIndicatorTest(startDate, endDate, earnings);
+		oldBasicIndicatorTest(startDate, endDate, earnings);
 	}	
 	
 	@Test
@@ -133,10 +132,10 @@ public class EricStrategy {
 			earnings.add(na);
 		}
 
-		basicIndicatorTest(startDate, endDate, earnings);
+		oldBasicIndicatorTest(startDate, endDate, earnings);
 	}
 	
-	private void newBasicIndicatorTest(final String startDate, final String endDate, final List<String> symbols, AbstractFundmentalSignal signal) throws Exception {
+	private void basicIndicatorTest(final String startDate, final String endDate, final List<String> symbols, AbstractFundmentalSignal signal) throws Exception {
 		MyPortfolio portfolio = new MyPortfolio(startDate, endDate, initCash);
 		MyStock index = new MyStock("000001.sh", startDate,endDate);
 		List<Double> PandL = new ArrayList<Double>();
@@ -215,7 +214,7 @@ public class EricStrategy {
 		}
 	}
 	
-	private void basicIndicatorTest(final String startDate, final String endDate, final List<? extends BasicFinanceReportIndicator> financeVars) throws Exception {
+	private void oldBasicIndicatorTest(final String startDate, final String endDate, final List<? extends BasicFinanceReportIndicator> financeVars) throws Exception {
 		MyPortfolio portfolio = new MyPortfolio(startDate, endDate, initCash);
 		MyStock index = new MyStock("000001.sh", startDate,endDate);
 		List<Double> PandL = new ArrayList<Double>();
