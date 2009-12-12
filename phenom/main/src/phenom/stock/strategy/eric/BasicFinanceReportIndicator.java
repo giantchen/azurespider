@@ -23,13 +23,6 @@ public abstract class BasicFinanceReportIndicator {
 		this.stock = new MyStock(symbol, startDate, endDate);
 		if (field != null && field.length() > 0)
 			indicators = loadFinanceData(symbol, field);
-//		ea = new EMovingAverage();
-//		List<String> dates = new ArrayList<String>();
-//		Map<String, Double> prices = stock.getClosePrice(true);
-//		dates.addAll(prices.keySet());
-//		Collections.sort(dates);
-//		for (String date : dates)
-//			ea.addValue(new GenericComputableEntry(symbol, date, prices.get(date)));
 	}
 
 	public String getSymbol() {
