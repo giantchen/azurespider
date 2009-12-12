@@ -13,6 +13,17 @@ public class Dividend implements Comparable<Dividend>{
 	private String divDate;
 	private String regDate; //entitlement date
 	private String symbol;
+	
+	//≈‰π…œ‡πÿ
+	private double allocShare;
+	private double allocPrice;
+	
+	public double getAllocShare() {
+		return allocShare;
+	}
+	public double getAllocPrice() {
+		return allocPrice;
+	}
 	public double getCashDiv() {
 		return cashDiv;
 	}
@@ -96,6 +107,10 @@ public class Dividend implements Comparable<Dividend>{
 		divDate = rs_.getString("DividendDate");
 		cashDiv = Double.parseDouble(rs_.getString("Dividend")) / 10;
 		stockDiv = Double.parseDouble(rs_.getString("BonusShare")) / 10;
-		tranDiv = Double.parseDouble(rs_.getString("TransitShare")) / 10;
+		tranDiv = Double.parseDouble(rs_.getString("TransitShare")) / 10;		
+	}
+	
+	public void setAlloc(ResultSet rs_) throws SQLException {
+		
 	}
 }
