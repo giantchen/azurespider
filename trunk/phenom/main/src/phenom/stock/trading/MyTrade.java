@@ -4,6 +4,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import phenom.stock.Dividend;
+import phenom.utils.DividendUtil;
+import phenom.utils.DividendUtil.DateType;
+
 public class MyTrade {
 	protected double commision; // 佣金
 	protected double minCommision; // 最小佣金，单位：元
@@ -20,7 +24,8 @@ public class MyTrade {
 	private MyStock stock;
 	int entitledVolume; // if this trade is entitled for XR XD
 	double bonusCash, bonusShares, tranShares, allocShares, allocPrice;
-
+	private static int COEFFICENT = 1;
+	
 	private List<IOperation> operations = new ArrayList<IOperation>();
 	
 	interface IOperation {
@@ -38,14 +43,14 @@ public class MyTrade {
 		public void action() {
 			try {
 				// allocate shares
-				double alloc = (int) (volume / 10 * allocShares);
+				double alloc = (int) (volume / COEFFICENT * allocShares);
 				sharesOnTheWay += alloc;
 				cashOnTheWay -= round(alloc * allocPrice);
 				if (alloc > 0) {
 					System.out.println("symbol = " + getStock().getSymbol() + " alloc = " + allocShares + " price = " + allocPrice);
 				}
-				sharesOnTheWay += (int) (volume / 10 * bonusShares) + (int) (volume / 10 * tranShares);
-				cashOnTheWay += round(volume / 10 * bonusCash);
+				sharesOnTheWay += (int) (volume / COEFFICENT * bonusShares) + (int) (volume / COEFFICENT * tranShares);
+				cashOnTheWay += round(volume / COEFFICENT * bonusCash);
 				bonusShares = 0;
 				bonusCash = 0;
 				tranShares = 0;
@@ -234,7 +239,9 @@ public class MyTrade {
 		sharesOnTheWay = 0;		
 		
 		// DX DR date
-		if (stock.isXDate(currentDate) && entitledVolume > 0)
+		if ((DividendUtil.getAllocEntitlement(stock.getSymbol(), currentDate.toString(), DateType.XDATE) != null
+				|| DividendUtil.getEntitlement(stock.getSymbol(), currentDate.toString(), DateType.XDATE) != null)
+				&& entitledVolume > 0)
 			operations.add(new DROperation(entitledVolume));
 		
 		if (stock.isTradeDate(currentDate.toString())) {
@@ -251,15 +258,22 @@ public class MyTrade {
 		}
 		
 		// DX DR registration 
-		if (stock.isXRegDate(currentDate)) {
+		// Bonus Stock || Bonus Cash
+		Dividend bonus = DividendUtil.getEntitlement(stock.getSymbol(), currentDate.toString(), DateType.REG_DATE);
+		if (bonus != null) {
 			entitledVolume = shares + sharesOnTheWay;
-			bonusCash = stock.getBonusCash(currentDate); // 分红
-			bonusShares = stock.getBonusShares(currentDate); // 红股
-			tranShares = stock.getTranShares(currentDate); // 转增
-			allocShares = stock.getAllocShares(currentDate);
-			allocPrice = stock.getAllocPrice(currentDate);
+			bonusCash = bonus.getCashDiv();
+			bonusShares = bonus.getStockDiv();
+			tranShares = bonus.getTranDiv();
 		}
 		
+		// Allocate stock
+		bonus = DividendUtil.getAllocEntitlement(stock.getSymbol(), currentDate.toString(), DateType.REG_DATE);
+		if (bonus != null) {
+			entitledVolume = shares + sharesOnTheWay;
+			allocShares = bonus.getAllocShare();
+			allocPrice = bonus.getAllocPrice();
+		}
 		operations.clear();
 	}
 	
