@@ -11,96 +11,114 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.ArrayList;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import phenom.database.ConnectionManager;
 import phenom.stock.Dividend;
-import phenom.stock.PositionEntry;
 import phenom.stock.Stock;
 
 /**
  * 
- * 所有除权、工具方法都延迟加载
- * TODO：未来可考虑eager init，用多线程处理如 Latch
- *
+ * 所有除权、工具方法都延迟加载：未来可考虑eager init，用多线程处理如 Latch
+ * 
  */
 public class WeightUtil {
-	final static String SQL = "select * from (select Symbol, XDate from STOCK_BONUS union select Symbol, " +
-			"XDate from STOCK_ALLOC) t where t.Symbol = ? and t.XDate >= '20000101'";	
-	final static String DIVSQL = "select * from STOCK_BONUS where Symbol = ? and AnnounceDate != '' " +
-			"and (ListDate != '' or (ListDate = '' and Dividend != 0))"; 
+	public enum DateType {
+		REG_DATE, XDATE, LIST_DATE;
+	}
+
+	private final static Lock lock = new ReentrantLock();
+
+	//分红除权等数据
+	final static String DIVSQL = "select * from STOCK_BONUS where Symbol = ? and AnnounceDate != '' "
+			+ "and (ListDate != '' or (ListDate = '' and Dividend != 0))";
 	
-	//分红转增增发
+	//配股
+	final static String ALLOC_SQL = "select * from STOCK_ALLOC where Symbol = ? and AnnounceDate != ''";
+		
+	// 分红转增增发
 	static Map<String, List<Dividend>> weights = new HashMap<String, List<Dividend>>();
-	
-	public static Dividend getEntitledDividend(PositionEntry pe_, String date_) {
+
+	public static Dividend getEntitlement(String symbol, String date, DateType dt) {
 		Dividend dv = null;
-		if(!weights.containsKey(pe_.getSymbol())) {
-			initDividend(pe_.getSymbol());
-		}		
-		List<Dividend> ds = weights.get(pe_.getSymbol());		
-		if(ds.size() > 0) {
-			for(Dividend d : ds) {
-				if(date_.equals(d.getRegDate())){					
+		if (!weights.containsKey(symbol)) {
+			initDividend(symbol, false);
+		}
+		List<Dividend> ds = weights.get(symbol);
+		if (ds.size() > 0) {
+			for (Dividend d : ds) {
+				if (dt == DateType.LIST_DATE && date.equals(d.getListDate())) {
 					dv = d;
+					break;
+				} else if (dt == DateType.XDATE && date.equals(d.getXDate())) {
+					dv = d;
+					break;
+				} else if (dt == DateType.REG_DATE && date.equals(d.getRegDate())) {
+					dv = d;
+					break;
 				}
 			}
 		}
 		return dv;
 	}
-	
-	public static void applyWeight(Stock s_) {		
-		s_.setWeightedClosePrice(s_.getClosePrice() * s_.getWeight());
-		s_.setWeightedOpenPrice(s_.getOpenPrice() * s_.getWeight());
-		s_.setWeightedHighPrice(s_.getHighPrice() * s_.getWeight());
-		s_.setWeightedLowPrice(s_.getLowPrice() * s_.getWeight());		
+
+	public static void applyWeight(Stock s) {
+		s.setWeightedClosePrice(s.getClosePrice() * s.getWeight());
+		s.setWeightedOpenPrice(s.getOpenPrice() * s.getWeight());
+		s.setWeightedHighPrice(s.getHighPrice() * s.getWeight());
+		s.setWeightedLowPrice(s.getLowPrice() * s.getWeight());
 	}
-	
-	public static Dividend applyDividend(String symbol_, String buyDate_) {
-		if(!weights.containsKey(symbol_)) {
-			initDividend(symbol_);
-		}		
-		List<Dividend> ds = weights.get(symbol_);
+
+	public static Dividend applyDividend(String symbol, String buyDate) {
+		if (!weights.containsKey(symbol)) {
+			initDividend(symbol, false);
+		}
+		List<Dividend> ds = weights.get(symbol);
 		Dividend di = null;
-		if(ds.size() > 0) {
-			for(Dividend d : ds) {
-				if(buyDate_.compareTo(d.getXDate()) < 0) {
+		if (ds.size() > 0) {
+			for (Dividend d : ds) {
+				if (buyDate.compareTo(d.getXDate()) < 0) {
 					di = d;
 					break;
 				}
 			}
 		}
-		
+
 		return di;
 	}
-	
-	//初始化转增 除权 增发
-	private static synchronized void initDividend(String symbol_) {
+
+	// 初始化转增 除权 增发, alloc means 配股
+	private static void initDividend(String symbol, boolean alloc) {
+		lock.lock();
+
 		List<Dividend> ws = new ArrayList<Dividend>();
-		weights.put(symbol_, ws);
-		
-		Connection conn = null;		
+		weights.put(symbol, ws);
+		Connection conn = null;
 		PreparedStatement s = null;
 		ResultSet rs = null;
-		
-		try {			
-			conn = ConnectionManager.getConnection();
-			//System.out.println();
-			
-			s = conn.prepareStatement(DIVSQL);
-			s.setString(1, symbol_);
-			rs = s.executeQuery();			
-			while(rs.next()) {
+		try {
+			conn = ConnectionManager.getConnection();			
+			s = alloc ? conn.prepareStatement(ALLOC_SQL) : conn.prepareStatement(DIVSQL);
+			s.setString(1, symbol);
+			rs = s.executeQuery();
+			while (rs.next()) {
 				Dividend d = new Dividend();
-				d.set(rs);
+				if(!alloc) {
+					d.set(rs);
+				} else {
+					d.setAlloc(rs);
+				}
 				ws.add(d);
-			}			
-			rs.close();			
+			}
+			rs.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return;
-		}  finally {
+		} finally {
 			if (conn != null) {
 				try {
-					s.close();					
+					s.close();
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
@@ -108,6 +126,7 @@ public class WeightUtil {
 			}
 		}
 		
+		lock.unlock();
 		Collections.sort(ws);
 	}
 }
