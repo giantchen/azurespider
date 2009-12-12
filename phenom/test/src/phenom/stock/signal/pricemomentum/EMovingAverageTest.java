@@ -31,13 +31,13 @@ public class EMovingAverageTest {
         //data with weekends
         List<Stock> stocks = s.getStock("20090101", "20090131", false);
         m.addPrices(stocks);
-        BigDecimal b = BigDecimal.valueOf(m.getAverage(s, 12)).setScale(4, BigDecimal.ROUND_HALF_UP);        
+        BigDecimal b = BigDecimal.valueOf(m.calculate(s.getSymbol(), s.getDate())).setScale(4, BigDecimal.ROUND_HALF_UP);        
         Assert.assertEquals(10.4853, b.doubleValue());
         
         
         s = new Stock("600518.sh", "20090220", -1);
         m.addPrices(s.getStock("20090201", "20090229", false), true);
-        b = BigDecimal.valueOf(m.getAverage(s, 12)).setScale(4, BigDecimal.ROUND_HALF_UP);        
+        b = BigDecimal.valueOf(m.calculate(s.getSymbol(), s.getDate())).setScale(4, BigDecimal.ROUND_HALF_UP);        
         Assert.assertEquals(10.5890, b.doubleValue()); 
     }
     

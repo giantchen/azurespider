@@ -1,6 +1,5 @@
 package phenom.stock.signal.pricemomentum;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -51,7 +50,7 @@ public class DeltaEMAverage extends AbstractPriceMomentumSignal {
 	}
 	
 	@Override
-	public double calculate(String symbol, String date, int cycle) {
+	public double calculate(String symbol, String date) {
 		double delta = AbstractPriceMomentumSignal.INVALID_VALUE;
 		validate(symbol, date, cycle);
 		
@@ -61,27 +60,21 @@ public class DeltaEMAverage extends AbstractPriceMomentumSignal {
 		
 		if(!super.isCalculated(symbol, date, cycle)) {
 			String previousTD = DateUtil.previousTradeDate(symbol, date);
-			double now = emv.getAverage(symbol, date, cycle);			
+			double now = emv.calculate(symbol, date);			
 			
 			if(!isValid(now)) {
 				return delta;
 			}
 			
-			double yesterday = emv.getAverage(symbol, previousTD, cycle);			
+			double yesterday = emv.calculate(symbol, previousTD);			
 			delta = (now - yesterday) / yesterday;
 			
 			//add into cache
-			Map<String, List<CycleValuePair>> symbolAverages = new HashMap<String, List<CycleValuePair>>();
-			cache.put(symbol, symbolAverages);
-			List<CycleValuePair> pairs = new ArrayList<CycleValuePair>();
-			pairs.add(new CycleValuePair(cycle, delta));
-			symbolAverages.put(date, pairs);
+			Map<String, Double> symbolAverages = new HashMap<String, Double>();
+			cache.put(symbol, symbolAverages);			
+			symbolAverages.put(date, delta);
 		}
 		
 		return delta;
-	}
-	
-	public double getDelta(String symbol_, String date_, int cycle_) {
-		return calculate(symbol_, date_, cycle_);
 	}
 }

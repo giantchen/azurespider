@@ -2,14 +2,12 @@ package phenom.stock.signal.pricemomentum;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
 import phenom.utils.DateUtil;
-import phenom.stock.Cycle;
 import phenom.stock.signal.GenericComputableEntry;
 
 /**
@@ -23,89 +21,43 @@ public class SMovingAverage extends AbstractPriceMomentumSignal{
 		super(cycle);
 	}
 	
-    DescriptiveStatistics stat = new DescriptiveStatistics();    
-    
-    /**
-     * By Default calculate Week/Ten Day/Fifteen Day/Month Average
-     * After set, the averages are available via getAverage
-     */
-    public void setAverage(GenericComputableEntry s_) {
-        setAverage(s_.getSymbol(), s_.getDate());
-    }
-    
-    /**
-     * By Default calculate Week/Ten Day/Fifteen Day/Month Average
-     * After set, the averages are available via getAverage
-     */
-    public void setAverage(String symbol_, String date_) {
-        for(Cycle c : Cycle.values()) {
-            getAverage(symbol_, date_, c); 
-        }
-    } 
-    
-    public double getAverage(GenericComputableEntry s_, Cycle c_) {
-        return getAverage(s_, c_.numDays());
-    }
-    
-    public double getAverage(GenericComputableEntry s_, int days_) {
-        return calculate(s_.getSymbol(), s_.getDate(), days_);
-    }    
-    
-    /**
-     * Calculate Average Specified by cycle_
-     */
-    public double getAverage(String symbol_, String date_, Cycle cycle_) {
-        return calculate(symbol_, date_, cycle_.numDays());
-    }    
+    DescriptiveStatistics stat = new DescriptiveStatistics();        
     
     /**
      * Calculate Average Specified by days
      */
     @Override
-    public double calculate(String symbol_, String date_, int days_) {
-        validate(symbol_, date_, days_);
+    public double calculate(String symbol_, String date_) {
+        validate(symbol_, date_, cycle);
         
         if (!isTradeDate(symbol_, date_)) {
 			return AbstractPriceMomentumSignal.INVALID_VALUE;
 		}
         
-        CycleValuePair average = null;
-        
-        Map<String, List<CycleValuePair>> symbolAverages = cache.get(symbol_);;
+        Map<String, Double> symbolAverages = cache.get(symbol_);;
         if (symbolAverages == null) {
-            symbolAverages = new HashMap<String, List<CycleValuePair>>();
+            symbolAverages = new HashMap<String, Double>();
             cache.put(symbol_, symbolAverages);
         }
         
-        List<CycleValuePair> pairs = symbolAverages.get(date_);        
-        if(pairs == null) {
-            pairs = new ArrayList<CycleValuePair>();
-            symbolAverages.put(date_, pairs);
-        }        
-        
-        for(CycleValuePair c : pairs) {
-            if(c.getCycle() == days_) {
-                average = c;
-                break;
-            }
-        }
+        Double average = symbolAverages.get(date_);        
         
         if(average == null) {
-            average = calculateMean(symbol_, date_, days_);
-            pairs.add(average);
+            average = calculateMean(symbol_, date_);
+            symbolAverages.put(date_, average);
         }
         
-        return average.getValue();
+        return average;
     }
     
-    protected CycleValuePair calculateMean(String symbol_, String date_, int days_) {
+    protected double calculateMean(String symbol_, String date_) {
     	stat.clear();    	
     	List<GenericComputableEntry> stocks = values.get(symbol_);
-        CycleValuePair cv = null;
+        Double cv = null;
         GenericComputableEntry s = new GenericComputableEntry(symbol_, null, -1);          
         String curDate = date_;           
         
-        for(int i = 0; i < days_; i++) {
+        for(int i = 0; i < cycle; i++) {
             s.setDate(curDate);
             int index = Collections.binarySearch(stocks, s);
             
@@ -127,8 +79,7 @@ public class SMovingAverage extends AbstractPriceMomentumSignal{
             curDate = DateUtil.previousDay(s.getDate());            
         }
         
-        cv = new CycleValuePair(days_, stat.getMean());
-        return cv;
+        return stat.getMean();
     }
 }
 

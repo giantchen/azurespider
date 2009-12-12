@@ -1,6 +1,5 @@
 package phenom.stock.signal.pricemomentum;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +42,7 @@ public class PriceReverse extends AbstractPriceMomentumSignal {
 	}
 	
 	@Override
-	public double calculate(String symbol, String date, int cycle) {
+	public double calculate(String symbol, String date) {
 		double pr = AbstractPriceMomentumSignal.INVALID_VALUE;
 		validate(symbol, date, cycle);
 		
@@ -54,53 +53,39 @@ public class PriceReverse extends AbstractPriceMomentumSignal {
 		if (!isCalculated(symbol, date, cycle)) {
 			calculatePR(symbol, date, cycle);
 		}
-		List<CycleValuePair> pairs = cache.get(symbol).get(date);
-		for (CycleValuePair c : pairs) {
-			if (c.getCycle() == cycle) {
-				pr = c.getValue();
-				break;
-			}
-		}
-		return pr;
+		Double pairs = cache.get(symbol).get(date);
+		return pairs == null ? AbstractPriceMomentumSignal.INVALID_VALUE : pairs;
 	}
 
 	private void calculatePR(String symbol, String date, int cycle) {
-		pDelta.calculate(symbol, date, cycle);
+		pDelta.calculate(symbol, date);
 		List<GenericComputableEntry> deltas = pDelta.getDeltas(symbol, cycle);
 		Collections.sort(deltas);
 
 		eMovingAverage.addPrices(deltas);
-		eMovingAverage.calculate(symbol, date, cycle);
+		eMovingAverage.calculate(symbol, date);
 
 		double[] tmp = new double[deltas.size()];
 
 		for (int i = 0; i < deltas.size(); i++) {
-			CycleValuePair c = null;
 			GenericComputableEntry s = deltas.get(i);
 			tmp[i] = s.getValue();
 
-			Map<String, List<CycleValuePair>> symbolAverages = cache.get(s
+			Map<String, Double> symbolAverages = cache.get(s
 					.getSymbol());
 			if (symbolAverages == null) {
-				symbolAverages = new HashMap<String, List<CycleValuePair>>();
+				symbolAverages = new HashMap<String, Double>();
 				cache.put(symbol, symbolAverages);
-			}
-
-			List<CycleValuePair> pairs = symbolAverages.get(s.getDate());
-			if (pairs == null) {
-				pairs = new ArrayList<CycleValuePair>();
-				symbolAverages.put(s.getDate(), pairs);
 			}
 			
 			int fi = (i + 1 - cycle >= 0) ? (i + 1 - cycle) : 0;
 			int length = (i + 1 - cycle >= 0) ? cycle : (i + 1);
 			
-			double eMean = eMovingAverage.getAverage(symbol, date, cycle);
+			double eMean = eMovingAverage.calculate(symbol, date);
 			double var = variance.evaluate(tmp, eMean, fi, length);
-			double delta = pDelta.getDelta(symbol, date, cycle);
+			double delta = pDelta.calculate(symbol, date);			
 			
-			c = new CycleValuePair(cycle, (delta - eMean) / Math.sqrt(var));
-			pairs.add(c);
+			symbolAverages.put(s.getDate(), (delta - eMean) / Math.sqrt(var));			
 		}
 	}
 }
