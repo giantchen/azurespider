@@ -17,7 +17,6 @@ import org.junit.Test;
 import phenom.stock.NameValuePair;
 import phenom.stock.signal.ISignal;
 import phenom.stock.signal.SignalHolder;
-import phenom.stock.signal.fundmental.AbstractFundmentalSignal;
 import phenom.stock.trading.MyPortfolio;
 import phenom.stock.trading.MyStock;
 import phenom.stock.trading.MyTrade;
