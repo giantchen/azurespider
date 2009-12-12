@@ -13,8 +13,8 @@ import phenom.stock.Index;
 import phenom.stock.NameValuePair;
 import phenom.stock.PositionEntry;
 import phenom.stock.Stock;
-import phenom.stock.techind.AbstractTechIndicator;
-import phenom.stock.techind.DeltaEMAverage;
+import phenom.stock.signal.pricemomentum.AbstractPriceMomentumSignal;
+import phenom.stock.signal.pricemomentum.DeltaEMAverage;
 import phenom.utils.DateUtil;
 import phenom.utils.StockUtil;
 import phenom.utils.WeightUtil;
@@ -141,7 +141,7 @@ public class RollingStrategy {
 					indexSymbol = symbol;
 					double delta = dea_.getDelta(symbol, td, days_);
 					//index may not be available at that time. e.g. index created from 2009 not in 2008
-					if(!AbstractTechIndicator.isValid(delta)) {
+					if(!AbstractPriceMomentumSignal.isValid(delta)) {
 						continue;
 					}
 					NameValuePair s = new NameValuePair(symbol, delta);
@@ -163,7 +163,7 @@ public class RollingStrategy {
 							stockSymbol = st;							
 							double delta = dea_.getDelta(st, td, days_);
 							
-							if(!AbstractTechIndicator.isValid(delta)) {
+							if(!AbstractPriceMomentumSignal.isValid(delta)) {
 								continue;
 							}
 							
