@@ -9,6 +9,8 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
 
+import phenom.stock.trading.MyStock;
+
 public abstract class BasicFinanceReportIndicator {
 	protected Map<String, Double> indicators;
 	protected MyStock stock;
