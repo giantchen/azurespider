@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import phenom.database.ConnectionManager;
-import phenom.stock.techind.AbstractTechIndicator;
+import phenom.stock.signal.GenericComputableEntry;
+import phenom.stock.signal.pricemomentum.AbstractPriceMomentumSignal;
 import phenom.utils.DateUtil;
 import phenom.utils.WeightUtil;;
 

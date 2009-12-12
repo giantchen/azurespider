@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import phenom.stock.Stock;
+import phenom.stock.signal.pricemomentum.Delta;
 
 public class DeltaTest {
 	Delta m = null;

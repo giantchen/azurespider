@@ -9,6 +9,7 @@ import org.junit.After;
 import org.junit.Test;
 
 import phenom.stock.Stock;
+import phenom.stock.signal.pricemomentum.PriceReverse;
 
 public class PriceReverseTest {
 	PriceReverse p = null;

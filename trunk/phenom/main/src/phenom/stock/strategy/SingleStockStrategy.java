@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 import phenom.stock.Stock;
 import phenom.stock.Dividend;
-import phenom.stock.techind.EMovingAverage;
+import phenom.stock.signal.pricemomentum.EMovingAverage;
 import phenom.utils.WeightUtil;
 public class SingleStockStrategy {
 	
