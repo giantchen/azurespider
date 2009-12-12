@@ -20,6 +20,7 @@ import phenom.stock.signal.fundmental.NetAssetsPerShare;
 import phenom.stock.trading.MyPortfolio;
 import phenom.stock.trading.MyStock;
 import phenom.stock.trading.MyTrade;
+import phenom.utils.DateUtil;
 import phenom.utils.graph.TimeSeriesGraph;
 
 public class EricStrategy {
@@ -47,28 +48,25 @@ public class EricStrategy {
 		String endDate = "20091204";	
 
 		List<String> symbols = this.getAllSymbols();
-		List<AbstractFundmentalSignal> netAssets = new ArrayList<AbstractFundmentalSignal>();
 		NetAssetsPerShare signal = new NetAssetsPerShare(symbols, startDate, endDate);
-		
 		newBasicIndicatorTest(startDate, endDate, symbols, signal);
 	}
 	
 	@Test
-	public void ReturnOnEquityStrategy() throws Exception {
+	public void BakNetAssetsStrategy() throws Exception {
 		String startDate = "20090105";
-		String endDate = "20091204";	
+		String endDate = "20091204";			
 
 		List<String> symbols = this.getAllSymbols();
-		List<BasicFinanceReportIndicator> roes = new ArrayList<BasicFinanceReportIndicator>();
+		List<BasicFinanceReportIndicator> earnings = new ArrayList<BasicFinanceReportIndicator>();
 		
 		for (String symbol : symbols) {
 			System.out.println("Loading " + symbol);
-			ReturnOnEquity na = new ReturnOnEquity(symbol, startDate, endDate);
-			roes.add(na);
-		}
-		
-		basicIndicatorTest(startDate, endDate, roes);
-	}
+			BakNetAssetsPerShare na = new BakNetAssetsPerShare(symbol, startDate, endDate);
+			earnings.add(na);
+		}		
+		basicIndicatorTest(startDate, endDate, earnings);
+	}	
 	
 	@Test
 	public void EarningPerShareStrategy() throws Exception {
@@ -153,6 +151,9 @@ public class EricStrategy {
 			indexPrice.add(index.getClosePrice(portfolio.getToday()) / base);
 			
 			for (String symbol : symbols){
+				if (!DateUtil.isTradeDate(symbol, portfolio.getToday()))
+					continue;
+				
 				if (signal.calculate(symbol, portfolio.getToday()) != Double.NaN)
 					indicators.add(new NameValuePair(symbol, signal.calculate(symbol, portfolio.getToday())));
 			}
