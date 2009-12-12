@@ -9,7 +9,7 @@ import java.util.List;
 import phenom.database.ConnectionManager;
 import phenom.stock.signal.GenericComputableEntry;
 import phenom.utils.DateUtil;
-import phenom.utils.WeightUtil;;
+import phenom.utils.DividendUtil;;
 
 public class Stock extends GenericComputableEntry{
 	public static String SZZS = "000001.sh";	
@@ -215,7 +215,7 @@ public class Stock extends GenericComputableEntry{
 				stocks.add(s);
 				
 				if(applyWeight_) {
-					WeightUtil.applyWeight(s);
+					DividendUtil.applyWeight(s);
 					//PriceCalculator.applyWeight(s);
 				}
 			}			

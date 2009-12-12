@@ -17,7 +17,7 @@ import phenom.stock.signal.pricemomentum.AbstractPriceMomentumSignal;
 import phenom.stock.signal.pricemomentum.DeltaEMAverage;
 import phenom.utils.DateUtil;
 import phenom.utils.StockUtil;
-import phenom.utils.WeightUtil;
+import phenom.utils.DividendUtil;
 import phenom.utils.graph.TimeSeriesGraph;
 
 public class RollingStrategy {
@@ -261,7 +261,7 @@ public class RollingStrategy {
 	private void processEntitlement(String date_) {
 		for(String symbol : position.keySet()) {
 			PositionEntry pe = position.get(symbol);			
-			Dividend d = WeightUtil.getEntitlement(pe.getSymbol(), date_, WeightUtil.DateType.REG_DATE);
+			Dividend d = DividendUtil.getEntitlement(pe.getSymbol(), date_, DividendUtil.DateType.REG_DATE);
 			if(d != null) {
 				pe.increaseInflight(d);
 			}
