@@ -139,7 +139,7 @@ public class RollingStrategy {
 				date = td;
 				for(String symbol : indexStock.keySet()) {
 					indexSymbol = symbol;
-					double delta = dea_.getDelta(symbol, td, days);
+					double delta = dea_.calculate(symbol, td);
 					//index may not be available at that time. e.g. index created from 2009 not in 2008
 					if(!AbstractPriceMomentumSignal.isValid(delta)) {
 						continue;
@@ -161,7 +161,7 @@ public class RollingStrategy {
 						List<String> sts = indexStock.get(s.getName());
 						for(String st : sts) {
 							stockSymbol = st;							
-							double delta = dea_.getDelta(st, td, days);
+							double delta = dea_.calculate(st, td);
 							
 							if(!AbstractPriceMomentumSignal.isValid(delta)) {
 								continue;
