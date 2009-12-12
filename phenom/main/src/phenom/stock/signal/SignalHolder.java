@@ -3,7 +3,6 @@ package phenom.stock.signal;
 import java.util.List;
 
 import phenom.stock.Stock;
-import phenom.stock.signal.fundmental.AbstractFundmentalSignal;
 import phenom.stock.signal.fundmental.EarningToPrice;
 import phenom.stock.signal.fundmental.FundmentalData;
 import phenom.stock.signal.fundmental.NetAssetsPerShare;

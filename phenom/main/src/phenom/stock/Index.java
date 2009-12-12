@@ -14,6 +14,7 @@ import phenom.database.ConnectionManager;
 public class Index {
 	private final static String INDEX_SQL = "select distinct IndexId from STOCK_INDEX where " +
 			"IndexId between '000908.sh' and '000916.sh'";
+	@SuppressWarnings("unused")
 	private final static String INDEX_SQL1 = "select distinct IndexId from STOCK_INDEX where " +
 	"IndexId between '000914.sh' and '000915.sh'";
 	
