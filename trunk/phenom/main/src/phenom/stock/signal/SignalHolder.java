@@ -16,9 +16,9 @@ public class SignalHolder {
 	String endDate;
 	List<String> symbols;
 	
-	EMovingAverage eMovingAverage = new EMovingAverage();
-	PriceReverse priceReverse = new PriceReverse();
-	DeltaEMAverage deltaEMAverage = new DeltaEMAverage();
+	EMovingAverage eMovingAverage = new EMovingAverage(1);
+	PriceReverse priceReverse = new PriceReverse(1);
+	DeltaEMAverage deltaEMAverage = new DeltaEMAverage(1);
 	EarningToPrice earningToPrice = new EarningToPrice();
 	NetAssetsPerShare netAssetsPerShare = new NetAssetsPerShare();
 	
@@ -40,11 +40,18 @@ public class SignalHolder {
 			netAssetsPerShare.addFundmentalData(fundmentalDatas);
 		}
 	}
+	
+	
 
 	// Price Momentum signals
 	public double getEMAverage(String symbol, String date, int cycle) {
 		return eMovingAverage.calculate(symbol, date, cycle);
 	}
+	
+	public ISignal getEMSignal(int cycle) {
+		return new EMovingAverage();
+	}
+	
 
 	public double getPriceReverse(String symbol, String date, int cycle) {
 		return priceReverse.calculate(symbol, date, cycle);
