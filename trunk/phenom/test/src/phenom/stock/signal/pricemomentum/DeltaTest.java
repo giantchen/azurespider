@@ -30,7 +30,7 @@ public class DeltaTest {
         s.setDate("20090123");        
         
         List<Stock> stocks = Stock.getStock("000001.sz", "20090101", "20091231", true);
-        m.addValues(stocks);
+        m.addPrices(stocks);
         double d = m.getDelta(s.getSymbol(), s.getDate(), 3);
         BigDecimal b = (BigDecimal.valueOf(d).setScale(4, BigDecimal.ROUND_HALF_UP));        
         Assert.assertEquals(-0.0127, b.doubleValue());
