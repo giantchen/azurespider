@@ -31,7 +31,7 @@ public class SingleStockStrategy {
 		String endDate = "20091231";
 		List<Stock> lsts = Stock.getStock(symbol, fromDate, endDate, true);
 		EMovingAverage em = new EMovingAverage();
-		em.addValues(lsts, false);
+		em.addPrices(lsts, false);
 		
 		em.calculate(symbol, endDate, 10);
 		em.calculate(symbol, endDate, 5);

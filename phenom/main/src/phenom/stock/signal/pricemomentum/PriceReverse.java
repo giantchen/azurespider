@@ -32,8 +32,8 @@ public class PriceReverse extends AbstractPriceMomentumSignal {
 	}
 
 	@Override
-	public void setValues(Map<String, List<GenericComputableEntry>> s_) {
-		pDelta.setValues(s_);
+	public void setPrices(Map<String, List<GenericComputableEntry>> s_) {
+		pDelta.setPrices(s_);
 	}
 
 	@Override
@@ -42,17 +42,20 @@ public class PriceReverse extends AbstractPriceMomentumSignal {
 	}
 	
 	@Override
-	public double calculate(String symbol_, String date_, int cycle_) {
-		double pr = 0;
-		validate(symbol_, date_, cycle_);
-
-		if (!isCalculated(symbol_, date_, cycle_)) {
-			calculatePR(symbol_, date_, cycle_);
+	public double calculate(String symbol, String date, int cycle) {
+		double pr = AbstractPriceMomentumSignal.INVALID_VALUE;
+		validate(symbol, date, cycle);
+		
+		if (!isTradeDate(symbol, date)) {
+			return pr;
 		}
-
-		List<CycleValuePair> pairs = cache.get(symbol_).get(date_);
+		
+		if (!isCalculated(symbol, date, cycle)) {
+			calculatePR(symbol, date, cycle);
+		}
+		List<CycleValuePair> pairs = cache.get(symbol).get(date);
 		for (CycleValuePair c : pairs) {
-			if (c.getCycle() == cycle_) {
+			if (c.getCycle() == cycle) {
 				pr = c.getValue();
 				break;
 			}
@@ -60,13 +63,13 @@ public class PriceReverse extends AbstractPriceMomentumSignal {
 		return pr;
 	}
 
-	private void calculatePR(String symbol_, String date_, int cycle_) {
-		pDelta.calculate(symbol_, date_, cycle_);
-		List<GenericComputableEntry> deltas = pDelta.getDeltas(symbol_, cycle_);
+	private void calculatePR(String symbol, String date, int cycle) {
+		pDelta.calculate(symbol, date, cycle);
+		List<GenericComputableEntry> deltas = pDelta.getDeltas(symbol, cycle);
 		Collections.sort(deltas);
 
 		eMovingAverage.addPrices(deltas);
-		eMovingAverage.calculate(symbol_, date_, cycle_);
+		eMovingAverage.calculate(symbol, date, cycle);
 
 		double[] tmp = new double[deltas.size()];
 
@@ -79,7 +82,7 @@ public class PriceReverse extends AbstractPriceMomentumSignal {
 					.getSymbol());
 			if (symbolAverages == null) {
 				symbolAverages = new HashMap<String, List<CycleValuePair>>();
-				cache.put(symbol_, symbolAverages);
+				cache.put(symbol, symbolAverages);
 			}
 
 			List<CycleValuePair> pairs = symbolAverages.get(s.getDate());
@@ -88,14 +91,14 @@ public class PriceReverse extends AbstractPriceMomentumSignal {
 				symbolAverages.put(s.getDate(), pairs);
 			}
 			
-			int fi = (i + 1 - cycle_ >= 0) ? (i + 1 - cycle_) : 0;
-			int length = (i + 1 - cycle_ >= 0) ? cycle_ : (i + 1);
+			int fi = (i + 1 - cycle >= 0) ? (i + 1 - cycle) : 0;
+			int length = (i + 1 - cycle >= 0) ? cycle : (i + 1);
 			
-			double eMean = eMovingAverage.getAverage(symbol_, date_, cycle_);
+			double eMean = eMovingAverage.getAverage(symbol, date, cycle);
 			double var = variance.evaluate(tmp, eMean, fi, length);
-			double delta = pDelta.getDelta(symbol_, date_, cycle_);
+			double delta = pDelta.getDelta(symbol, date, cycle);
 			
-			c = new CycleValuePair(cycle_, (delta - eMean) / Math.sqrt(var));
+			c = new CycleValuePair(cycle, (delta - eMean) / Math.sqrt(var));
 			pairs.add(c);
 		}
 	}

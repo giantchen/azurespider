@@ -5,10 +5,12 @@ import java.util.List;
 
 import phenom.stock.signal.pricemomentum.EMovingAverage;
 import phenom.stock.signal.pricemomentum.PriceReverse;
+import phenom.stock.signal.pricemomentum.DeltaEMAverage;
 
 public class SignalHolder {
 	EMovingAverage eMovingAverage = new EMovingAverage();
 	PriceReverse priceReverse = new PriceReverse();
+	DeltaEMAverage deltaEMAverage = new DeltaEMAverage();
 	
 	public SignalHolder(List<String> symbols, String startDate, String endDate) {
 		
@@ -23,8 +25,8 @@ public class SignalHolder {
 			Collections.sort(entries);
 		}
 
-		eMovingAverage.addValues(entries, false);
-		priceReverse.addValues(entries, false);
+		eMovingAverage.addPrices(entries, false);
+		priceReverse.addPrices(entries, false);
 	}
 
 	public double getEMAverage(String symbol, String date, int cycle) {

@@ -10,16 +10,20 @@ import phenom.utils.DateUtil;
 
 public class Delta extends AbstractPriceMomentumSignal {
 	@Override
-	public double calculate(final String symbol_, final String date_, final int cycle_) {
+	public double calculate(final String symbol, final String date, final int cycle) {
 		double average = AbstractPriceMomentumSignal.INVALID_VALUE;
-		validate(symbol_, date_, cycle_);
+		validate(symbol, date, cycle);
 		
-		if(!super.isCalculated(symbol_, date_, cycle_)) {
-			calculate(symbol_, cycle_);
+		if(!isTradeDate(symbol, date)) {
+			return average;
+		}
+		
+		if(!super.isCalculated(symbol, date, cycle)) {
+			calculate(symbol, cycle);
 		}		
-		List<CycleValuePair> pairs = cache.get(symbol_).get(date_);        
+		List<CycleValuePair> pairs = cache.get(symbol).get(date);        
         for(CycleValuePair c : pairs) {
-            if(c.getCycle() == cycle_) {
+            if(c.getCycle() == cycle) {
                 average = c.getValue();
                 break;
             }
@@ -28,8 +32,8 @@ public class Delta extends AbstractPriceMomentumSignal {
 		return average;
 	}
 	
-	public double getDelta(String symbol_, String date_, int cycle_) {
-		return calculate(symbol_, date_, cycle_);
+	public double getDelta(final String symbol, final String date, final int cycle) {
+		return calculate(symbol, date, cycle);
 	}
 	
 	public List<GenericComputableEntry> getDeltas(String symbol_, int cycle_) {

@@ -193,6 +193,7 @@ public class RollingStrategy {
 					sell(sellSymbols, td, sellStampTax, commission);
 					buy(buySymbols, td, buyStampTax, commission);
 				}			
+				System.out.println("buy =" + buySymbols);
 				
 				buySymbols.clear();
 				sellSymbols.clear();
