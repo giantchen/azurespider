@@ -37,8 +37,8 @@ public class PriceReverse extends AbstractPriceMomentumSignal {
 	}
 
 	@Override
-	public Map<String, List<GenericComputableEntry>> getValues() {
-		return pDelta.getValues();
+	public Map<String, List<GenericComputableEntry>> getPrices() {
+		return pDelta.getPrices();
 	}
 	
 	@Override
