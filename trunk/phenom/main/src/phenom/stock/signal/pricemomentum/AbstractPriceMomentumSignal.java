@@ -89,8 +89,7 @@ public abstract class AbstractPriceMomentumSignal implements ISignal {
 		Map<String, Double> m = cache.get(symbol_);
 		if (m != null) {
 			if (m.get(date_) != null)
-				;
-			flag = true;
+				flag = true;
 		}
 		return flag;
 	}
