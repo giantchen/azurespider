@@ -74,7 +74,7 @@ public class DateUtil {
     	return 1;
     }
     
-    public boolean isTradeDate(String symbol, String date) {
+    public static boolean isTradeDate(String symbol, String date) {
     	return phenom.stock.Stock.isTradeDate(symbol, date);
     }
 }

@@ -8,8 +8,6 @@ import java.sql.PreparedStatement;
 import java.util.Collections;
 import java.util.Map;
 import java.util.List;
-import java.util.TreeMap;
-import java.util.SortedMap;
 import java.util.HashMap;
 import java.util.ArrayList;
 
@@ -30,16 +28,8 @@ public class WeightUtil {
 	final static String DIVSQL = "select * from STOCK_BONUS where Symbol = ? and AnnounceDate != '' " +
 			"and (ListDate != '' or (ListDate = '' and Dividend != 0))"; 
 	
-	//除权因子key = symbol value = {key = date, value = factor}
-	static Map<String, SortedMap<String, Double>> weightFactors = new TreeMap<String, SortedMap<String, Double>>();
 	//分红转增增发
 	static Map<String, List<Dividend>> weights = new HashMap<String, List<Dividend>>();
-			
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {		
-	}
 	
 	public static Dividend getEntitledDividend(PositionEntry pe_, String date_) {
 		Dividend dv = null;
@@ -128,62 +118,6 @@ public class WeightUtil {
 		}
 		
 		return di;
-	}
-	
-	/**
-	 * init symbol and keydates
-	 */
-	@SuppressWarnings("unused")
-	private synchronized static void initFactor(String symbol_) {
-		SortedMap<String, Double> weights = new TreeMap<String, Double>();
-		weightFactors.put(symbol_, weights);		
-		
-		Connection conn = null;		
-		PreparedStatement s = null;
-		ResultSet rs = null;
-		
-		try {			
-			conn = ConnectionManager.getConnection();
-			//System.out.println(SQL);
-			
-			//retrieve symbol and ex date
-			s = conn.prepareStatement(SQL);
-			s.setString(1, symbol_);
-			rs = s.executeQuery();			
-			while(rs.next()) {
-				weights.put(rs.getString("XDate"), null);
-			}			
-			rs.close();
-			//if weights exists
-			if(weights.size() != 0) {
-				Stock current = Stock.getStock(symbol_, weights.lastKey());
-				/**
-				 * 如果除权日那天没有日线数据的话，就会抛NULLPointerException。
-				 * 比如说600369.sh，最后一次除权日期为20060720，但是20060720那天似乎是停牌，没有任何日线数据
-				 */
-				while(current == null) {
-					current = Stock.getStock(symbol_, DateUtil.nextDay(weights.lastKey()));
-				}
-				//init factors
-				for(String xDate : weights.keySet()) {
-					Stock pStock = Stock.previousStock(symbol_, xDate);
-					//weights.put(xDate, BigDecimal.valueOf(pStock.getWeight() / current.getWeight()).setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue());
-					weights.put(xDate, pStock.getWeight() / current.getWeight());
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return;
-		}  finally {
-			if (conn != null) {
-				try {
-					s.close();					
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
 	}
 	
 	//初始化转增 除权 增发
