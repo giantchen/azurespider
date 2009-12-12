@@ -16,6 +16,7 @@ import org.junit.Test;
 
 import phenom.stock.NameValuePair;
 import phenom.stock.signal.fundmental.AbstractFundmentalSignal;
+import phenom.stock.signal.fundmental.FundmentalData;
 import phenom.stock.signal.fundmental.NetAssetsPerShare;
 import phenom.stock.trading.MyPortfolio;
 import phenom.stock.trading.MyStock;
@@ -48,7 +49,9 @@ public class EricStrategy {
 		String endDate = "20091204";	
 
 		List<String> symbols = this.getAllSymbols();
-		NetAssetsPerShare signal = new NetAssetsPerShare(symbols, startDate, endDate);
+		List<FundmentalData> datas = AbstractFundmentalSignal.loadFundmentalData(symbols, startDate, endDate);
+		NetAssetsPerShare signal = new NetAssetsPerShare();
+		signal.addFundmentalData(datas);
 		newBasicIndicatorTest(startDate, endDate, symbols, signal);
 	}
 	
