@@ -27,8 +27,8 @@ public class PriceReverse extends AbstractPriceMomentumSignal {
 	}
 
 	@Override
-	public void addValue(GenericComputableEntry s_) {
-		pDelta.addValue(s_);
+	public void addPrice(GenericComputableEntry s_) {
+		pDelta.addPrice(s_);
 	}
 
 	@Override
@@ -65,7 +65,7 @@ public class PriceReverse extends AbstractPriceMomentumSignal {
 		List<GenericComputableEntry> deltas = pDelta.getDeltas(symbol_, cycle_);
 		Collections.sort(deltas);
 
-		eMovingAverage.addValues(deltas);
+		eMovingAverage.addPrices(deltas);
 		eMovingAverage.calculate(symbol_, date_, cycle_);
 
 		double[] tmp = new double[deltas.size()];
