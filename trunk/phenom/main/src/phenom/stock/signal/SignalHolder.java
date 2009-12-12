@@ -55,7 +55,7 @@ public class SignalHolder {
 	}
 	
 	// Fundmental signals
-	public ISignal getEarningToPriceSignal() {
+	public EarningToPrice getEarningToPriceSignal() {
 		return this.earningToPrice;
 	}
 	
@@ -63,7 +63,7 @@ public class SignalHolder {
 		return earningToPrice.calculate(symbol, date);
 	}
 	
-	public ISignal getNetAssetsPerShareSignal() {
+	public NetAssetsPerShare getNetAssetsPerShareSignal() {
 		return this.netAssetsPerShare;
 	}
 
