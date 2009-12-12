@@ -12,8 +12,9 @@ import phenom.utils.DateUtil;
 public class DeltaEMAverage extends AbstractPriceMomentumSignal {
 	EMovingAverage emv;
 
-	public DeltaEMAverage() {
-		emv = new EMovingAverage();
+	public DeltaEMAverage(int cycle) {
+		super(cycle);
+		emv = new EMovingAverage(cycle);
 	}
 
 	@Override

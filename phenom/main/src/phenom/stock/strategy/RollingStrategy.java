@@ -70,7 +70,7 @@ public class RollingStrategy {
 
 	public static void main(String[] args) {
 		RollingStrategy rs = new RollingStrategy(3000000, 10, 5, null);
-		DeltaEMAverage dt = new DeltaEMAverage();
+		DeltaEMAverage dt = new DeltaEMAverage(5);
 
 		//init mapping and trade dates
 		indexStock = Index.getIndexStockMapping();		

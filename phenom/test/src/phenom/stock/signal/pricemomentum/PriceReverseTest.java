@@ -13,7 +13,7 @@ import phenom.stock.Stock;
 public class PriceReverseTest {
 	PriceReverse p = null;
 	public PriceReverseTest() {
-		p = new PriceReverse();
+		p = new PriceReverse(3);
 	}
 	
 	@Test

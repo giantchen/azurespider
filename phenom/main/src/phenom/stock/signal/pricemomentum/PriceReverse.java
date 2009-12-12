@@ -15,9 +15,10 @@ public class PriceReverse extends AbstractPriceMomentumSignal {
 	private Delta pDelta = null;
 	private EMovingAverage eMovingAverage = null;
 
-	public PriceReverse() {
-		pDelta = new Delta();
-		eMovingAverage = new EMovingAverage();
+	public PriceReverse(int cycle) {
+		super(cycle);
+		pDelta = new Delta(cycle);
+		eMovingAverage = new EMovingAverage(cycle);
 	}
 
 	@Override
