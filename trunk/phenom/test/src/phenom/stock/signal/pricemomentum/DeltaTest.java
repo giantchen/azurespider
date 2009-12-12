@@ -15,7 +15,7 @@ public class DeltaTest {
 	Delta m = null;
 
     public DeltaTest() {
-        m = new Delta();
+        m = new Delta(3);
     }
 
     @Before

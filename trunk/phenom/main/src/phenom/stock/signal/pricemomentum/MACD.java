@@ -26,8 +26,9 @@ public class MACD extends AbstractPriceMomentumSignal {
     
     EMovingAverage ema = null;
     
-    public MACD() {
-        ema = new ExponentialMA();        
+    public MACD(int cycle) {
+    	super(cycle);
+        ema = new ExponentialMA(cycle);        
     }
     
     @Override
@@ -195,6 +196,9 @@ public class MACD extends AbstractPriceMomentumSignal {
      *
      */
     private static class ExponentialMA extends EMovingAverage {
+    	public ExponentialMA(int cycle) {
+			super(cycle);
+		}
         @Override
         protected double[] calculateFactor(int... cycle_) {        
             int p1 = cycle_[0];

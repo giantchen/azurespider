@@ -15,7 +15,11 @@ import phenom.stock.signal.GenericComputableEntry;
  *
  * Currently only support eager calculation
  */
-public class EMovingAverage extends AbstractPriceMomentumSignal{
+public class EMovingAverage extends AbstractPriceMomentumSignal{	
+	public EMovingAverage(int cycle) {
+		super(cycle);
+	}
+	
 	public double getAverage(String symbol_, String date_, int cycle) {
 		return calculate(symbol_, date_, cycle);
 	}

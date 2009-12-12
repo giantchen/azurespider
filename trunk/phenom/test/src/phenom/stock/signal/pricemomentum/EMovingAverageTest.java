@@ -14,7 +14,7 @@ public class EMovingAverageTest {
 	EMovingAverage m = null;
 
     public EMovingAverageTest() {
-        m = new EMovingAverage();
+        m = new EMovingAverage(12);
     }
 
     @Before

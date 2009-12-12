@@ -9,6 +9,10 @@ import phenom.stock.signal.GenericComputableEntry;
 import phenom.utils.DateUtil;
 
 public class Delta extends AbstractPriceMomentumSignal {
+	public Delta(int cycle) {
+		super(cycle);
+	}
+	
 	@Override
 	public double calculate(final String symbol, final String date, final int cycle) {
 		double average = AbstractPriceMomentumSignal.INVALID_VALUE;

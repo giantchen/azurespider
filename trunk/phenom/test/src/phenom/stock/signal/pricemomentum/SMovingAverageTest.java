@@ -15,7 +15,7 @@ public class SMovingAverageTest {
 	SMovingAverage m = null;
 
     public SMovingAverageTest() {
-        m = new SMovingAverage();
+        m = new SMovingAverage(Cycle.THIRTY_DAYS.numDays());
     }
 
     @Before

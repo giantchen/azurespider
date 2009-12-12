@@ -11,12 +11,16 @@ import phenom.stock.signal.ISignal;
 
 public abstract class AbstractPriceMomentumSignal implements ISignal {
 	public static double INVALID_VALUE = Double.NaN;
-	public int DEFAULT_CYCLE = 5;
+	public int cycle = 5;
 
 	// key = symbol, value(key = date, List(value = CycleValuePair))
 	protected Map<String, Map<String, List<CycleValuePair>>> cache = new HashMap<String, Map<String, List<CycleValuePair>>>();
 	// protected List<Stock> values = new ArrayList<Stock>();
 	protected Map<String, List<GenericComputableEntry>> values = new HashMap<String, List<GenericComputableEntry>>();
+	
+	public AbstractPriceMomentumSignal(int cycle) {
+		this.cycle = cycle;
+	}
 
 	@Override
 	public double calculate(String symbol, String date) {
@@ -26,7 +30,7 @@ public abstract class AbstractPriceMomentumSignal implements ISignal {
 	public abstract double calculate(String symbol_, String date_, int cycle_);
 
 	public int getDefaultCycle() {
-		return DEFAULT_CYCLE;
+		return cycle;
 	}
 
 	public void addPrices(List<? extends GenericComputableEntry> s_) {

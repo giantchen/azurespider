@@ -14,7 +14,7 @@ public class MACDTest {
 	MACD m = null;
 	
 	public MACDTest() {
-		m = new MACD();
+		m = new MACD(MACD.DEFAULT_LONG_CYCLE + MACD.DEFAULT_SHORT_CYCLE);
 	}
 	
 	@Before

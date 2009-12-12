@@ -18,7 +18,11 @@ import phenom.stock.signal.GenericComputableEntry;
  * Before each public method call, the values must already be sorted, or parse true when call addValue/addValues method
  * 
  */
-public class SMovingAverage extends AbstractPriceMomentumSignal{       
+public class SMovingAverage extends AbstractPriceMomentumSignal{    
+	public SMovingAverage(int cycle) {
+		super(cycle);
+	}
+	
     DescriptiveStatistics stat = new DescriptiveStatistics();    
     
     /**
