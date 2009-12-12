@@ -14,7 +14,7 @@ import org.junit.Test;
 public class MyStockTest {
 
 	/**
-	 * Test method for {@link phenom.stock.strategy.eric.MyStock#getSymbol()}.
+	 * Test method for {@link phenom.stock.trading.MyStock#getSymbol()}.
 	 */
 	@Test
 	public void testGetSymbol() {
@@ -22,7 +22,7 @@ public class MyStockTest {
 	}
 
 	/**
-	 * Test method for {@link phenom.stock.strategy.eric.MyStock#getTradeDates()}.
+	 * Test method for {@link phenom.stock.trading.MyStock#getTradeDates()}.
 	 */
 	@Test
 	public void testGetTradeDates() {
@@ -30,7 +30,7 @@ public class MyStockTest {
 	}
 
 	/**
-	 * Test method for {@link phenom.stock.strategy.eric.MyStock#isTradeDate(java.lang.String)}.
+	 * Test method for {@link phenom.stock.trading.MyStock#isTradeDate(java.lang.String)}.
 	 */
 	@Test
 	public void testIsTradeDate() {
@@ -38,7 +38,7 @@ public class MyStockTest {
 	}
 
 	/**
-	 * Test method for {@link phenom.stock.strategy.eric.MyStock#getOpenPrice(java.lang.Integer)}.
+	 * Test method for {@link phenom.stock.trading.MyStock#getOpenPrice(java.lang.Integer)}.
 	 */
 	@Test
 	public void testGetOpenPriceInteger() {
@@ -46,7 +46,7 @@ public class MyStockTest {
 	}
 
 	/**
-	 * Test method for {@link phenom.stock.strategy.eric.MyStock#getOpenPrice(java.lang.Integer, boolean)}.
+	 * Test method for {@link phenom.stock.trading.MyStock#getOpenPrice(java.lang.Integer, boolean)}.
 	 */
 	@Test
 	public void testGetOpenPriceIntegerBoolean() {
@@ -54,7 +54,7 @@ public class MyStockTest {
 	}
 
 	/**
-	 * Test method for {@link phenom.stock.strategy.eric.MyStock#getOpenPrice(java.lang.String)}.
+	 * Test method for {@link phenom.stock.trading.MyStock#getOpenPrice(java.lang.String)}.
 	 */
 	@Test
 	public void testGetOpenPriceString() {
@@ -62,7 +62,7 @@ public class MyStockTest {
 	}
 
 	/**
-	 * Test method for {@link phenom.stock.strategy.eric.MyStock#getOpenPrice(java.lang.String, boolean)}.
+	 * Test method for {@link phenom.stock.trading.MyStock#getOpenPrice(java.lang.String, boolean)}.
 	 */
 	@Test
 	public void testGetOpenPriceStringBoolean() {
@@ -70,7 +70,7 @@ public class MyStockTest {
 	}
 
 	/**
-	 * Test method for {@link phenom.stock.strategy.eric.MyStock#getClosePrice(java.lang.String)}.
+	 * Test method for {@link phenom.stock.trading.MyStock#getClosePrice(java.lang.String)}.
 	 */
 	@Test
 	public void testGetClosePriceString() {
@@ -78,7 +78,7 @@ public class MyStockTest {
 	}
 
 	/**
-	 * Test method for {@link phenom.stock.strategy.eric.MyStock#getClosePrice(java.lang.String, boolean)}.
+	 * Test method for {@link phenom.stock.trading.MyStock#getClosePrice(java.lang.String, boolean)}.
 	 */
 	@Test
 	public void testGetClosePriceStringBoolean() {
@@ -86,7 +86,7 @@ public class MyStockTest {
 	}
 
 	/**
-	 * Test method for {@link phenom.stock.strategy.eric.MyStock#getEndDate()}.
+	 * Test method for {@link phenom.stock.trading.MyStock#getEndDate()}.
 	 */
 	@Test
 	public void testGetEndDate() {
@@ -94,7 +94,7 @@ public class MyStockTest {
 	}
 
 	/**
-	 * Test method for {@link phenom.stock.strategy.eric.MyStock#getStartDate()}.
+	 * Test method for {@link phenom.stock.trading.MyStock#getStartDate()}.
 	 */
 	@Test
 	public void testGetStartDate() {
