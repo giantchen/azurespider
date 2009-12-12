@@ -1,6 +1,7 @@
 package phenom.stock.signal.pricemomentum;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,8 +36,17 @@ public class DeltaEMAverage extends AbstractPriceMomentumSignal {
 		emv.setPrices(s_);
 	}
 
-	public Map<String, List<GenericComputableEntry>> getValues() {
+	public Map<String, List<GenericComputableEntry>> getPrices() {
 		return emv.values;
+	}
+	
+	@Override
+	public boolean isTradeDate(String symbol, String date) {
+		if (Collections.binarySearch(emv.getPrices().get(symbol), new GenericComputableEntry(symbol, date, -1)) < 0) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 	
 	@Override

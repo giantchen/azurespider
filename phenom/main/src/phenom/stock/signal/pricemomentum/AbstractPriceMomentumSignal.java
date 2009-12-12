@@ -113,7 +113,7 @@ public abstract class AbstractPriceMomentumSignal implements ISignal {
 		this.values = s_;
 	}
 
-	protected Map<String, List<GenericComputableEntry>> getValues() {
+	protected Map<String, List<GenericComputableEntry>> getPrices() {
 		return values;
 	}
 
@@ -121,7 +121,7 @@ public abstract class AbstractPriceMomentumSignal implements ISignal {
 		String s = null;
 		if (symbol_ == null || date_ == null || cycle_ <= 0) {
 			s = "Symbol and Date must be set up, Days must be positive";
-		} else if (getValues() == null || getValues().size() == 0) {
+		} else if (getPrices() == null || getPrices().size() == 0) {
 			s = "Value is not initialized";
 		}
 
