@@ -34,11 +34,12 @@ public class SignalHolder {
 			deltaEMAverage.addPrices(stocks);
 			earningToPrice.addPrices(stocks);
 			
-			//add the fundamental
-			List<FundmentalData> fundmentalDatas = AbstractFundmentalSignal.loadFundmentalData(symbols, startDate, endDate);
-			earningToPrice.addFundmentalData(fundmentalDatas);
-			netAssetsPerShare.addFundmentalData(fundmentalDatas);
 		}
+		
+		//add the fundamental
+		List<FundmentalData> fundmentalDatas = FundmentalData.loadFundmentalData(symbols, startDate, endDate);
+		earningToPrice.addFundmentalData(fundmentalDatas);
+		netAssetsPerShare.addFundmentalData(fundmentalDatas);
 	}
 	
 	
@@ -49,7 +50,7 @@ public class SignalHolder {
 	}
 	
 	public ISignal getEMSignal(int cycle) {
-		return new EMovingAverage();
+		return eMovingAverage;
 	}
 	
 

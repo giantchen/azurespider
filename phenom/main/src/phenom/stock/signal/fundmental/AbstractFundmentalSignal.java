@@ -41,40 +41,4 @@ public abstract class AbstractFundmentalSignal implements ISignal {
 			m.put(data.getDate(), data.getValue());
 		}
 	}
-	
-	static public List<FundmentalData> loadFundmentalData(final List<String> symbols, final String startDate, final String endDate) {
-		List<FundmentalData> ret = new ArrayList<FundmentalData>();
-		Connection conn = ConnectionManager.getConnection();
-		
-		for (String symbol : symbols) {
-			try {
-				String SQL_GET_FINANCE_INDICATOR_BY_SYMBOL = "SELECT * FROM STOCK_FINANCE WHERE symbol = ?";
-				PreparedStatement statement = conn.prepareStatement(SQL_GET_FINANCE_INDICATOR_BY_SYMBOL);
-				statement.setString(1, symbol);
-				ResultSet result = statement.executeQuery();
-				while (result.next()) {
-					FundmentalData data = new FundmentalData();
-					data.setAnnounceDate(result.getString("AnnounceDate"));
-					data.setCapitalReservPerShare(result.getDouble("CapitalReservePerShare"));
-					data.setCashPerShare(result.getDouble("CashPerShare"));
-					data.setCurrentAssets(result.getDouble("CurrentAssets"));
-					data.setDueDate(result.getString("DueDate"));
-					data.setEarningPerShare(result.getDouble("EarningPerShare"));
-					data.setFinancingExpense(result.getDouble("EarningPerShare"));
-					data.setFixedAssets(result.getDouble("FixedAssets"));
-					data.setLongTermDebt(result.getDouble("FixedAssets"));
-					data.setNetAssetsPerShare(result.getDouble("NetAssetsPerShare"));
-					data.setNetProfit(result.getDouble("NetProfit"));
-					data.setPrimeRevenue(result.getDouble("PrimeRevenue"));
-					data.setSymbol(result.getString("Symbol"));
-					data.setTotalAssets(result.getDouble("TotalAssets"));
-					ret.add(data);
-					}			
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		return ret;
-	}
 }
