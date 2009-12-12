@@ -22,7 +22,7 @@ public class MACDTest {
 		Stock s = new Stock("000001.sz");
         s.setDate("20090123");        
         List<Stock> stocks = s.getStock("20090101", "20090131", false);
-		m.addValues(stocks);        
+		m.addPrices(stocks);        
 	}
 	
 	@Test
