@@ -47,55 +47,7 @@ public class WeightUtil {
 		return dv;
 	}
 	
-	public static String parseDate(String date_) {					
-		int iMonth = Integer.parseInt(date_.substring(4, 6));
-		int year = Integer.parseInt(date_.substring(0, 4));
-		int day = Integer.parseInt(date_.substring(6));
-		
-		if(iMonth > 0 && iMonth <= 12) {
-			return date_;
-		}
-		
-		iMonth = iMonth % 12;
-		
-		if(iMonth == 0) {
-			iMonth = 12;
-		}
-		
-		String sMonth = String.valueOf(iMonth);
-		String sDay = String.valueOf(day);
-		
-		if(sMonth.length() == 1) {
-			sMonth = "0" + sMonth;
-		}
-		
-		if(sDay.length() == 1) {
-			sDay = "0" + sDay;
-		}
-		
-		date_ = String.valueOf(year + 1) + sMonth + sDay;
-		
-		return date_;
-	}
-	
-	public static int parseDate(int date_) {
-		return Integer.parseInt(parseDate(String.valueOf(date_)));
-	}
-	
-	public static void applyWeight(Stock s_) {
-		/*if(!weightFactors.containsKey(s_.getSymbol())) {
-			initFactor(s_.getSymbol());
-		}
-		SortedMap<String, Double> weights = weightFactors.get(s_.getSymbol());		
-		double factor = 1.0;		
-		
-		for(String xDate : weights.keySet()) {
-			if(s_.getDate().compareTo(xDate) < 0) {				
-				factor = weights.get(xDate);
-				break;
-			}
-		}*/
-		
+	public static void applyWeight(Stock s_) {		
 		s_.setWeightedClosePrice(s_.getClosePrice() * s_.getWeight());
 		s_.setWeightedOpenPrice(s_.getOpenPrice() * s_.getWeight());
 		s_.setWeightedHighPrice(s_.getHighPrice() * s_.getWeight());
