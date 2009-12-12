@@ -13,21 +13,17 @@ public abstract class AbstractPriceMomentumSignal implements ISignal {
 	public static double INVALID_VALUE = Double.NaN;
 	public int cycle = 5;
 
-	// key = symbol, value(key = date, List(value = CycleValuePair))
-	protected Map<String, Map<String, List<CycleValuePair>>> cache = new HashMap<String, Map<String, List<CycleValuePair>>>();
+	// key = symbol, value(key = date, List(value = double))
+	protected Map<String, Map<String, Double>> cache = new HashMap<String, Map<String, Double>>();
 	// protected List<Stock> values = new ArrayList<Stock>();
 	protected Map<String, List<GenericComputableEntry>> values = new HashMap<String, List<GenericComputableEntry>>();
-	
+
 	public AbstractPriceMomentumSignal(int cycle) {
 		this.cycle = cycle;
 	}
 
 	@Override
-	public double calculate(String symbol, String date) {
-		return calculate(symbol, date, getDefaultCycle());
-	}
-
-	public abstract double calculate(String symbol_, String date_, int cycle_);
+	public abstract double calculate(String symbol, String date);
 
 	public int getDefaultCycle() {
 		return cycle;
@@ -90,20 +86,12 @@ public abstract class AbstractPriceMomentumSignal implements ISignal {
 
 	public boolean isCalculated(String symbol_, String date_, int cycle_) {
 		boolean flag = false;
-
-		Map<String, List<CycleValuePair>> m = cache.get(symbol_);
+		Map<String, Double> m = cache.get(symbol_);
 		if (m != null) {
-			List<CycleValuePair> l = m.get(date_);
-			if (l != null) {
-				for (CycleValuePair c : l) {
-					if (c.getCycle() == cycle_) {
-						flag = true;
-						break;
-					}
-				}
-			}
+			if (m.get(date_) != null)
+				;
+			flag = true;
 		}
-
 		return flag;
 	}
 
@@ -139,33 +127,11 @@ public abstract class AbstractPriceMomentumSignal implements ISignal {
 	}
 
 	public boolean isTradeDate(String symbol, String date) {
-		if (Collections.binarySearch(values.get(symbol), new GenericComputableEntry(symbol, date, -1)) < 0) {
+		if (Collections.binarySearch(values.get(symbol),
+				new GenericComputableEntry(symbol, date, -1)) < 0) {
 			return false;
 		} else {
 			return true;
-		}
-	}
-
-	public static class CycleValuePair {
-		private double value;
-		private int cycle;
-
-		/**
-		 * @param value
-		 * @param cycle
-		 */
-		public CycleValuePair(int cycle, double value) {
-			super();
-			this.value = value;
-			this.cycle = cycle;
-		}
-
-		public double getValue() {
-			return this.value;
-		}
-
-		public int getCycle() {
-			return this.cycle;
 		}
 	}
 }

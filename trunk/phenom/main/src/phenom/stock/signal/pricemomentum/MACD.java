@@ -20,63 +20,47 @@ public class MACD extends AbstractPriceMomentumSignal {
     public static final int DEFAULT_LONG_CYCLE = 26;
     public static final int DEFAULT_DEA_CYCLE = 9; 
     
-    Map<String, Map<String, List<CycleValuePair>>> DEACache = new HashMap<String, Map<String, List<CycleValuePair>>>();
+    Map<String, Map<String, Double>> DEACache = new HashMap<String, Map<String, Double>>();
     
     Set<String> calculatedCycleCache = new HashSet<String>();    
     
-    EMovingAverage ema = null;
+    EMovingAverage emaShort = null;
+    EMovingAverage emaLong = null;   
     
-    public MACD(int cycle) {
-    	super(cycle);
-        ema = new ExponentialMA(cycle);        
+    public MACD(int shortCycle, int longCycle) {
+    	super(shortCycle);
+    	emaShort = new EMovingAverage(shortCycle);
+    	emaLong = new EMovingAverage(longCycle);
     }
     
     @Override
     public void addPrices(List<? extends GenericComputableEntry> s) {
         super.addPrices(s);
-        ema.setPrices(values);
+        emaShort.setPrices(values);
+        emaLong.setPrices(values);
     }
     
     @Override
     public void clear(boolean clearCache_) {
         super.clear(clearCache_);
         DEACache.clear();
-        ema.clear(clearCache_);
+        emaShort.clear(clearCache_);
+        emaLong.clear(clearCache_);
         calculatedCycleCache.clear();
     }
     
-    public double getDIFF(String symbol_, String date_, int cycle_) {
-        List<CycleValuePair> pairs = cache.get(symbol_).get(date_);
-        for(CycleValuePair c : pairs) {
-            if(c.getCycle() == cycle_) {
-                return c.getValue();
-            }
-        }
-        
-        return AbstractPriceMomentumSignal.INVALID_VALUE;
+    public double getDIFF(String symbol_, String date_) {
+        Double d = cache.get(symbol_).get(date_);
+        return d == null ? AbstractPriceMomentumSignal.INVALID_VALUE : d;
     }
     
-    public double getDEA(String symbol_, String date_, int cycle_) {
-        List<CycleValuePair> pairs = DEACache.get(symbol_).get(date_);
-        for(CycleValuePair c : pairs) {
-            if(c.getCycle() == cycle_) {
-                return c.getValue();
-            }
-        }
-        
-        return AbstractPriceMomentumSignal.INVALID_VALUE;
-    }    
-    
-    public double calculate(GenericComputableEntry s_) {
-        return calculate(s_, DEFAULT_SHORT_CYCLE, DEFAULT_LONG_CYCLE);
-    }
-    
-    public double calculate(GenericComputableEntry s_, int shortCycle_, int longCycle_) {
-        return calculate(s_.getSymbol(), s_.getDate(), shortCycle_, longCycle_);
+    public double getDEA(String symbol_, String date_) {
+    	Double d = DEACache.get(symbol_).get(date_);
+        return d == null ? AbstractPriceMomentumSignal.INVALID_VALUE : d;
     }
     
     @Override
-    public double calculate(String symbol_, String date_, int cycle_) {
+    public double calculate(String symbol_, String date_) {
         return calculate(symbol_, date_, DEFAULT_SHORT_CYCLE, DEFAULT_LONG_CYCLE);
     }
     
@@ -100,7 +84,7 @@ public class MACD extends AbstractPriceMomentumSignal {
         }
         
         int days = shortCycle + longCycle;
-        List<CycleValuePair> pairs = DEACache.get(symbol).get(date);
+        average = DEACache.get(symbol).get(date);
         for(CycleValuePair c : pairs) {
             if(c.getCycle() == days) {
                 average = c.getValue();
