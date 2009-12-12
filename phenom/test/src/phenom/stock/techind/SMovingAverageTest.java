@@ -9,6 +9,7 @@ import junit.framework.Assert;
 
 import phenom.stock.Stock;
 import phenom.stock.Cycle;
+import phenom.stock.signal.pricemomentum.SMovingAverage;
 
 public class SMovingAverageTest {
 

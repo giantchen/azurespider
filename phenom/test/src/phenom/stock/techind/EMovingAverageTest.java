@@ -8,6 +8,8 @@ import org.junit.Test;
 import junit.framework.Assert;
 
 import phenom.stock.Stock;
+import phenom.stock.signal.pricemomentum.AbstractPriceMomentumSignal;
+import phenom.stock.signal.pricemomentum.EMovingAverage;
 
 public class EMovingAverageTest {
 
@@ -43,8 +45,8 @@ public class EMovingAverageTest {
     
     @Test
     public void testValid() {
-    	Assert.assertEquals(false, AbstractTechIndicator.isValid(AbstractTechIndicator.INVALID_VALUE));
-    	Assert.assertEquals(false, AbstractTechIndicator.isValid(Double.NaN));
-    	Assert.assertEquals(true, AbstractTechIndicator.isValid(1.1));
+    	Assert.assertEquals(false, AbstractPriceMomentumSignal.isValid(AbstractPriceMomentumSignal.INVALID_VALUE));
+    	Assert.assertEquals(false, AbstractPriceMomentumSignal.isValid(Double.NaN));
+    	Assert.assertEquals(true, AbstractPriceMomentumSignal.isValid(1.1));
     }
 }
