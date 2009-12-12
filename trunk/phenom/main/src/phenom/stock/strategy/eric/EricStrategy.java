@@ -55,6 +55,17 @@ public class EricStrategy {
 	}
 	
 	@Test
+	public void EarningToPriceStrategy() throws Exception {
+		String startDate = "20090105";
+		String endDate = "20091204";	
+
+		List<String> symbols = this.getAllSymbols();
+		SignalHolder signals = new SignalHolder(symbols, startDate, endDate);
+		
+		basicIndicatorTest(startDate, endDate, symbols, signals.getEarningToPriceSignal());
+	}
+	
+	@Test
 	public void BakNetAssetsStrategy() throws Exception {
 		String startDate = "20090105";
 		String endDate = "20091204";			
@@ -87,7 +98,7 @@ public class EricStrategy {
 	}	
 	
 	@Test
-	public void EarningToPriceStrategy() throws Exception {
+	public void BakEarningToPriceStrategy() throws Exception {
 		String startDate = "20090105";
 		String endDate = "20091204";	
 
@@ -100,7 +111,7 @@ public class EricStrategy {
 			earnings.add(ep);
 		}		
 		oldBasicIndicatorTest(startDate, endDate, earnings);
-	}	
+	}
 	
 	@Test
 	public void CashFlowToPriceStrategy() throws Exception {
