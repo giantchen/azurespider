@@ -146,7 +146,7 @@ public class EricStrategy {
 		oldBasicIndicatorTest(startDate, endDate, earnings);
 	}
 	
-	private void basicIndicatorTest(final String startDate, final String endDate, final List<String> symbols, AbstractFundmentalSignal signal) throws Exception {
+	private void basicIndicatorTest(final String startDate, final String endDate, final List<String> symbols, ISignal signal) throws Exception {
 		MyPortfolio portfolio = new MyPortfolio(startDate, endDate, initCash);
 		MyStock index = new MyStock("000001.sh", startDate,endDate);
 		List<Double> PandL = new ArrayList<Double>();
@@ -215,7 +215,7 @@ public class EricStrategy {
 
 		System.out.println(PandL);
 		TimeSeriesGraph graph = new TimeSeriesGraph(startDate + " - " + endDate, "Date", "Price & Money");
-		graph.addDataSource(signal.getName(), PandL);
+		graph.addDataSource(signal.getClass().toString(), PandL);
 		graph.addDataSource("Index", indexPrice);
 		graph.display();
 		try {
