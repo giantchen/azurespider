@@ -3,9 +3,13 @@ package phenom.stock.signal;
 import java.util.List;
 
 import phenom.stock.Stock;
+import phenom.stock.signal.fundmental.AbstractFundmentalSignal;
+import phenom.stock.signal.fundmental.EarningToPrice;
+import phenom.stock.signal.fundmental.FundmentalData;
+import phenom.stock.signal.fundmental.NetAssetsPerShare;
+import phenom.stock.signal.pricemomentum.DeltaEMAverage;
 import phenom.stock.signal.pricemomentum.EMovingAverage;
 import phenom.stock.signal.pricemomentum.PriceReverse;
-import phenom.stock.signal.pricemomentum.DeltaEMAverage;
 
 public class SignalHolder {
 	String startDate;
@@ -15,6 +19,8 @@ public class SignalHolder {
 	EMovingAverage eMovingAverage = new EMovingAverage();
 	PriceReverse priceReverse = new PriceReverse();
 	DeltaEMAverage deltaEMAverage = new DeltaEMAverage();
+	EarningToPrice earningToPrice = new EarningToPrice();
+	NetAssetsPerShare netAssetsPerShare = new NetAssetsPerShare();
 	
 	public SignalHolder(List<String> symbols, String startDate, String endDate) {
 		this.symbols = symbols;
@@ -26,11 +32,16 @@ public class SignalHolder {
 			eMovingAverage.addPrices(stocks);
 			priceReverse.addPrices(stocks);
 			deltaEMAverage.addPrices(stocks);
+			earningToPrice.addPrices(stocks);
 			
 			//add the fundamental
+			List<FundmentalData> fundmentalDatas = AbstractFundmentalSignal.loadFundmentalData(symbols, startDate, endDate);
+			earningToPrice.addFundmentalData(fundmentalDatas);
+			netAssetsPerShare.addFundmentalData(fundmentalDatas);
 		}
 	}
 
+	// Price Momentum signals
 	public double getEMAverage(String symbol, String date, int cycle) {
 		return eMovingAverage.calculate(symbol, date, cycle);
 	}
@@ -42,7 +53,24 @@ public class SignalHolder {
 	public double getEMDelta(String symbol, String date, int cycle) {
 		return deltaEMAverage.calculate(symbol, date, cycle);
 	}
+	
+	// Fundmental signals
+	public ISignal getEarningToPriceSignal() {
+		return this.earningToPrice;
+	}
+	
+	public double getEarningToPrice(String symbol, String date) {
+		return earningToPrice.calculate(symbol, date);
+	}
+	
+	public ISignal getNetAssetsPerShareSignal() {
+		return this.netAssetsPerShare;
+	}
 
+	public double getNetAssetsPerShare(String symbol, String date) {
+		return netAssetsPerShare.calculate(symbol, date);
+	}
+	
 	public String getStartDate() {
 		return startDate;
 	}
