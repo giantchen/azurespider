@@ -148,6 +148,7 @@ public class RollingStrategy {
 					sortedIndex.add(s);
 				}
 				
+				
 				//only start to sell/buy after 5 days
 				if(i >= 5 ) {
 					Collections.sort(sortedIndex, NameValuePair.VALUE_COMPARATOR_ASC);					
