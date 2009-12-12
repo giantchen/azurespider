@@ -2,6 +2,8 @@ package phenom.stock.signal.pricemomentum;
 
 import java.util.List;
 
+import phenom.stock.Stock;
+
 public class StockTest { 
 
 	/**
