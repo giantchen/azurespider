@@ -19,7 +19,7 @@ public class DateUtilTest {
 	
 	@Test
 	public void testTradeDates() {
-		Assert.assertEquals(171, DateUtil.tradeDates("20090101", "20091231").size());
+		Assert.assertEquals(214, DateUtil.tradeDates("20090101", "20091231").size());
 	}
 
 }
