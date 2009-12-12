@@ -2,7 +2,7 @@ package phenom.stock.strategy.eric;
 
 
 public class ReturnOnEquity extends BasicFinanceReportIndicator {
-	private NetAssetsPerShare netAssets;
+	private BakNetAssetsPerShare netAssets;
 	private EarningPerShare earning;
 	
 	public ReturnOnEquity(String symbol) {
@@ -11,7 +11,7 @@ public class ReturnOnEquity extends BasicFinanceReportIndicator {
 	
 	public ReturnOnEquity(String symbol, String startDate, String endDate) {
 		super(symbol, "", startDate, endDate);
-		netAssets = new NetAssetsPerShare(symbol, startDate, endDate);
+		netAssets = new BakNetAssetsPerShare(symbol, startDate, endDate);
 		earning = new EarningPerShare(symbol, startDate, endDate);
 	}
 	
