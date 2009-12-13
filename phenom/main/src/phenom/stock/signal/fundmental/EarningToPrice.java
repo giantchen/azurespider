@@ -8,6 +8,8 @@ import java.util.Map.Entry;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
+import phenom.stock.signal.SignalConstants;
+
 public class EarningToPrice extends AbstractFundmentalSignal {
 	@Override
 	public void addFundmentalData(List<FundmentalData> dataList) {
@@ -31,12 +33,12 @@ public class EarningToPrice extends AbstractFundmentalSignal {
 	@Override
 	public double calculate(final String symbol, final String date) {
 		if (!values.containsKey(symbol) || !prices.containsKey(symbol) || !prices.get(symbol).containsKey(date))
-			return Double.NaN;
+			return SignalConstants.INVALID_VALUE;
 		
 		TreeMap<String, Double> map = (TreeMap<String, Double>) values.get(symbol);
 		Entry<String, Double> entry = map.floorEntry(date);
 		if (entry == null)
-			return Double.NaN;
+			return SignalConstants.INVALID_VALUE;
 		
 		DescriptiveStatistics stat = cachedStat.get(symbol);
 		if (stat == null) {
