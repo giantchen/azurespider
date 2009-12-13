@@ -1,6 +1,5 @@
 package phenom.stock.signal.pricemomentum;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,17 +19,27 @@ public class MACD extends AbstractPriceMomentumSignal {
     public static final int DEFAULT_LONG_CYCLE = 26;
     public static final int DEFAULT_DEA_CYCLE = 9; 
     
+    private int shortCycle;
+    private int longCycle;
+    private int deaCycle;
+    
     Map<String, Map<String, Double>> DEACache = new HashMap<String, Map<String, Double>>();
     
     Set<String> calculatedCycleCache = new HashSet<String>();    
     
-    EMovingAverage emaShort = null;
-    EMovingAverage emaLong = null;   
+    ExponentialMA emaShort = null;
+    ExponentialMA emaLong = null;   
     
-    public MACD(int shortCycle, int longCycle) {
+    public MACD() {
+    	this(DEFAULT_SHORT_CYCLE, DEFAULT_LONG_CYCLE, DEFAULT_DEA_CYCLE);
+    }
+    public MACD(int shortCycle, int longCycle, int deaCycle) {
     	super(shortCycle);
-    	emaShort = new EMovingAverage(shortCycle);
-    	emaLong = new EMovingAverage(longCycle);
+    	this.shortCycle = shortCycle;
+    	this.longCycle = longCycle;
+    	this.deaCycle = deaCycle;
+    	emaShort = new ExponentialMA(shortCycle);
+    	emaLong = new ExponentialMA(longCycle);
     }
     
     @Override
@@ -59,15 +68,8 @@ public class MACD extends AbstractPriceMomentumSignal {
         return d == null ? AbstractPriceMomentumSignal.INVALID_VALUE : d;
     }
     
-    @Override
-    public double calculate(String symbol_, String date_) {
-        return calculate(symbol_, date_, DEFAULT_SHORT_CYCLE, DEFAULT_LONG_CYCLE);
-    }
-    
-    /**
-     * Calculate Average Specified by days
-     */    
-    public double calculate(String symbol, String date, int shortCycle, int longCycle) {
+    @Override    
+    public double calculate(String symbol, String date) {
         double average = AbstractPriceMomentumSignal.INVALID_VALUE;
         validate(symbol, date, shortCycle);
         validate(symbol, date, longCycle);
@@ -78,47 +80,32 @@ public class MACD extends AbstractPriceMomentumSignal {
         
         String k = symbol + String.valueOf(shortCycle) + String.valueOf(longCycle);
         if(!calculatedCycleCache.contains(k)) {
-            calculateDIF(symbol, date, shortCycle, longCycle);
-            calculateDEA(symbol, date, DEFAULT_DEA_CYCLE);
+            calculateDIF(symbol, date);
+            calculateDEA(symbol, date);
             calculatedCycleCache.add(k);
         }
         
-        int days = shortCycle + longCycle;
-        average = DEACache.get(symbol).get(date);
-        for(CycleValuePair c : pairs) {
-            if(c.getCycle() == days) {
-                average = c.getValue();
-                break;
-            }
-        }
-        
-        return average;
+        average = DEACache.get(symbol).get(date);        
+        return DEACache.get(symbol).get(date);
     }
     
     /**
      * Eager Calculation
      */
-    private void calculateDIF(String symbol_, String date_, int shortCycle_, int longCycle_) {
-        int days_ = shortCycle_ + longCycle_;
-        ema.calculate(symbol_, date_, shortCycle_);
-        ema.calculate(symbol_, date_, longCycle_);
+    private void calculateDIF(String symbol_, String date_) {
+        emaShort.calculate(symbol_, date_);
+        emaLong.calculate(symbol_, date_);
         
         List<GenericComputableEntry> stocks = values.get(symbol_);        
-        Map<String, List<CycleValuePair>> macds = cache.get(symbol_);            
+        Map<String, Double> macds = cache.get(symbol_);            
         if (macds == null) {
-            macds = new HashMap<String, List<CycleValuePair>>();
+            macds = new HashMap<String, Double>();
             cache.put(symbol_, macds);
         }      
             
         for(GenericComputableEntry s : stocks) {
-            List<CycleValuePair> pairs = macds.get(s.getDate());        
-            if(pairs == null) {
-                pairs = new ArrayList<CycleValuePair>();
-                macds.put(s.getDate(), pairs);
-            }
-            CycleValuePair v = new CycleValuePair(days_,
-                    ema.calculate(symbol_, s.getDate(), shortCycle_) - ema.calculate(symbol_, s.getDate(), longCycle_)); 
-            pairs.add(v);
+            macds.put(s.getDate(),
+            			emaShort.calculate(symbol_, s.getDate()) - emaLong.calculate(symbol_, s.getDate()));                  
         }
     }
     
@@ -126,44 +113,28 @@ public class MACD extends AbstractPriceMomentumSignal {
      * Eager Calulation
      * @param cycle_
      */
-    private void calculateDEA(String symbol_, String date_, int cycle_) {
-        int diffCycle = DEFAULT_SHORT_CYCLE + DEFAULT_LONG_CYCLE;
+    private void calculateDEA(String symbol_, String date_) {        
         List<GenericComputableEntry> stocks = values.get(symbol_);
         
-        Map<String, List<CycleValuePair>> symbolDEAs = DEACache.get(symbol_);            
+        Map<String, Double> symbolDEAs = DEACache.get(symbol_);            
         if (symbolDEAs == null) {
-            symbolDEAs = new HashMap<String, List<CycleValuePair>>();
+            symbolDEAs = new HashMap<String, Double>();
             DEACache.put(symbol_, symbolDEAs);
         }
         
         for(int i = 0; i < stocks.size(); i++) {
-            CycleValuePair c = null;
-            GenericComputableEntry s = stocks.get(i);            
+            Double c = null;
+            GenericComputableEntry s = stocks.get(i);
             
-            List<CycleValuePair> pairs = symbolDEAs.get(s.getDate());        
-            if(pairs == null) {
-                pairs = new ArrayList<CycleValuePair>();
-                symbolDEAs.put(s.getDate(), pairs);
-            }            
-            
-            if(i == 0) {                
-                c = new CycleValuePair(cycle_, getDIFF(symbol_, s.getDate(), diffCycle));                
-            } else {
-                //find previous dea
-                CycleValuePair previosPair = null;
-                List<CycleValuePair> previousPairs = symbolDEAs.get(stocks.get(i - 1).getDate());
-                for(CycleValuePair cv : previousPairs) {
-                    if(cv.getCycle() == cycle_) {
-                        previosPair = cv;
-                        break;
-                    }
-                }                
-                
-                double []factor = calculateFactor(cycle_);                
-                c = new CycleValuePair(cycle_, getDIFF(symbol_, s.getDate(), diffCycle) * factor[0]
-                        + previosPair.getValue() * factor[1]);                
+            if(i == 0) { 
+            	symbolDEAs.put(s.getDate(), getDIFF(symbol_, s.getDate()));              
+            } else {                
+                Double previousDEA = symbolDEAs.get(stocks.get(i - 1).getDate());                
+                double []factor = calculateFactor(deaCycle);                
+                c = getDIFF(symbol_, s.getDate()) * factor[0]
+                        + previousDEA * factor[1];
+                symbolDEAs.put(s.getDate(), c);  
             }
-            pairs.add(c);
         }
     }    
    
