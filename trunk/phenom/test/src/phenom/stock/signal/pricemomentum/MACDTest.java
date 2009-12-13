@@ -14,7 +14,7 @@ public class MACDTest {
 	MACD m = null;
 	
 	public MACDTest() {
-		m = new MACD(MACD.DEFAULT_LONG_CYCLE + MACD.DEFAULT_SHORT_CYCLE);
+		m = new MACD();
 	}
 	
 	@Before
@@ -29,9 +29,8 @@ public class MACDTest {
 	public void testGetDiff() {
 		Stock s = new Stock("000001.sz");
 		s.setDate("20090123");
-		m.calculate(s);		
-		int days = MACD.DEFAULT_LONG_CYCLE + MACD.DEFAULT_SHORT_CYCLE;		
-		double d = m.getDIFF(s.getSymbol(), s.getDate(), days);
+		m.calculate(s.getSymbol(), s.getDate());
+		double d = m.getDIFF(s.getSymbol(), s.getDate());
 		
 		Assert.assertEquals(0.4843, BigDecimal.valueOf(d).setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue());		
 	}
@@ -40,10 +39,8 @@ public class MACDTest {
 	public void testGetDEA() {
 		Stock s = new Stock("000001.sz");
 		s.setDate("20090123");
-		m.calculate(s);		
-		//int days = MACD.DEFAULT_LONG_CYCLE + MACD.DEFAULT_SHORT_CYCLE;		
-		double d = m.getDEA(s.getSymbol(), s.getDate(), MACD.DEFAULT_DEA_CYCLE);
-		
+		m.calculate(s.getSymbol(), s.getDate());		
+		double d = m.getDEA(s.getSymbol(), s.getDate());		
 		Assert.assertEquals(0.2821, BigDecimal.valueOf(d).setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue());
 	}
 	
