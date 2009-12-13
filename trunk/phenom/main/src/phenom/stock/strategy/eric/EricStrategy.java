@@ -163,9 +163,6 @@ public class EricStrategy {
 			indexPrice.add(index.getClosePrice(portfolio.getToday()) / base);
 			
 			for (String symbol : symbols){
-				if (!DateUtil.isTradeDate(symbol, portfolio.getToday()))
-					continue;
-				
 				if (signal.calculate(symbol, portfolio.getToday()) != Double.NaN)
 					indicators.add(new NameValuePair(symbol, signal.calculate(symbol, portfolio.getToday())));
 			}
@@ -178,6 +175,9 @@ public class EricStrategy {
 			int i = 0;
 			while (top5symbols.size() < 5 && i < indicators.size()) {
 				String symbol = indicators.get(i++).getName();
+				if (!DateUtil.isTradeDate(symbol, portfolio.getToday()))
+					continue;
+				
 				top5symbols.add(symbol);
 				if (!portfolio.getSymbols().contains(symbol)) {
 						symbolsToBuy.add(symbol);
@@ -188,7 +188,9 @@ public class EricStrategy {
 			List<String> symbolsToSell = new ArrayList<String>();
 			// sell the symbols not in the top 5 list
 			for (String symbol : portfolio.getSymbols())
-				if (!top5symbols.contains(symbol)) {
+				if (!top5symbols.contains(symbol) 
+						&& DateUtil.isTradeDate(symbol, portfolio.getToday())
+						) {
 					symbolsToSell.add(symbol);
 					portfolio.sell(symbol);
 					System.out.println("Sell " + symbol);
@@ -197,7 +199,8 @@ public class EricStrategy {
 			if (symbolsToBuy.size() == 0 && portfolio.getCash() / portfolio.PandL() >= 0.1) {
 				// ¼Ó²Ö
 				for (MyTrade t : portfolio.getTrades()) {
-					if (t.getShares() + t.getSharesOnTheWay() != 0)
+					if (t.getShares() + t.getSharesOnTheWay() != 0
+							&& DateUtil.isTradeDate(t.getStock().getSymbol(), portfolio.getToday()))
 						symbolsToBuy.add(t.getStock().getSymbol());
 				}
 				symbolsToBuy.removeAll(symbolsToSell);
@@ -214,7 +217,7 @@ public class EricStrategy {
 
 		System.out.println(PandL);
 		TimeSeriesGraph graph = new TimeSeriesGraph(startDate + " - " + endDate, "Date", "Price & Money");
-		graph.addDataSource(signal.getClass().toString(), PandL);
+		graph.addDataSource(signal.getClass().getCanonicalName(), PandL);
 		graph.addDataSource("Index", indexPrice);
 		graph.display();
 		try {
@@ -263,7 +266,8 @@ public class EricStrategy {
 			List<String> symbolsToSell = new ArrayList<String>();
 			// sell the symbols not in the top 5 list
 			for (String symbol : portfolio.getSymbols())
-				if (!top5symbols.contains(symbol)) {
+				if (!top5symbols.contains(symbol)
+						&& DateUtil.isTradeDate(symbol, portfolio.getToday())) {
 					symbolsToSell.add(symbol);
 					portfolio.sell(symbol);
 					System.out.println("Sell " + symbol);
@@ -272,7 +276,8 @@ public class EricStrategy {
 			if (symbolsToBuy.size() == 0 && portfolio.getCash() / portfolio.PandL() >= 0.1) {
 				// ¼Ó²Ö
 				for (MyTrade t : portfolio.getTrades()) {
-					if (t.getShares() + t.getSharesOnTheWay() != 0)
+					if (t.getShares() + t.getSharesOnTheWay() != 0
+							&& DateUtil.isTradeDate(t.getStock().getSymbol(), portfolio.getToday()))
 						symbolsToBuy.add(t.getStock().getSymbol());
 				}
 				symbolsToBuy.removeAll(symbolsToSell);

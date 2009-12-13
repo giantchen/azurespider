@@ -4,6 +4,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Map.Entry;
+
+import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
 
 public class NetAssetsPerShare extends AbstractFundmentalSignal {
@@ -31,12 +34,22 @@ public class NetAssetsPerShare extends AbstractFundmentalSignal {
 		if (!values.containsKey(symbol))
 			return Double.NaN;
 		
-		// the map is in desc order, so return the first date that <= date
-		for (String d : values.get(symbol).keySet()) {
-			if (d.compareTo(date) <= 0) {
-				return values.get(symbol).get(d);
-			}
+		DescriptiveStatistics stat = cachedStat.get(symbol);
+		if (stat == null) {
+			stat = new DescriptiveStatistics();
+			cachedStat.put(symbol, stat);
 		}
-		return Double.NaN;
+		
+		TreeMap<String, Double> map = (TreeMap<String, Double>) values.get(symbol);
+		Entry<String, Double> entry = map.floorEntry(date);
+		if (entry == null)
+			return Double.NaN;
+		
+		
+		stat.addValue(entry.getValue());
+		double mean = stat.getMean();
+		double sd = stat.getStandardDeviation();
+		// return the normalized value
+		return (entry.getValue() - mean) / sd;
 	}
 }
