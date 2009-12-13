@@ -8,6 +8,11 @@ import java.util.Map;
 import phenom.stock.signal.GenericComputableEntry;
 import phenom.utils.DateUtil;
 
+/**
+ * 
+ * cycle is useless for this signal
+ *
+ */
 public class Delta extends AbstractPriceMomentumSignal {
 	public Delta(int cycle) {
 		super(cycle);
@@ -23,22 +28,27 @@ public class Delta extends AbstractPriceMomentumSignal {
 		}
 		
 		if(!super.isCalculated(symbol, date, cycle)) {
-			calculate(symbol, cycle);
+			calculate(symbol);
 		}		
 		return  cache.get(symbol).get(date);
 	}
 	
-	public List<GenericComputableEntry> getDeltas(String symbol_, int cycle_) {
+	/*
+	 * The calculate must be called before calling this method.
+	 * This method is used to provide a interface
+	 * */	
+	public List<GenericComputableEntry> getDeltas(String symbol_) {
 		List<GenericComputableEntry> lst = new ArrayList<GenericComputableEntry>();
 		Map<String, Double> r = cache.get(symbol_);
 				
 		for(String k : r.keySet()) {
 			lst.add(new GenericComputableEntry(symbol_, k, r.get(k)));
 		}
+		
 		return lst;
 	}
 	
-	private void calculate(String symbol_, int cycle_) {
+	private void calculate(String symbol_) {
 		List<GenericComputableEntry> stocks = values.get(symbol_);
 		
 		for(int i = 0; i < stocks.size(); i++) {			

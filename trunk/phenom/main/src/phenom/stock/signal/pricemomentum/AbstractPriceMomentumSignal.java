@@ -8,9 +8,10 @@ import java.util.Collections;
 
 import phenom.stock.signal.GenericComputableEntry;
 import phenom.stock.signal.ISignal;
+import phenom.stock.signal.SignalConstants;
 
 public abstract class AbstractPriceMomentumSignal implements ISignal {
-	public static double INVALID_VALUE = Double.NaN;
+	public static double INVALID_VALUE = SignalConstants.INVALID_VALUE;
 	public int cycle = 5;
 
 	// key = symbol, value(key = date, List(value = double))
@@ -25,7 +26,7 @@ public abstract class AbstractPriceMomentumSignal implements ISignal {
 	@Override
 	public abstract double calculate(String symbol, String date);
 
-	public int getDefaultCycle() {
+	public int getCycle() {
 		return cycle;
 	}
 
@@ -126,7 +127,7 @@ public abstract class AbstractPriceMomentumSignal implements ISignal {
 	}
 
 	public boolean isTradeDate(String symbol, String date) {
-		if (Collections.binarySearch(values.get(symbol),
+		if (Collections.binarySearch(getPrices().get(symbol),
 				new GenericComputableEntry(symbol, date, -1)) < 0) {
 			return false;
 		} else {

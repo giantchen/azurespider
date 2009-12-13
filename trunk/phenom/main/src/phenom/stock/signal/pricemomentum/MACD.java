@@ -42,6 +42,17 @@ public class MACD extends AbstractPriceMomentumSignal {
     	emaLong = new ExponentialMA(longCycle);
     }
     
+    public int getLongCycle() {
+    	return longCycle;
+    }
+    
+    public int getShortCycle() {
+    	return shortCycle;
+    }
+    
+    public int getDEACycle() {
+    	return deaCycle;
+    }
     @Override
     public void addPrices(List<? extends GenericComputableEntry> s) {
         super.addPrices(s);

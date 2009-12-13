@@ -53,7 +53,7 @@ public class SMovingAverage extends AbstractPriceMomentumSignal{
     protected double calculateMean(String symbol_, String date_) {
     	stat.clear();    	
     	List<GenericComputableEntry> stocks = values.get(symbol_);
-        Double cv = null;
+        
         GenericComputableEntry s = new GenericComputableEntry(symbol_, null, -1);          
         String curDate = date_;           
         
