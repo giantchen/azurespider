@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import junit.framework.Assert;
-
 import org.junit.After;
 import org.junit.Test;
 
@@ -13,7 +12,7 @@ import phenom.stock.Stock;
 public class PriceReverseTest {
 	PriceReverse p = null;
 	public PriceReverseTest() {
-		p = new PriceReverse(3);
+		p = new PriceReverse(5);
 	}
 	
 	@Test
@@ -25,7 +24,7 @@ public class PriceReverseTest {
         p.addPrices(stocks);
         double d = p.calculate(s.getSymbol(), s.getDate());
         BigDecimal b = (BigDecimal.valueOf(d).setScale(4, BigDecimal.ROUND_HALF_UP));        
-        Assert.assertEquals(-0.0127, b.doubleValue());
+        Assert.assertEquals(-1.0353, b.doubleValue());
 	}
 	
 	@After
