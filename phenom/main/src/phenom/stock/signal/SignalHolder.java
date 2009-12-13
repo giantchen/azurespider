@@ -44,8 +44,8 @@ public class SignalHolder {
 	
 
 	// Price Momentum signals
-	public double getEMAverage(String symbol, String date, int cycle) {
-		return eMovingAverage.calculate(symbol, date, cycle);
+	public double getEMAverage(String symbol, String date) {
+		return eMovingAverage.calculate(symbol, date);
 	}
 	
 	public ISignal getEMSignal(int cycle) {
@@ -53,12 +53,12 @@ public class SignalHolder {
 	}
 	
 
-	public double getPriceReverse(String symbol, String date, int cycle) {
-		return priceReverse.calculate(symbol, date, cycle);
+	public double getPriceReverse(String symbol, String date) {
+		return priceReverse.calculate(symbol, date);
 	}	
 	
-	public double getEMDelta(String symbol, String date, int cycle) {
-		return deltaEMAverage.calculate(symbol, date, cycle);
+	public double getEMDelta(String symbol, String date) {
+		return deltaEMAverage.calculate(symbol, date);
 	}
 	
 	// Fundmental signals
