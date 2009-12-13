@@ -30,6 +30,11 @@ public class PriceReverse extends AbstractPriceMomentumSignal {
 	public void addPrice(GenericComputableEntry s_) {
 		pDelta.addPrice(s_);
 	}
+	
+	@Override
+	public void addPrices(List<? extends GenericComputableEntry> s_) {
+		pDelta.addPrices(s_);
+	}
 
 	@Override
 	public void setPrices(Map<String, List<GenericComputableEntry>> s_) {
@@ -40,26 +45,27 @@ public class PriceReverse extends AbstractPriceMomentumSignal {
 	public Map<String, List<GenericComputableEntry>> getPrices() {
 		return pDelta.getPrices();
 	}
-	
+
 	@Override
 	public double calculate(String symbol, String date) {
 		double pr = AbstractPriceMomentumSignal.INVALID_VALUE;
 		validate(symbol, date, cycle);
-		
+
 		if (!isTradeDate(symbol, date)) {
 			return pr;
 		}
-		
+
 		if (!isCalculated(symbol, date, cycle)) {
-			calculatePR(symbol, date, cycle);
+			calculatePR(symbol, date);
 		}
 		Double pairs = cache.get(symbol).get(date);
-		return pairs == null ? AbstractPriceMomentumSignal.INVALID_VALUE : pairs;
+		return pairs == null ? AbstractPriceMomentumSignal.INVALID_VALUE
+				: pairs;
 	}
 
-	private void calculatePR(String symbol, String date, int cycle) {
+	private void calculatePR(String symbol, String date) {
 		pDelta.calculate(symbol, date);
-		List<GenericComputableEntry> deltas = pDelta.getDeltas(symbol, cycle);
+		List<GenericComputableEntry> deltas = pDelta.getDeltas(symbol);
 		Collections.sort(deltas);
 
 		eMovingAverage.addPrices(deltas);
@@ -71,21 +77,20 @@ public class PriceReverse extends AbstractPriceMomentumSignal {
 			GenericComputableEntry s = deltas.get(i);
 			tmp[i] = s.getValue();
 
-			Map<String, Double> symbolAverages = cache.get(s
-					.getSymbol());
+			Map<String, Double> symbolAverages = cache.get(s.getSymbol());
 			if (symbolAverages == null) {
 				symbolAverages = new HashMap<String, Double>();
 				cache.put(symbol, symbolAverages);
 			}
-			
+
 			int fi = (i + 1 - cycle >= 0) ? (i + 1 - cycle) : 0;
 			int length = (i + 1 - cycle >= 0) ? cycle : (i + 1);
-			
+
 			double eMean = eMovingAverage.calculate(symbol, date);
 			double var = variance.evaluate(tmp, eMean, fi, length);
-			double delta = pDelta.calculate(symbol, date);			
-			
-			symbolAverages.put(s.getDate(), (delta - eMean) / Math.sqrt(var));			
+			double delta = pDelta.calculate(symbol, date);
+
+			symbolAverages.put(s.getDate(), (delta - eMean) / Math.sqrt(var));
 		}
 	}
 }
