@@ -73,14 +73,19 @@ public class PriceReverse extends AbstractPriceMomentumSignal {
 
 		double[] tmp = new double[deltas.size()];
 
-		for (int i = 0; i < deltas.size(); i++) {
+		for (int i = 0; i < deltas.size(); i++) {			
 			GenericComputableEntry s = deltas.get(i);
 			tmp[i] = s.getValue();
 
-			Map<String, Double> symbolAverages = cache.get(s.getSymbol());
+			Map<String, Double> symbolAverages = cache.get(s.getSymbol());			
 			if (symbolAverages == null) {
 				symbolAverages = new HashMap<String, Double>();
 				cache.put(symbol, symbolAverages);
+			}
+			
+			if(i == 0) {
+				symbolAverages.put(s.getDate(), 0d);
+				continue;
 			}
 
 			int fi = (i + 1 - cycle >= 0) ? (i + 1 - cycle) : 0;

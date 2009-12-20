@@ -42,7 +42,7 @@ public class EMovingAverage extends AbstractPriceMomentumSignal {
 	 * Eager Calculation
 	 */
 	private void calculateEM(String symbol, int cycle) {
-    	List<GenericComputableEntry> stocks = values.get(symbol);
+    	List<GenericComputableEntry> stocks = prices.get(symbol);
     	
     	for(int i = 0; i < stocks.size(); i++) {    	
     		GenericComputableEntry s = stocks.get(i);

@@ -37,7 +37,7 @@ public class DeltaEMAverage extends AbstractPriceMomentumSignal {
 	}
 
 	public Map<String, List<GenericComputableEntry>> getPrices() {
-		return emv.values;
+		return emv.prices;
 	}
 	
 	@Override

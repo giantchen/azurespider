@@ -17,7 +17,7 @@ public abstract class AbstractPriceMomentumSignal implements ISignal {
 	// key = symbol, value(key = date, List(value = double))
 	protected Map<String, Map<String, Double>> cache = new HashMap<String, Map<String, Double>>();
 	// protected List<Stock> values = new ArrayList<Stock>();
-	protected Map<String, List<GenericComputableEntry>> values = new HashMap<String, List<GenericComputableEntry>>();
+	protected Map<String, List<GenericComputableEntry>> prices = new HashMap<String, List<GenericComputableEntry>>();
 
 	public AbstractPriceMomentumSignal(int cycle) {
 		this.cycle = cycle;
@@ -37,17 +37,17 @@ public abstract class AbstractPriceMomentumSignal implements ISignal {
 	public void addPrices(List<? extends GenericComputableEntry> s_,
 			boolean sort_) {
 		for (GenericComputableEntry s : s_) {
-			List<GenericComputableEntry> st = values.get(s.getSymbol());
+			List<GenericComputableEntry> st = prices.get(s.getSymbol());
 			if (st == null) {
 				st = new ArrayList<GenericComputableEntry>();
-				values.put(s.getSymbol(), st);
+				prices.put(s.getSymbol(), st);
 			}
 			st.add(s);
 		}
 
 		if (sort_) {
-			for (String sb : values.keySet()) {
-				Collections.sort(values.get(sb));
+			for (String sb : prices.keySet()) {
+				Collections.sort(prices.get(sb));
 			}
 		}
 	}
@@ -63,10 +63,10 @@ public abstract class AbstractPriceMomentumSignal implements ISignal {
 	 *            if already sorting, should parse false
 	 */
 	public void addPrice(GenericComputableEntry s_, boolean sort_) {
-		List<GenericComputableEntry> s = values.get(s_.getSymbol());
+		List<GenericComputableEntry> s = prices.get(s_.getSymbol());
 		if (s == null) {
 			s = new ArrayList<GenericComputableEntry>();
-			values.put(s_.getSymbol(), s);
+			prices.put(s_.getSymbol(), s);
 		}
 		s.add(s_);
 		if (sort_) {
@@ -79,7 +79,7 @@ public abstract class AbstractPriceMomentumSignal implements ISignal {
 	}
 
 	public void clear(boolean clearCache_) {
-		values.clear();
+		prices.clear();
 		if (clearCache_) {
 			cache.clear();
 		}
@@ -102,11 +102,11 @@ public abstract class AbstractPriceMomentumSignal implements ISignal {
 	 * @param s_
 	 */
 	protected void setPrices(Map<String, List<GenericComputableEntry>> s_) {
-		this.values = s_;
+		this.prices = s_;
 	}
 
 	protected Map<String, List<GenericComputableEntry>> getPrices() {
-		return values;
+		return prices;
 	}
 
 	protected void validate(String symbol_, String date_, int cycle_) {
