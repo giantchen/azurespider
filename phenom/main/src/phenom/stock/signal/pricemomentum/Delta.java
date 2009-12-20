@@ -49,7 +49,7 @@ public class Delta extends AbstractPriceMomentumSignal {
 	}
 	
 	private void calculate(String symbol_) {
-		List<GenericComputableEntry> stocks = values.get(symbol_);
+		List<GenericComputableEntry> stocks = prices.get(symbol_);
 		
 		for(int i = 0; i < stocks.size(); i++) {			
     		GenericComputableEntry s = stocks.get(i);

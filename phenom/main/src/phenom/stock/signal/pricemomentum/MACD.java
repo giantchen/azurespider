@@ -56,8 +56,8 @@ public class MACD extends AbstractPriceMomentumSignal {
     @Override
     public void addPrices(List<? extends GenericComputableEntry> s) {
         super.addPrices(s);
-        emaShort.setPrices(values);
-        emaLong.setPrices(values);
+        emaShort.setPrices(prices);
+        emaLong.setPrices(prices);
     }
     
     @Override
@@ -107,7 +107,7 @@ public class MACD extends AbstractPriceMomentumSignal {
         emaShort.calculate(symbol_, date_);
         emaLong.calculate(symbol_, date_);
         
-        List<GenericComputableEntry> stocks = values.get(symbol_);        
+        List<GenericComputableEntry> stocks = prices.get(symbol_);        
         Map<String, Double> macds = cache.get(symbol_);            
         if (macds == null) {
             macds = new HashMap<String, Double>();
@@ -125,7 +125,7 @@ public class MACD extends AbstractPriceMomentumSignal {
      * @param cycle_
      */
     private void calculateDEA(String symbol_, String date_) {        
-        List<GenericComputableEntry> stocks = values.get(symbol_);
+        List<GenericComputableEntry> stocks = prices.get(symbol_);
         
         Map<String, Double> symbolDEAs = DEACache.get(symbol_);            
         if (symbolDEAs == null) {
