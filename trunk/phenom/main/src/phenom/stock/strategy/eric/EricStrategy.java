@@ -43,6 +43,17 @@ public class EricStrategy {
 	}
 	
 	@Test
+	public void ReturnOnEquityStrategy() throws Exception {
+		String startDate = "20090105";
+		String endDate = "20091204";	
+
+		List<String> symbols = this.getAllSymbols();
+		SignalHolder signals = new SignalHolder(symbols, startDate, endDate);
+		
+		basicIndicatorTest(startDate, endDate, symbols, signals.getReturnOnEquity());
+	}
+	
+	@Test
 	public void NetAssetsStrategy() throws Exception {
 		String startDate = "20090105";
 		String endDate = "20091204";	
@@ -54,6 +65,28 @@ public class EricStrategy {
 	}
 	
 	@Test
+	public void CashFlowToPriceStrategy() throws Exception {
+		String startDate = "20090105";
+		String endDate = "20091211";	
+
+		List<String> symbols = this.getAllSymbols();
+		SignalHolder signals = new SignalHolder(symbols, startDate, endDate);
+		
+		basicIndicatorTest(startDate, endDate, symbols, signals.getCashFlowToPrice());
+	}	
+	
+	@Test
+	public void EarningPerShareStrategy() throws Exception {
+		String startDate = "20090105";
+		String endDate = "20091211";	
+
+		List<String> symbols = this.getAllSymbols();
+		SignalHolder signals = new SignalHolder(symbols, startDate, endDate);
+		
+		basicIndicatorTest(startDate, endDate, symbols, signals.getEarningPerShare());
+	}	
+	
+	@Test
 	public void EarningToPriceStrategy() throws Exception {
 		String startDate = "20090105";
 		String endDate = "20091204";	
@@ -62,6 +95,17 @@ public class EricStrategy {
 		SignalHolder signals = new SignalHolder(symbols, startDate, endDate);
 		
 		basicIndicatorTest(startDate, endDate, symbols, signals.getEarningToPriceSignal());
+	}
+	
+	@Test
+	public void NetProfitStrategy() throws Exception {
+		String startDate = "20090105";
+		String endDate = "20091204";	
+
+		List<String> symbols = this.getAllSymbols();
+		SignalHolder signals = new SignalHolder(symbols, startDate, endDate);
+		
+		basicIndicatorTest(startDate, endDate, symbols, signals.getNetProfit());
 	}
 	
 	@Test
@@ -81,7 +125,7 @@ public class EricStrategy {
 	}	
 	
 	@Test
-	public void EarningPerShareStrategy() throws Exception {
+	public void BakReturnOnEquityStrategy() throws Exception {
 		String startDate = "20090105";
 		String endDate = "20091204";			
 
@@ -90,7 +134,23 @@ public class EricStrategy {
 		
 		for (String symbol : symbols) {
 			System.out.println("Loading " + symbol);
-			EarningPerShare na = new EarningPerShare(symbol, startDate, endDate);
+			BakReturnOnEquity na = new BakReturnOnEquity(symbol, startDate, endDate);
+			earnings.add(na);
+		}		
+		oldBasicIndicatorTest(startDate, endDate, earnings);
+	}
+	
+	@Test
+	public void BakEarningPerShareStrategy() throws Exception {
+		String startDate = "20090105";
+		String endDate = "20091211";			
+
+		List<String> symbols = this.getAllSymbols();
+		List<BasicFinanceReportIndicator> earnings = new ArrayList<BasicFinanceReportIndicator>();
+		
+		for (String symbol : symbols) {
+			System.out.println("Loading " + symbol);
+			BakEarningPerShare na = new BakEarningPerShare(symbol, startDate, endDate);
 			earnings.add(na);
 		}		
 		oldBasicIndicatorTest(startDate, endDate, earnings);
@@ -113,23 +173,23 @@ public class EricStrategy {
 	}
 	
 	@Test
-	public void CashFlowToPriceStrategy() throws Exception {
+	public void BakCashFlowToPriceStrategy() throws Exception {
 		String startDate = "20090105";
-		String endDate = "20091204";		
+		String endDate = "20091211";		
 
 		List<String> symbols = this.getAllSymbols();
 		List<BasicFinanceReportIndicator> earnings = new ArrayList<BasicFinanceReportIndicator>();
 		
 		for (String symbol : symbols) {
 			System.out.println("Loading " + symbol);
-			CashFlowToPrice cfp = new CashFlowToPrice(symbol, startDate, endDate);
+			BakCashFlowToPrice cfp = new BakCashFlowToPrice(symbol, startDate, endDate);
 			earnings.add(cfp);
 		}		
 		oldBasicIndicatorTest(startDate, endDate, earnings);
 	}	
 	
 	@Test
-	public void NetProfitStrategy() throws Exception {
+	public void BakNetProfitStrategy() throws Exception {
 		String startDate = "20090105";
 		String endDate = "20091204";		
 
@@ -138,7 +198,7 @@ public class EricStrategy {
 		
 		for (String symbol : symbols) {
 			System.out.println("Loading " + symbol);
-			NetProfit na = new NetProfit(symbol, startDate, endDate);
+			BakNetProfit na = new BakNetProfit(symbol, startDate, endDate);
 			earnings.add(na);
 		}
 
