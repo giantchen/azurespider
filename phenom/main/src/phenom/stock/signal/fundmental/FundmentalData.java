@@ -155,21 +155,15 @@ public class FundmentalData {
 					while (result.next()) {
 						FundmentalData data = new FundmentalData();
 						data.setAnnounceDate(result.getString("AnnounceDate"));
-						data.setCapitalReservPerShare(result
-								.getDouble("CapitalReservePerShare"));
+						data.setCapitalReservPerShare(result.getDouble("CapitalReservePerShare"));
 						data.setCashPerShare(result.getDouble("CashPerShare"));
-						data
-								.setCurrentAssets(result
-										.getDouble("CurrentAssets"));
+						data.setCurrentAssets(result.getDouble("CurrentAssets"));
 						data.setDueDate(result.getString("DueDate"));
-						data.setEarningPerShare(result
-								.getDouble("EarningPerShare"));
-						data.setFinancingExpense(result
-								.getDouble("EarningPerShare"));
+						data.setEarningPerShare(result.getDouble("EarningPerShare"));
+						data.setFinancingExpense(result.getDouble("EarningPerShare"));
 						data.setFixedAssets(result.getDouble("FixedAssets"));
 						data.setLongTermDebt(result.getDouble("FixedAssets"));
-						data.setNetAssetsPerShare(result
-								.getDouble("NetAssetsPerShare"));
+						data.setNetAssetsPerShare(result.getDouble("NetAssetsPerShare"));
 						data.setNetProfit(result.getDouble("NetProfit"));
 						data.setPrimeRevenue(result.getDouble("PrimeRevenue"));
 						data.setSymbol(result.getString("Symbol"));

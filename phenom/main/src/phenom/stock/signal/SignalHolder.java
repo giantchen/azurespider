@@ -3,9 +3,13 @@ package phenom.stock.signal;
 import java.util.List;
 
 import phenom.stock.Stock;
+import phenom.stock.signal.fundmental.CashFlowToPrice;
+import phenom.stock.signal.fundmental.EarningPerShare;
 import phenom.stock.signal.fundmental.EarningToPrice;
 import phenom.stock.signal.fundmental.FundmentalData;
 import phenom.stock.signal.fundmental.NetAssetsPerShare;
+import phenom.stock.signal.fundmental.NetProfit;
+import phenom.stock.signal.fundmental.ReturnOnEquity;
 import phenom.stock.signal.pricemomentum.DeltaEMAverage;
 import phenom.stock.signal.pricemomentum.EMovingAverage;
 import phenom.stock.signal.pricemomentum.PriceReverse;
@@ -20,6 +24,10 @@ public class SignalHolder {
 	DeltaEMAverage deltaEMAverage = new DeltaEMAverage(1);
 	EarningToPrice earningToPrice = new EarningToPrice();
 	NetAssetsPerShare netAssetsPerShare = new NetAssetsPerShare();
+	CashFlowToPrice cashFlowToPrice = new CashFlowToPrice();
+	EarningPerShare earningPerShare = new EarningPerShare();
+	NetProfit netProfit = new NetProfit();
+	ReturnOnEquity returnOnEquity = new ReturnOnEquity();
 	
 	public SignalHolder(List<String> symbols, String startDate, String endDate) {
 		this.symbols = symbols;
@@ -32,16 +40,18 @@ public class SignalHolder {
 			priceReverse.addPrices(stocks);
 			deltaEMAverage.addPrices(stocks);
 			earningToPrice.addPrices(stocks);
-			
+			cashFlowToPrice.addPrices(stocks);
 		}
 		
 		//add the fundamental
 		List<FundmentalData> fundmentalDatas = FundmentalData.loadFundmentalData(symbols, startDate, endDate);
 		earningToPrice.addFundmentalData(fundmentalDatas);
 		netAssetsPerShare.addFundmentalData(fundmentalDatas);
-	}
-	
-	
+		cashFlowToPrice.addFundmentalData(fundmentalDatas);
+		earningPerShare.addFundmentalData(fundmentalDatas);
+		netProfit.addFundmentalData(fundmentalDatas);
+		returnOnEquity.addFundmentalData(fundmentalDatas);
+	}	
 
 	// Price Momentum signals
 	public double getEMAverage(String symbol, String date) {
@@ -77,6 +87,38 @@ public class SignalHolder {
 	public double getNetAssetsPerShare(String symbol, String date) {
 		return netAssetsPerShare.calculate(symbol, date);
 	}
+	
+	public CashFlowToPrice getCashFlowToPrice() {
+		return cashFlowToPrice;
+	}
+	
+	public double getCashFlowToPrice(String symbol, String date) {
+		return cashFlowToPrice.calculate(symbol, date);
+	}
+	
+	public EarningPerShare getEarningPerShare() {
+		return earningPerShare;
+	}
+	
+	public double getEarningPerShare(String symbol, String date) {
+		return earningPerShare.calculate(symbol, date);
+	}
+	
+	public NetProfit getNetProfit() {
+		return netProfit;
+	}
+	
+	public double getNetProfit(String symbol, String date) {
+		return netProfit.calculate(symbol, date);
+	}
+	
+	public ReturnOnEquity getReturnOnEquity() {
+		return returnOnEquity;
+	}
+	
+	public double getReturnOnEquity(String symbol, String date) {
+		return returnOnEquity.calculate(symbol, date);
+	}	
 	
 	public String getStartDate() {
 		return startDate;
