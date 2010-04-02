@@ -25,6 +25,7 @@ public class Stock extends GenericComputableEntry{
 	private double weightedClosePrice;
 	private double weightedLowPrice;
 	private double weightedHighPrice;
+	private double logreturn;
 	private boolean trade;
 	
 	public boolean isTrade() {
@@ -61,6 +62,10 @@ public class Stock extends GenericComputableEntry{
 
 	public void setWeightedHighPrice(double weightedHighPrice) {
 		this.weightedHighPrice = weightedHighPrice;
+	}
+	
+	public double getReturn() {
+		return this.logreturn;
 	}
 
 	@Override
@@ -163,6 +168,7 @@ public class Stock extends GenericComputableEntry{
 		amount = rs_.getDouble("amount");
 		volume = rs_.getDouble("Volume");
 		weight = rs_.getDouble("Weight");		
+		logreturn = rs_.getDouble("Return");
 		weightedOpenPrice = openPrice;
 		weightedClosePrice = closePrice;
 		weightedLowPrice = lowPrice;
