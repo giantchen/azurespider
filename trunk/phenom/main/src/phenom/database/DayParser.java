@@ -29,11 +29,12 @@ public class DayParser {
 		"Amount DOUBLE NOT NULL ," +				// 成交量
 		"Volume NUMERIC NOT NULL , " +				// 成交额 !! 数据为空 !!
 		"Exchange VARCHAR, " +						// 交易所 sh 或者 sz
-		"Weight DOUBLE NOT NULL" +					// 复权因子
+		"Weight DOUBLE NOT NULL, " +					// 复权因子
+		"Return DOUBLE NOT NULL" +                  // 日回报率
 		")";
 	private static final String INSERT_STOCK_PRICE = "insert into STOCK_PRICE (Uid, Symbol, Date, "
-		+ "Open, High, Low, Close, Amount,Volume, Exchange, Weight)"
-		+ "values (?,?,?,?,?,?,?,?,?,?,?)";
+		+ "Open, High, Low, Close, Amount,Volume, Exchange, Weight, Return)"
+		+ "values (?,?,?,?,?,?,?,?,?,?,?,?)";
 	private static final String CREATE_INDEX_ON_STOCK_PRICE = "CREATE INDEX IDX_PRICE ON STOCK_PRICE(Symbol ASC, Date ASC, Exchange ASC)";
 	
 	private static String _historyFile = "data/history.csv";
@@ -72,6 +73,7 @@ public class DayParser {
 			prep = conn.prepareStatement(INSERT_STOCK_PRICE);
 			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(_historyFile)));
 			String line = null;
+			double prevPrice = 0;
 			
 			while ((line = reader.readLine()) != null) {
 				line = line.trim();
@@ -99,15 +101,23 @@ public class DayParser {
 				prep.setDouble(6, b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());	// Low
 				
 				b = new BigDecimal(Double.parseDouble(fields[4]) / weight);
-				prep.setDouble(7, b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());	// Close
+				double close = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+				prep.setDouble(7, close);	// Close
 				
 				prep.setDouble(8, Double.parseDouble(fields[6]));							// Amount								// Amount = 0 
 				prep.setDouble(9, Double.parseDouble(fields[7]));							// Volume
 				prep.setString(10, fields[0].substring(fields[0].length() - 2));			// Exchange
-				prep.setDouble(11, weight);	// Weight 		
+				prep.setDouble(11, weight);	// Weight
+				if (prevPrice == 0)
+					prep.setDouble(12, 0); // Return
+				else {
+					b = new BigDecimal(Math.log(close / prevPrice));
+					prep.setDouble(12, b.setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue());
+				}
+				prevPrice = close;
 				prep.addBatch();
 				
-				if (uid % 5000 == 0) {
+				if (uid % 500000 == 0) {
 					prep.executeBatch();
 					conn.commit();
 				}
