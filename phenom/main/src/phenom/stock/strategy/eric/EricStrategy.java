@@ -45,7 +45,7 @@ public class EricStrategy {
 	@Test
 	public void ReturnOnEquityStrategy() throws Exception {
 		String startDate = "20090105";
-		String endDate = "20091204";	
+		String endDate = "20091225";	
 
 		List<String> symbols = this.getAllSymbols();
 		SignalHolder signals = new SignalHolder(symbols, startDate, endDate);
@@ -78,7 +78,7 @@ public class EricStrategy {
 	@Test
 	public void EarningPerShareStrategy() throws Exception {
 		String startDate = "20090105";
-		String endDate = "20091211";	
+		String endDate = "20100205";	
 
 		List<String> symbols = this.getAllSymbols();
 		SignalHolder signals = new SignalHolder(symbols, startDate, endDate);
@@ -89,7 +89,7 @@ public class EricStrategy {
 	@Test
 	public void EarningToPriceStrategy() throws Exception {
 		String startDate = "20090105";
-		String endDate = "20091204";	
+		String endDate = "20100305";	
 
 		List<String> symbols = this.getAllSymbols();
 		SignalHolder signals = new SignalHolder(symbols, startDate, endDate);
@@ -100,111 +100,14 @@ public class EricStrategy {
 	@Test
 	public void NetProfitStrategy() throws Exception {
 		String startDate = "20090105";
-		String endDate = "20091204";	
+		String endDate = "20100205";	
 
 		List<String> symbols = this.getAllSymbols();
 		SignalHolder signals = new SignalHolder(symbols, startDate, endDate);
 		
 		basicIndicatorTest(startDate, endDate, symbols, signals.getNetProfit());
 	}
-	
-	@Test
-	public void BakNetAssetsStrategy() throws Exception {
-		String startDate = "20090105";
-		String endDate = "20091204";			
 
-		List<String> symbols = this.getAllSymbols();
-		List<BasicFinanceReportIndicator> earnings = new ArrayList<BasicFinanceReportIndicator>();
-		
-		for (String symbol : symbols) {
-			System.out.println("Loading " + symbol);
-			BakNetAssetsPerShare na = new BakNetAssetsPerShare(symbol, startDate, endDate);
-			earnings.add(na);
-		}		
-		oldBasicIndicatorTest(startDate, endDate, earnings);
-	}	
-	
-	@Test
-	public void BakReturnOnEquityStrategy() throws Exception {
-		String startDate = "20090105";
-		String endDate = "20091204";			
-
-		List<String> symbols = this.getAllSymbols();
-		List<BasicFinanceReportIndicator> earnings = new ArrayList<BasicFinanceReportIndicator>();
-		
-		for (String symbol : symbols) {
-			System.out.println("Loading " + symbol);
-			BakReturnOnEquity na = new BakReturnOnEquity(symbol, startDate, endDate);
-			earnings.add(na);
-		}		
-		oldBasicIndicatorTest(startDate, endDate, earnings);
-	}
-	
-	@Test
-	public void BakEarningPerShareStrategy() throws Exception {
-		String startDate = "20090105";
-		String endDate = "20091211";			
-
-		List<String> symbols = this.getAllSymbols();
-		List<BasicFinanceReportIndicator> earnings = new ArrayList<BasicFinanceReportIndicator>();
-		
-		for (String symbol : symbols) {
-			System.out.println("Loading " + symbol);
-			BakEarningPerShare na = new BakEarningPerShare(symbol, startDate, endDate);
-			earnings.add(na);
-		}		
-		oldBasicIndicatorTest(startDate, endDate, earnings);
-	}	
-	
-	@Test
-	public void BakEarningToPriceStrategy() throws Exception {
-		String startDate = "20090105";
-		String endDate = "20091204";	
-
-		List<String> symbols = this.getAllSymbols();
-		List<BasicFinanceReportIndicator> earnings = new ArrayList<BasicFinanceReportIndicator>();
-		
-		for (String symbol : symbols) {
-			System.out.println("Loading " + symbol);
-			BakEarningToPrice ep = new BakEarningToPrice(symbol, startDate, endDate);
-			earnings.add(ep);
-		}		
-		oldBasicIndicatorTest(startDate, endDate, earnings);
-	}
-	
-	@Test
-	public void BakCashFlowToPriceStrategy() throws Exception {
-		String startDate = "20090105";
-		String endDate = "20091211";		
-
-		List<String> symbols = this.getAllSymbols();
-		List<BasicFinanceReportIndicator> earnings = new ArrayList<BasicFinanceReportIndicator>();
-		
-		for (String symbol : symbols) {
-			System.out.println("Loading " + symbol);
-			BakCashFlowToPrice cfp = new BakCashFlowToPrice(symbol, startDate, endDate);
-			earnings.add(cfp);
-		}		
-		oldBasicIndicatorTest(startDate, endDate, earnings);
-	}	
-	
-	@Test
-	public void BakNetProfitStrategy() throws Exception {
-		String startDate = "20090105";
-		String endDate = "20091204";		
-
-		List<String> symbols = this.getAllSymbols();
-		List<BasicFinanceReportIndicator> earnings = new ArrayList<BasicFinanceReportIndicator>();
-		
-		for (String symbol : symbols) {
-			System.out.println("Loading " + symbol);
-			BakNetProfit na = new BakNetProfit(symbol, startDate, endDate);
-			earnings.add(na);
-		}
-
-		oldBasicIndicatorTest(startDate, endDate, earnings);
-	}
-	
 	private void basicIndicatorTest(final String startDate, final String endDate, final List<String> symbols, ISignal signal) throws Exception {
 		MyPortfolio portfolio = new MyPortfolio(startDate, endDate, initCash);
 		MyStock index = new MyStock("000001.sh", startDate,endDate);
@@ -278,83 +181,6 @@ public class EricStrategy {
 		System.out.println(PandL);
 		TimeSeriesGraph graph = new TimeSeriesGraph(startDate + " - " + endDate, "Date", "Price & Money");
 		graph.addDataSource(signal.getClass().getCanonicalName(), PandL);
-		graph.addDataSource("Index", indexPrice);
-		graph.display();
-		try {
-			Thread.sleep(600 * 1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private void oldBasicIndicatorTest(final String startDate, final String endDate, final List<? extends BasicFinanceReportIndicator> financeVars) throws Exception {
-		MyPortfolio portfolio = new MyPortfolio(startDate, endDate, initCash);
-		MyStock index = new MyStock("000001.sh", startDate,endDate);
-		List<Double> PandL = new ArrayList<Double>();
-		List<Double> indexPrice = new ArrayList<Double>();
-		System.out.println(portfolio.getToday() + " = " + portfolio.PandL() + " (" + portfolio.getCash() +") £¨0) " + portfolio);
-		PandL.add(portfolio.PandL() / initCash);
-		double base = index.getClosePrice(startDate);
-		indexPrice.add(1.0);
-		
-		while (!portfolio.nextDay().equals(endDate)) {
-			List<FinanceIndicator> indicators = new ArrayList<FinanceIndicator>();
-			System.out.println(portfolio.getToday() + " = " + portfolio.PandL() + " (" + portfolio.getCash() +") £¨" + (portfolio.PandL() - PandL.get(PandL.size() - 1) * initCash) + ") " + portfolio);
-			System.out.println("Strategy for tomorrow");
-			PandL.add(portfolio.PandL() / initCash);
-			indexPrice.add(index.getClosePrice(portfolio.getToday()) / base);
-			
-			for (BasicFinanceReportIndicator na : financeVars) {
-				if (na.getIndicator(portfolio.getToday())!= null)
-					indicators.add(na.getIndicator(portfolio.getToday()));
-			}
-			Collections.sort(indicators);
-			
-			Set<String> top5symbols = new HashSet<String>();
-			Set<String> symbolsToBuy = new HashSet<String>();
-			
-			int i = 0;
-			while (top5symbols.size() < 5 && i < indicators.size()) {
-				String symbol = indicators.get(i++).getSymbol();
-				top5symbols.add(symbol);
-				if (!portfolio.getSymbols().contains(symbol)) {
-						symbolsToBuy.add(symbol);
-				}						
-			}
-			System.out.println(top5symbols);
-			
-			List<String> symbolsToSell = new ArrayList<String>();
-			// sell the symbols not in the top 5 list
-			for (String symbol : portfolio.getSymbols())
-				if (!top5symbols.contains(symbol)
-						&& DateUtil.isTradeDate(symbol, portfolio.getToday())) {
-					symbolsToSell.add(symbol);
-					portfolio.sell(symbol);
-					System.out.println("Sell " + symbol);
-				}
-			
-			if (symbolsToBuy.size() == 0 && portfolio.getCash() / portfolio.PandL() >= 0.1) {
-				// ¼Ó²Ö
-				for (MyTrade t : portfolio.getTrades()) {
-					if (t.getShares() + t.getSharesOnTheWay() != 0
-							&& DateUtil.isTradeDate(t.getStock().getSymbol(), portfolio.getToday()))
-						symbolsToBuy.add(t.getStock().getSymbol());
-				}
-				symbolsToBuy.removeAll(symbolsToSell);
-				System.out.print("¼Ó²Ö ");
-				System.out.println(symbolsToBuy);
-			}
-			
-			// buy the symbols in the top 5 list
-			for (String symbol : symbolsToBuy) {
-				portfolio.buy(symbol, portfolio.getCash() / symbolsToBuy.size());
-				System.out.println("Buy " + symbol);
-			}
-		}
-
-		System.out.println(PandL);
-		TimeSeriesGraph graph = new TimeSeriesGraph(startDate + " - " + endDate, "Date", "Price & Money");
-		graph.addDataSource(financeVars.get(0).getName(), PandL);
 		graph.addDataSource("Index", indexPrice);
 		graph.display();
 		try {
