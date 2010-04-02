@@ -1,6 +1,7 @@
 package phenom.stock.signal;
 
 import java.util.List;
+import java.util.Map;
 
 import phenom.stock.Stock;
 import phenom.stock.signal.fundmental.CashFlowToPrice;
@@ -13,6 +14,8 @@ import phenom.stock.signal.fundmental.ReturnOnEquity;
 import phenom.stock.signal.pricemomentum.DeltaEMAverage;
 import phenom.stock.signal.pricemomentum.EMovingAverage;
 import phenom.stock.signal.pricemomentum.PriceReverse;
+import phenom.stock.signal.technical.AbstractTechnicalSignal;
+import phenom.stock.signal.technical.AlphaSignal;
 
 public class SignalHolder {
 	String startDate;
@@ -28,6 +31,7 @@ public class SignalHolder {
 	EarningPerShare earningPerShare = new EarningPerShare();
 	NetProfit netProfit = new NetProfit();
 	ReturnOnEquity returnOnEquity = new ReturnOnEquity();
+	AlphaSignal alphaSignal = new AlphaSignal();
 	
 	public SignalHolder(List<String> symbols, String startDate, String endDate) {
 		this.symbols = symbols;
@@ -41,6 +45,9 @@ public class SignalHolder {
 			deltaEMAverage.addPrices(stocks);
 			earningToPrice.addPrices(stocks);
 			cashFlowToPrice.addPrices(stocks);
+			
+			// add technical signals
+			alphaSignal.addPrices(stocks);
 		}
 		
 		//add the fundamental
@@ -51,8 +58,12 @@ public class SignalHolder {
 		earningPerShare.addFundmentalData(fundmentalDatas);
 		netProfit.addFundmentalData(fundmentalDatas);
 		returnOnEquity.addFundmentalData(fundmentalDatas);
+		
+		// risk-free interest rate
+		Map<String, Double> risk_free_rate = AbstractTechnicalSignal.loadRiskFreeInterestRate();
+		alphaSignal.addRiskFreeRate(risk_free_rate);
 	}	
-
+	
 	// Price Momentum signals
 	public double getEMAverage(String symbol, String date) {
 		return eMovingAverage.calculate(symbol, date);
@@ -130,5 +141,9 @@ public class SignalHolder {
 
 	public List<String> getSymbols() {
 		return symbols;
+	}
+	
+	public AlphaSignal getAlphaSignal() {
+		return alphaSignal;
 	}
 }
