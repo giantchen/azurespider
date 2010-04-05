@@ -16,6 +16,9 @@ import phenom.stock.signal.pricemomentum.EMovingAverage;
 import phenom.stock.signal.pricemomentum.PriceReverse;
 import phenom.stock.signal.technical.AbstractTechnicalSignal;
 import phenom.stock.signal.technical.AlphaSignal;
+import phenom.stock.signal.technical.BetaSignal;
+import phenom.stock.signal.technical.MeanSignal;
+import phenom.stock.signal.technical.VolatilitySignal;
 
 public class SignalHolder {
 	String startDate;
@@ -32,6 +35,9 @@ public class SignalHolder {
 	NetProfit netProfit = new NetProfit();
 	ReturnOnEquity returnOnEquity = new ReturnOnEquity();
 	AlphaSignal alphaSignal = new AlphaSignal();
+	BetaSignal betaSignal = new BetaSignal();
+	VolatilitySignal volatilitySignal = new VolatilitySignal();
+	MeanSignal meanSignal = new MeanSignal();
 	
 	public SignalHolder(List<String> symbols, String startDate, String endDate) {
 		this.symbols = symbols;
@@ -48,6 +54,9 @@ public class SignalHolder {
 			
 			// add technical signals
 			alphaSignal.addPrices(stocks);
+			betaSignal.addPrices(stocks);
+			volatilitySignal.addPrices(stocks);
+			meanSignal.addPrices(stocks);
 		}
 		
 		//add the fundamental
@@ -62,6 +71,7 @@ public class SignalHolder {
 		// risk-free interest rate
 		Map<String, Double> risk_free_rate = AbstractTechnicalSignal.loadRiskFreeInterestRate();
 		alphaSignal.addRiskFreeRate(risk_free_rate);
+		betaSignal.addRiskFreeRate(risk_free_rate);
 	}	
 	
 	// Price Momentum signals
@@ -145,5 +155,17 @@ public class SignalHolder {
 	
 	public AlphaSignal getAlphaSignal() {
 		return alphaSignal;
+	}
+
+	public BetaSignal getBetaSignal() {
+		return betaSignal;
+	}
+
+	public VolatilitySignal getVolatilitySignal() {
+		return volatilitySignal;
+	}
+
+	public MeanSignal getMeanSignal() {
+		return meanSignal;
 	}
 }
