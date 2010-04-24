@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="lib" path="lib/javabuilder.jar"/>
 	<classpathentry kind="src" path="main/src"/>
 	<classpathentry kind="src" path="test/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
@@ -10,5 +11,6 @@
 	<classpathentry kind="lib" path="lib/sqlitejdbc-v056.jar"/>
 	<classpathentry kind="lib" path="lib/commons-math-2.0-sources.jar"/>
 	<classpathentry kind="lib" path="lib/commons-math-2.0.jar" sourcepath="lib/commons-math-2.0-sources.jar"/>
+	<classpathentry kind="lib" path="lib/mvo.jar"/>
 	<classpathentry kind="output" path="ide-bin"/>
 </classpath>
