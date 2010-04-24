@@ -205,18 +205,21 @@ public class MyTrade {
 	}
 	
 	public double getTotalMoney() {
-		double closePrice =  0;
-		if (stock.isTradeDate(currentDate.toString()))
-			closePrice = stock.getClosePrice(currentDate.toString());
-		else
-			closePrice = stock.getClosePrice(lastTradeDate.toString());
-
-		double ret = getCash() + getCashOnTheWay() + (shares + sharesOnTheWay) * closePrice;
+		double ret = getCash() + getCashOnTheWay() + getAmount();
 		for (IOperation op : operations) {
 			if (op instanceof BuyOperation)
 				ret += ((BuyOperation)op).getMoney();
 		}
 		return new BigDecimal(ret).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+	}
+	
+	public double getLastClosePrice() {
+		double closePrice =  0;
+		if (stock.isTradeDate(currentDate.toString()))
+			closePrice = stock.getClosePrice(currentDate.toString());
+		else
+			closePrice = stock.getClosePrice(lastTradeDate.toString());
+		return closePrice;
 	}
 	
 	public int getShares() {
@@ -229,6 +232,10 @@ public class MyTrade {
 	
 	public double getCashOnTheWay() {
 		return new BigDecimal(cashOnTheWay).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+	}
+	
+	public double getAmount() {
+		return (shares + sharesOnTheWay) * getLastClosePrice();		
 	}
 	
 	public void nextDay() {

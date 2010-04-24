@@ -19,9 +19,23 @@ public abstract class AbstractTechnicalSignal implements ISignal {
 	protected Map<String, List<GenericComputableEntry>> prices = new HashMap<String, List<GenericComputableEntry>>();
 	protected Map<String, List<GenericComputableEntry>> returns = new HashMap<String, List<GenericComputableEntry>>();
 	
+	public AbstractTechnicalSignal()
+	{
+		_if = new HashMap<String, Double>();
+	}
+	
 	@Override
 	public abstract double calculate(String symbol, String date);
 
+	
+	public void addRiskFreeRate(final String date, double value) {
+		_if.put(date, value);
+	}	
+
+	public void addRiskFreeRate(Map<String, Double> riskFreeRate) {
+		_if = riskFreeRate;
+	} 
+	
 	public void addPrice(GenericComputableEntry s_) {
 		List<GenericComputableEntry> s = prices.get(s_.getSymbol());
 		if (s == null) {
@@ -81,13 +95,14 @@ public abstract class AbstractTechnicalSignal implements ISignal {
 		try {
 			conn = ConnectionManager.getConnection();
 			String sQL_GET_RISK_FREE_INTEREST_RATEString = "SELECT * FROM STOCK_RISKFREE_INTEREST";
+			// String sQL_GET_RISK_FREE_INTEREST_RATEString = "SELECT Uid, Date, Return FROM STOCK_PRICE WHERE Symbol = '000001.sh'";
 			PreparedStatement statement;
 			try {
 				statement = conn.prepareStatement(sQL_GET_RISK_FREE_INTEREST_RATEString);
 				ResultSet result = statement.executeQuery();
 				while (result.next()) {
 					String date = result.getString(2);
-					double rate = result.getDouble(3);
+					double rate = result.getDouble(3) / Math.sqrt(65);
 					ret.put(date, rate);
 				}
 			} catch (SQLException e) {
@@ -111,10 +126,20 @@ public abstract class AbstractTechnicalSignal implements ISignal {
 	}
 
 	public boolean isTradeDate(String symbol, String date) {
-		if (Collections.binarySearch(getPrices().get(symbol), new GenericComputableEntry(symbol, date, -1)) < 0) {
+		List<GenericComputableEntry> entries = getPrices().get(symbol);
+		if (entries == null)
+			return false;
+		
+		if (Collections.binarySearch(entries, new GenericComputableEntry(symbol, date, -1)) < 0) {
 			return false;
 		} else {
 			return true;
 		}
 	}
+
+	protected double risk_free_interest_rate(final String date_) {
+		return _if.get(date_);
+	}
+	
+	protected Map<String, Double> _if;
 }

@@ -1,5 +1,7 @@
 package phenom.stock.signal;
 
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,13 +19,15 @@ import phenom.stock.signal.pricemomentum.PriceReverse;
 import phenom.stock.signal.technical.AbstractTechnicalSignal;
 import phenom.stock.signal.technical.AlphaSignal;
 import phenom.stock.signal.technical.BetaSignal;
+import phenom.stock.signal.technical.CovarianceSignal;
 import phenom.stock.signal.technical.MeanSignal;
+import phenom.stock.signal.technical.SharpSignal;
 import phenom.stock.signal.technical.VolatilitySignal;
 
 public class SignalHolder {
 	String startDate;
 	String endDate;
-	List<String> symbols;
+	Collection<String> symbols;
 	
 	EMovingAverage eMovingAverage = new EMovingAverage(1);
 	PriceReverse priceReverse = new PriceReverse(1);
@@ -38,40 +42,31 @@ public class SignalHolder {
 	BetaSignal betaSignal = new BetaSignal();
 	VolatilitySignal volatilitySignal = new VolatilitySignal();
 	MeanSignal meanSignal = new MeanSignal();
+	CovarianceSignal covarianceSignal = new CovarianceSignal();
+	SharpSignal sharpSignal = new SharpSignal();
+	List<Stock> _stocks;
+	List<FundmentalData> _fundementals;
+	Map<String, Double> _risk_free_rate;
 	
-	public SignalHolder(List<String> symbols, String startDate, String endDate) {
+	public SignalHolder(Collection<String> symbols, String startDate, String endDate) {
 		this.symbols = symbols;
 		this.startDate = startDate;
 		this.endDate = endDate;
+		_stocks = new LinkedList<Stock>();
 		for(String s : symbols) {
 			List<Stock> stocks = Stock.getStock(s, startDate, endDate, true);
+			_stocks.addAll(stocks);
 			
 			eMovingAverage.addPrices(stocks);
 			priceReverse.addPrices(stocks);
 			deltaEMAverage.addPrices(stocks);
-			earningToPrice.addPrices(stocks);
-			cashFlowToPrice.addPrices(stocks);
-			
-			// add technical signals
-			alphaSignal.addPrices(stocks);
-			betaSignal.addPrices(stocks);
-			volatilitySignal.addPrices(stocks);
-			meanSignal.addPrices(stocks);
 		}
 		
 		//add the fundamental
-		List<FundmentalData> fundmentalDatas = FundmentalData.loadFundmentalData(symbols, startDate, endDate);
-		earningToPrice.addFundmentalData(fundmentalDatas);
-		netAssetsPerShare.addFundmentalData(fundmentalDatas);
-		cashFlowToPrice.addFundmentalData(fundmentalDatas);
-		earningPerShare.addFundmentalData(fundmentalDatas);
-		netProfit.addFundmentalData(fundmentalDatas);
-		returnOnEquity.addFundmentalData(fundmentalDatas);
+		_fundementals = FundmentalData.loadFundmentalData(symbols, startDate, endDate);	
 		
 		// risk-free interest rate
-		Map<String, Double> risk_free_rate = AbstractTechnicalSignal.loadRiskFreeInterestRate();
-		alphaSignal.addRiskFreeRate(risk_free_rate);
-		betaSignal.addRiskFreeRate(risk_free_rate);
+		_risk_free_rate = AbstractTechnicalSignal.loadRiskFreeInterestRate();
 	}	
 	
 	// Price Momentum signals
@@ -92,54 +87,33 @@ public class SignalHolder {
 		return deltaEMAverage.calculate(symbol, date);
 	}
 	
-	// Fundmental signals
-	public EarningToPrice getEarningToPriceSignal() {
-		return this.earningToPrice;
-	}
-	
-	public double getEarningToPrice(String symbol, String date) {
-		return earningToPrice.calculate(symbol, date);
-	}
-	
-	public NetAssetsPerShare getNetAssetsPerShareSignal() {
-		return this.netAssetsPerShare;
-	}
-
-	public double getNetAssetsPerShare(String symbol, String date) {
-		return netAssetsPerShare.calculate(symbol, date);
-	}
+	// Fundemental signals
 	
 	public CashFlowToPrice getCashFlowToPrice() {
+		cashFlowToPrice.addPrices(_stocks);
+		cashFlowToPrice.addFundmentalData(_fundementals);
 		return cashFlowToPrice;
 	}
 	
-	public double getCashFlowToPrice(String symbol, String date) {
-		return cashFlowToPrice.calculate(symbol, date);
+	public NetAssetsPerShare getNetAssetsPerShareSignal() {
+		netAssetsPerShare.addFundmentalData(_fundementals);
+		return this.netAssetsPerShare;
 	}
-	
+
 	public EarningPerShare getEarningPerShare() {
+		earningPerShare.addFundmentalData(_fundementals);
 		return earningPerShare;
 	}
 	
-	public double getEarningPerShare(String symbol, String date) {
-		return earningPerShare.calculate(symbol, date);
-	}
-	
 	public NetProfit getNetProfit() {
+		netProfit.addFundmentalData(_fundementals);
 		return netProfit;
 	}
 	
-	public double getNetProfit(String symbol, String date) {
-		return netProfit.calculate(symbol, date);
-	}
-	
 	public ReturnOnEquity getReturnOnEquity() {
+		returnOnEquity.addFundmentalData(_fundementals);
 		return returnOnEquity;
 	}
-	
-	public double getReturnOnEquity(String symbol, String date) {
-		return returnOnEquity.calculate(symbol, date);
-	}	
 	
 	public String getStartDate() {
 		return startDate;
@@ -150,22 +124,50 @@ public class SignalHolder {
 	}
 
 	public List<String> getSymbols() {
-		return symbols;
+		List<String> ret = new LinkedList<String>();
+		ret.addAll(symbols);
+		return ret;
 	}
 	
 	public AlphaSignal getAlphaSignal() {
+		alphaSignal.addPrices(_stocks);
+		alphaSignal.addRiskFreeRate(_risk_free_rate);
 		return alphaSignal;
 	}
 
 	public BetaSignal getBetaSignal() {
+		betaSignal.addPrices(_stocks);
+		betaSignal.addRiskFreeRate(_risk_free_rate);
 		return betaSignal;
 	}
 
 	public VolatilitySignal getVolatilitySignal() {
+		volatilitySignal.addPrices(_stocks);
+		volatilitySignal.addRiskFreeRate(_risk_free_rate);
 		return volatilitySignal;
 	}
 
 	public MeanSignal getMeanSignal() {
+		meanSignal.addPrices(_stocks);
+		meanSignal.addRiskFreeRate(_risk_free_rate);
 		return meanSignal;
+	}
+
+	public CovarianceSignal getCovarianceSignal() {
+		covarianceSignal.addPrices(_stocks);
+		covarianceSignal.addRiskFreeRate(_risk_free_rate);
+		return covarianceSignal;
+	}
+
+	public SharpSignal getSharpSignal() {
+		sharpSignal.addPrices(_stocks);
+		sharpSignal.addRiskFreeRate(_risk_free_rate);
+		return sharpSignal;
+	}
+
+	public EarningToPrice getEarningToPriceSignal() {
+		this.earningToPrice.addPrices(_stocks);
+		this.earningToPrice.addFundmentalData(_fundementals);
+		return earningToPrice;
 	}
 }
