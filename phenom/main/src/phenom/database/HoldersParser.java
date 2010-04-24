@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -30,7 +29,6 @@ public class HoldersParser {
 
 	private static final String DROP_STOCK_HOLDERS = "DROP TABLE IF EXISTS STOCK_HOLDERS";
 	private static String _holdersFileName = "data/holders.csv";
-	private static String _dbPath = "data/SuperT_STOCK.sqlite";
 
 	/**
 	 * @param args
@@ -52,8 +50,7 @@ public class HoldersParser {
 		PreparedStatement prep = null;
 		Connection conn = null;
 		try {
-			String scon = "jdbc:sqlite:" + _dbPath;
-			conn = DriverManager.getConnection(scon);
+			conn = ConnectionManager.getConnection();
 			conn.setAutoCommit(false);
 
 			Statement s = conn.createStatement();
@@ -112,10 +109,9 @@ public class HoldersParser {
 			e.printStackTrace();
 		}
 
-		String scon = "jdbc:sqlite:" + _dbPath;
 		Connection conn;
 		try {
-			conn = DriverManager.getConnection(scon);
+			conn = ConnectionManager.getConnection();
 			Statement s = conn.createStatement();
 			s.executeUpdate(DROP_STOCK_HOLDERS);
 			s.executeUpdate(CREATE_STOCK_HOLDERS);
