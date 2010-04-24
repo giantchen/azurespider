@@ -209,7 +209,7 @@ public class Stock extends GenericComputableEntry{
 		String sql = "select * from STOCK_PRICE where Symbol = '" + symbol_ + "' and Date between '" 
 			+ startDate_ + "' and '" + endDate_ + "' order by Symbol, Date";		
 		
-		System.out.println(sql);
+		// System.out.println(sql);
 		
 		try {
 			conn = ConnectionManager.getConnection();

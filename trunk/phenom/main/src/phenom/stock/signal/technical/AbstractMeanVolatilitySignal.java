@@ -1,6 +1,7 @@
 package phenom.stock.signal.technical;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -12,9 +13,14 @@ import phenom.stock.signal.GenericComputableEntry;
 import phenom.stock.signal.SignalConstants;
 
 public abstract class AbstractMeanVolatilitySignal extends AbstractTechnicalSignal {	
+	private int _cycle = 0;
+	
 	public AbstractMeanVolatilitySignal() {
 		cache = new HashMap<String, Map<String, Double>>();
 	}
+	
+	public void setCycle(int cycle_) { _cycle = cycle_; }
+	public void reset() { cache.clear(); }
 
 	protected void doCalculation(final String symbol) {
 		List<GenericComputableEntry> entries = returns.get(symbol);		
@@ -27,16 +33,33 @@ public abstract class AbstractMeanVolatilitySignal extends AbstractTechnicalSign
 		
 		SummaryStatistics stats = new SummaryStatistics();
 		TreeSet<String> keySet = new TreeSet<String>(s.keySet());
+		List<Double> moving_data = new LinkedList<Double>();
+		
 		for (String date : keySet) {
 			if (cache.get(symbol) == null) {
 				Map<String, Double> v = new HashMap<String, Double>();
 				cache.put(symbol, v);
 			}
-			stats.addValue(s.get(date));
-			System.out.print("date = " + date + " ");
-			System.out.print("return = " + s.get(date) + " ");
-			System.out.print("mean = " + stats.getMean() + " ");
-			System.out.println("std = " + stats.getStandardDeviation());
+			
+			// need the risk-free interest rate
+			double riskFreeInterestRate = risk_free_interest_rate(date);
+			double val = s.get(date) - riskFreeInterestRate;
+			if (_cycle > 0) {
+				if (moving_data.size() + 1 >= _cycle) {
+					moving_data.remove(0);		
+					moving_data.add(val);
+					stats.clear();
+					for (double d : moving_data) {
+						stats.addValue(d);
+					}
+				} else {
+					moving_data.add(val);
+					stats.addValue(val);
+				}				
+			} else {
+				stats.addValue(val);
+			}
+			
 			cache.get(symbol).put(date, pickValue(stats));
 		}
 	}

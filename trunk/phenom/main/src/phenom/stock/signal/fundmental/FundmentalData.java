@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import phenom.database.ConnectionManager;
@@ -138,7 +139,7 @@ public class FundmentalData {
 	}
 
 	static public List<FundmentalData> loadFundmentalData(
-			final List<String> symbols, final String startDate,
+			final Collection<String> symbols, final String startDate,
 			final String endDate) {
 		List<FundmentalData> ret = new ArrayList<FundmentalData>();
 		Connection conn = null;

@@ -15,18 +15,8 @@ public abstract class AbstractAlphaBetaSignal extends AbstractTechnicalSignal {
 	
 	public AbstractAlphaBetaSignal() {
 		cache = new HashMap<String, Map<String, Double>>();
-		_if = new HashMap<String, Double>();
 	}
 	
-	public void addRiskFreeRate(final String date, double value) {
-		_if.put(date, value);
-	}
-	
-
-	public void addRiskFreeRate(Map<String, Double> riskFreeRate) {
-		_if = riskFreeRate;
-	} 
-
 	protected void doCalculation(final String symbol) {
 		List<GenericComputableEntry> entries = returns.get(symbol);
 		
@@ -86,10 +76,5 @@ public abstract class AbstractAlphaBetaSignal extends AbstractTechnicalSignal {
 		return cache.get(symbol).get(date);
 	}
 	
-	protected double risk_free_interest_rate(final String date_) {
-		return _if.get(date_);
-	}
-	
 	protected Map<String, Map<String, Double>> cache;
-	protected Map<String, Double> _if;
 }
