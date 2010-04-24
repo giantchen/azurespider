@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -30,7 +29,6 @@ public class RiskFreeInterestRateParser {
 
 	private static final String DROP_STOCK_RISKFREE_INTEREST = "DROP TABLE IF EXISTS STOCK_RISKFREE_INTEREST";
 	private static String _interestFile = "data/interestrate.csv";
-	private static String _dbPath = "data/SuperT_STOCK.sqlite";
 
 	public static void main(String[] args) {
 		RiskFreeInterestRateParser parser = new RiskFreeInterestRateParser();
@@ -49,8 +47,7 @@ public class RiskFreeInterestRateParser {
 		PreparedStatement prep = null;
 		Connection conn = null;
 		try {
-			String scon = "jdbc:sqlite:" + _dbPath;
-			conn = DriverManager.getConnection(scon);
+			conn = ConnectionManager.getConnection();
 			conn.setAutoCommit(false);
 
 			Statement s = conn.createStatement();
@@ -114,10 +111,9 @@ public class RiskFreeInterestRateParser {
 			e.printStackTrace();
 		}
 
-		String scon = "jdbc:sqlite:" + _dbPath;
 		Connection conn;
 		try {
-			conn = DriverManager.getConnection(scon);
+			conn = ConnectionManager.getConnection();
 			Statement s = conn.createStatement();
 			s.executeUpdate(DROP_STOCK_RISKFREE_INTEREST);
 			s.executeUpdate(CREATE_STOCK_RISKFREE_INTEREST);

@@ -7,7 +7,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -47,7 +46,6 @@ public class BasicInfoParser {
 	private static final String DROP_INDUSTRY_INFO = "DROP TABLE IF EXISTS INDUSTRY_INFO";
 	private static String _industryFile = "data/hybk.ini";
 	private static String _basicInfoFile = "data/comminfo.";
-	private static String _dbPath = "data/SuperT_STOCK.sqlite";
 	private Map<Integer, String> typeMap;
 
 	public BasicInfoParser() {
@@ -103,8 +101,7 @@ public class BasicInfoParser {
 		PreparedStatement prep = null;
 		Connection conn = null;
 		try {
-			String scon = "jdbc:sqlite:" + _dbPath;
-			conn = DriverManager.getConnection(scon);
+			conn = ConnectionManager.getConnection();
 			conn.setAutoCommit(false);
 			Statement s = conn.createStatement();
 			ResultSet rs = s
@@ -209,10 +206,9 @@ public class BasicInfoParser {
 			e.printStackTrace();
 		}
 
-		String scon = "jdbc:sqlite:" + _dbPath;
 		Connection conn;
 		try {
-			conn = DriverManager.getConnection(scon);
+			conn = ConnectionManager.getConnection();
 			Statement s = conn.createStatement();
 			s.executeUpdate(DROP_STOCK_INFO);
 			s.executeUpdate(CREATE_STOCK_INFO);

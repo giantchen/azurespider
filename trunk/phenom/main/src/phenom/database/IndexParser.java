@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,7 +28,6 @@ public class IndexParser {
 	private static final String CREATE_INDEX_ON_STOCK_INDEX = "CREATE INDEX IDX_INDEX ON STOCK_INDEX(Symbol ASC, IndexName)";
 	
 	private static String _indexFile = "data/index.csv";
-	private static String _dbPath = "data/SuperT_STOCK.sqlite";
 	
 	/**
 	 * @param args
@@ -52,8 +50,7 @@ public class IndexParser {
 		Connection conn = null;
 		
 		try {
-			String scon = "jdbc:sqlite:" + _dbPath;
-			conn = DriverManager.getConnection(scon);
+			conn = ConnectionManager.getConnection();
 			conn.setAutoCommit(false);			
 			Statement s = conn.createStatement();			
 			ResultSet rs = s.executeQuery("select max(Uid) Uid from STOCK_INDEX");
@@ -111,10 +108,9 @@ public class IndexParser {
 				e.printStackTrace();
 			}
 			
-			String scon = "jdbc:sqlite:" + _dbPath;
 			Connection conn;
 			try {
-				conn = DriverManager.getConnection(scon);
+				conn = ConnectionManager.getConnection();
 				Statement s = conn.createStatement();
 				s.executeUpdate(DROP_STOCK_INDEX);
 				s.executeUpdate(CREATE_STOCK_INDEX);

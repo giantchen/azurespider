@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -43,7 +42,6 @@ public class FinanceParser {
 
 	private static final String DROP_STOCK_FINANCE = "DROP TABLE IF EXISTS STOCK_FINANCE";
 	private static String _financeFile = "data/sina_finance.csv";
-	private static String _dbPath = "data/SuperT_STOCK.sqlite";
 
 	public static void main(String[] args) {
 		FinanceParser parser = new FinanceParser();
@@ -62,8 +60,7 @@ public class FinanceParser {
 		PreparedStatement prep = null;
 		Connection conn = null;
 		try {
-			String scon = "jdbc:sqlite:" + _dbPath;
-			conn = DriverManager.getConnection(scon);
+			conn = ConnectionManager.getConnection();
 			conn.setAutoCommit(false);
 
 			Statement s = conn.createStatement();
@@ -130,10 +127,9 @@ public class FinanceParser {
 			e.printStackTrace();
 		}
 
-		String scon = "jdbc:sqlite:" + _dbPath;
 		Connection conn;
 		try {
-			conn = DriverManager.getConnection(scon);
+			conn = ConnectionManager.getConnection();
 			Statement s = conn.createStatement();
 			s.executeUpdate(DROP_STOCK_FINANCE);
 			s.executeUpdate(CREATE_STOCK_FINANCE);

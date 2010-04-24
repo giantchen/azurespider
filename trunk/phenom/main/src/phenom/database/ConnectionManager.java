@@ -5,7 +5,8 @@ import java.sql.DriverManager;
 
 public class ConnectionManager {
 	private static String _dbPath;
-	private static final String DEFAULT_DB_PATH = "data\\SuperT_STOCK.sqlite";
+	private static final String DEFAULT_DB_PATH = "r:\\SuperT_STOCK.sqlite";
+	// private static final String DEFAULT_DB_PATH = "data\\SuperT_STOCK.sqlite";
 	
 	public static void init(String dbPath_) {
 		_dbPath = dbPath_;

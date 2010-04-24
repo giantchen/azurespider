@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -38,7 +37,6 @@ public class DayParser {
 	private static final String CREATE_INDEX_ON_STOCK_PRICE = "CREATE INDEX IDX_PRICE ON STOCK_PRICE(Symbol ASC, Date ASC, Exchange ASC)";
 	
 	private static String _historyFile = "data/history.csv";
-	private static String _dbPath = "data/SuperT_STOCK.sqlite";
 	
 	/**
 	 * @param args
@@ -61,8 +59,7 @@ public class DayParser {
 		Connection conn = null;
 		
 		try {
-			String scon = "jdbc:sqlite:" + _dbPath;
-			conn = DriverManager.getConnection(scon);
+			conn = ConnectionManager.getConnection();
 			conn.setAutoCommit(false);			
 			Statement s = conn.createStatement();			
 			ResultSet rs = s.executeQuery("select max(Uid) Uid from STOCK_PRICE");
@@ -146,10 +143,9 @@ public class DayParser {
 				e.printStackTrace();
 			}
 			
-			String scon = "jdbc:sqlite:" + _dbPath;
 			Connection conn;
 			try {
-				conn = DriverManager.getConnection(scon);
+				conn = ConnectionManager.getConnection();
 				Statement s = conn.createStatement();
 				s.executeUpdate(DROP_STOCK_PRICE);
 				s.executeUpdate(CREATE_STOCK_PRICE);

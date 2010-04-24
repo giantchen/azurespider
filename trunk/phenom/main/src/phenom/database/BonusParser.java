@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -59,7 +58,6 @@ public class BonusParser {
 	private static final String DROP_STOCK_ALLOC = "DROP TABLE IF EXISTS STOCK_ALLOC";
 	private static String _bonusFileName = "data/bonus.csv";
 	private static String _allocFileName = "data/alloc.csv";
-	private static String _dbPath = "data/SuperT_STOCK.sqlite";
 
 	/**
 	 * @param args
@@ -83,8 +81,7 @@ public class BonusParser {
 		
 		// Processing bonus table
 		try {
-			String scon = "jdbc:sqlite:" + _dbPath;
-			conn = DriverManager.getConnection(scon);
+			conn = ConnectionManager.getConnection();
 			conn.setAutoCommit(false);
 			
 			Statement s = conn.createStatement();
@@ -160,8 +157,7 @@ public class BonusParser {
 		
 		// Processing alloc table
 		try {
-			String scon = "jdbc:sqlite:" + _dbPath;
-			conn = DriverManager.getConnection(scon);
+			conn = ConnectionManager.getConnection();
 			conn.setAutoCommit(false);
 			
 			Statement s = conn.createStatement();
@@ -227,10 +223,9 @@ public class BonusParser {
 			e.printStackTrace();
 		}
 
-		String scon = "jdbc:sqlite:" + _dbPath;
 		Connection conn;
 		try {
-			conn = DriverManager.getConnection(scon);
+			conn = ConnectionManager.getConnection();
 			Statement s = conn.createStatement();
 			s.executeUpdate(DROP_STOCK_BONUS);
 			s.executeUpdate(CREATE_STOCK_BONUS);
