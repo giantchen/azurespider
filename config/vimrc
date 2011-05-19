@@ -5,6 +5,8 @@ set cindent
 set cino=g1h1
 set title
 set mouse=
+set number
+set showcmd
 
 set hlsearch
 set incsearch
@@ -16,6 +18,7 @@ behave mswin
 
 filetype plugin indent on
 autocmd FileType make set noexpandtab
+autocmd FileType tex set encoding=utf-8
 
 " backspace and cursor keys wrap to previous/next line
 set backspace=indent,eol,start whichwrap+=<,>,[,]
@@ -24,30 +27,30 @@ set backspace=indent,eol,start whichwrap+=<,>,[,]
 vnoremap <BS> d
 
 " CTRL-X and SHIFT-Del are Cut
-vnoremap <C-X> "+x
-vnoremap <S-Del> "+x
+"vnoremap <C-X> "+x
+"vnoremap <S-Del> "+x
 
 " CTRL-C and CTRL-Insert are Copy
-vnoremap <C-C> "+y
-vnoremap <C-Insert> "+y
+"vnoremap <C-C> "+y
+"vnoremap <C-Insert> "+y
 
 " CTRL-V and SHIFT-Insert are Paste
-map <C-V>		"+gP
-map <S-Insert>		"+gP
+"map <C-V>		"+gP
+"map <S-Insert>		"+gP
 
-cmap <C-V>		<C-R>+
-cmap <S-Insert>		<C-R>+
+"cmap <C-V>		<C-R>+
+"cmap <S-Insert>		<C-R>+
 
 " Pasting blockwise and linewise selections is not possible in Insert and
 " Visual mode without the +virtualedit feature.  They are pasted as if they
 " were characterwise instead.
 " Uses the paste.vim autoload script.
 
-exe 'inoremap <script> <C-V>' paste#paste_cmd['i']
-exe 'vnoremap <script> <C-V>' paste#paste_cmd['v']
+"exe 'inoremap <script> <C-V>' paste#paste_cmd['i']
+"exe 'vnoremap <script> <C-V>' paste#paste_cmd['v']
 
-imap <S-Insert>		<C-V>
-vmap <S-Insert>		<C-V>
+"imap <S-Insert>		<C-V>
+"vmap <S-Insert>		<C-V>
 
 " Use CTRL-Q to do what CTRL-V used to do
 noremap <C-Q>		<C-V>
@@ -71,14 +74,15 @@ if has("gui")
 endif
 
 " CTRL-A is Select all
-noremap <C-A> gggH<C-O>G
-inoremap <C-A> <C-O>gg<C-O>gH<C-O>G
-cnoremap <C-A> <C-C>gggH<C-O>G
-onoremap <C-A> <C-C>gggH<C-O>G
-snoremap <C-A> <C-C>gggH<C-O>G
-xnoremap <C-A> <C-C>ggVG
+"noremap <C-A> gggH<C-O>G
+"inoremap <C-A> <C-O>gg<C-O>gH<C-O>G
+"cnoremap <C-A> <C-C>gggH<C-O>G
+"onoremap <C-A> <C-C>gggH<C-O>G
+"snoremap <C-A> <C-C>gggH<C-O>G
+"xnoremap <C-A> <C-C>ggVG
 
 inoremap <C-Del> <C-O>dw
+noremap <C-Del> dw
 inoremap <C-BS> <C-W>
 
 function! s:SmartHome()
@@ -102,6 +106,6 @@ endif
 
 if &term == "linux"
    "set term=xtermc
-   set t_ts=]0;
-   set t_fs=
+   "set t_ts=]0;
+   "set t_fs=
 endif
