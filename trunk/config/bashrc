@@ -9,8 +9,11 @@
 export HISTCONTROL=ignoredups
 # ... and ignore same sucessive entries.
 export HISTCONTROL=ignoreboth
+export HISTSIZE=50000
 export IGNOREEOF=1
-#export LANG=en_US
+export LANG=en_US.UTF-8
+export GROOVY_HOME=/home/schen/jars/groovy-2.0.5
+PATH="$PATH:$GROOVY_HOME/bin"
 
 export GOROOT=$HOME/go
 export GOARCH=amd64
@@ -26,6 +29,7 @@ shopt -s histappend
 shopt -s checkwinsize
 
 shopt -s cdspell
+shopt -s histappend
 stty stop undef
 stty start undef
 
@@ -39,9 +43,9 @@ fi
 
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
-xterm|linux|screen)
+xterm*|linux|screen)
     PS1='${debian_chroot:+($debian_chroot)}\
-[\[\033[01;34m\]\w\[\033[00m\]]\n\
+[\[\033[01;34m\]\w\[\033[00m\]] \[\e[1;30m\]\t\[\e[0m\] \n\
 \[\033[00;32m\]\u\[\033[00m\]@\
 \[\033[00;33m\]\h\[\033[00m\]\$ '
     ;;
@@ -56,10 +60,10 @@ esac
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
 xterm*|rxvt*)
-    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD/$HOME/~}\007"'
+    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD/$HOME/~}\007";history -a'
     ;;
 screen*)
-    PROMPT_COMMAND='echo -ne "\033k${USER}@${HOSTNAME}: ${PWD/$HOME/~}\033\\"'
+    PROMPT_COMMAND='echo -ne "\033k${USER}@${HOSTNAME}: ${PWD/$HOME/~}\033\\";history -a'
     ;;
 *)
     ;;
@@ -93,6 +97,15 @@ alias grep='grep --color=auto'
 # fi
 #alias la='ls -A'
 #alias l='ls -CF'
+
+#eval `ssh-agent`
+
+function check-ssh-agent()
+{
+    [ -S "$SSH_AUTH_SOCK" ] && { ssh-add -l >& /dev/null || [ $? -ne 2 ]; }
+}
+check-ssh-agent || export SSH_AUTH_SOCK=~/.tmp/ssh-agent.sock
+check-ssh-agent || eval "$(ssh-agent -s -a ~/.tmp/ssh-agent.sock)"
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like

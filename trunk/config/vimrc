@@ -18,7 +18,16 @@ behave mswin
 
 filetype plugin indent on
 autocmd FileType make set noexpandtab
+autocmd FileType python set sw=4 ts=4 noexpandtab
 autocmd FileType tex set encoding=utf-8
+autocmd BufWritePre *.java :%s/\s\+$//e
+autocmd BufWritePre *.cc :%s/\s\+$//e
+autocmd BufWritePre *.h :%s/\s\+$//e
+
+augroup filetype
+  au! BufRead,BufNewFile *.proto setfiletype proto
+  au! BufRead,BufNewFile *.pic setf pic
+augroup end
 
 " backspace and cursor keys wrap to previous/next line
 set backspace=indent,eol,start whichwrap+=<,>,[,]
@@ -97,6 +106,8 @@ inoremap <silent><home> <C-O>:call <SID>SmartHome()<CR>
 nnoremap <silent><home> :call <SID>SmartHome()<CR>
 vnoremap <silent><home> :call <SID>SmartHome()<CR> 
 
+command Q :q
+command W :w
 
 if &term == "screen"
    set t_ts=k
