@@ -2,7 +2,7 @@ set nocp
 syntax on
 
 set cindent
-set cino=g1h1
+set cino=+2s,(0,g1,h1
 set title
 set mouse=
 set number
@@ -115,7 +115,7 @@ if &term == "screen"
    set t_@7=[4~
 endif
 
-if &term == "linux"
+if &term == "xterm"
    "set term=xtermc
    "set t_ts=]0;
    "set t_fs=

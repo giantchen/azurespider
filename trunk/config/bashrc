@@ -9,8 +9,6 @@
 export HISTCONTROL=ignoredups
 # ... and ignore same sucessive entries.
 export HISTCONTROL=ignoreboth
-export HISTSIZE=50000
-export IGNOREEOF=1
 export LANG=en_US.UTF-8
 export GROOVY_HOME=/home/schen/jars/groovy-2.0.5
 PATH="$PATH:$GROOVY_HOME/bin"
@@ -23,6 +21,8 @@ export GOOS=linux
 shopt -s histappend
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+export HISTSIZE=1000000
+export HISTFILESIZE=10000000
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -98,11 +98,9 @@ alias grep='grep --color=auto'
 #alias la='ls -A'
 #alias l='ls -CF'
 
-#eval `ssh-agent`
-
 function check-ssh-agent()
 {
-    [ -S "$SSH_AUTH_SOCK" ] && { ssh-add -l >& /dev/null || [ $? -ne 2 ]; }
+  [ -S "$SSH_AUTH_SOCK" ] && { ssh-add -l >& /dev/null || [ $? -ne 2 ]; }
 }
 check-ssh-agent || export SSH_AUTH_SOCK=~/.tmp/ssh-agent.sock
 check-ssh-agent || eval "$(ssh-agent -s -a ~/.tmp/ssh-agent.sock)"
